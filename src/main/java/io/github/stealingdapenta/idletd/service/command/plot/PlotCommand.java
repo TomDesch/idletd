@@ -15,7 +15,7 @@ public class PlotCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        CommandExecutor cmd = new GoToPlotCommand(plotHandler);
+        CommandExecutor cmd = new GoToPlotCommand();
 
         // No arguments will display help.
         if (args.length == 0) {

@@ -15,8 +15,6 @@ import static io.github.stealingdapenta.idletd.plot.Plot.findOwnedPlot;
 @RequiredArgsConstructor
 public class GoToPlotCommand implements CommandExecutor {
 
-    private final PlotHandler plotHandler;
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) {
