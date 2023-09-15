@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 public class PlotCommand implements CommandExecutor {
@@ -14,22 +15,27 @@ public class PlotCommand implements CommandExecutor {
     private final PlotHandler plotHandler = new PlotHandler(schematicHandler);
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender,
+                             @NotNull Command command,
+                             @NotNull String label,
+                             String[] args) {
+        // Default command : teleport player to his plot
         CommandExecutor cmd = new GoToPlotCommand();
 
         // No arguments will display help.
         if (args.length == 0) {
-            cmd.onCommand(sender, command, label, args);
-            return true;
+            return cmd.onCommand(sender, command, label, args);
         }
 
-        switch (args[0].toLowerCase()) {
+        String subcommand = args[0].toLowerCase();
+
+        switch (subcommand) {
             case "help" -> cmd = new PlotHelpCommand();
             case "new" -> cmd = new CreatePlotCommand(plotHandler);
+            default -> cmd = new GoToPlotCommand();
         }
 
-        cmd.onCommand(sender, command, label, args);
-        return true;
+        return cmd.onCommand(sender, command, label, args);
     }
 
 }

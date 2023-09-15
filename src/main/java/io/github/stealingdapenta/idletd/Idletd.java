@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 
@@ -51,13 +52,9 @@ public class Idletd extends JavaPlugin {
 
         this.copyResourcesToDataFolder();
 
-        this.getCommand("zombie").setExecutor(spawnZombieCommand);
-        this.getCommand("tracker").setExecutor(trackerCommand);
-        this.getCommand("plot").setExecutor(plotCommand);
+        this.registerCommands();
+        this.registerEvents();
 
-        Bukkit.getPluginManager().registerEvents(trackerListener, getInstance());
-        Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
-        Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
 
         try {
             DatabaseManager.createTables();
@@ -68,6 +65,19 @@ public class Idletd extends JavaPlugin {
         }
 
         this.pluginEnabledLog();
+    }
+
+    private void registerCommands() {
+        Objects.requireNonNull(this.getCommand("zombie")).setExecutor(spawnZombieCommand);
+        Objects.requireNonNull(this.getCommand("tracker")).setExecutor(trackerCommand);
+        Objects.requireNonNull(this.getCommand("plot")).setExecutor(plotCommand);
+        Objects.requireNonNull(this.getCommand("p")).setExecutor(plotCommand);
+    }
+
+    private void registerEvents() {
+        Bukkit.getPluginManager().registerEvents(trackerListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
     }
 
     @Override
