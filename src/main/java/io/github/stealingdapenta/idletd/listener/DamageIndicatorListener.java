@@ -3,7 +3,6 @@ package io.github.stealingdapenta.idletd.listener;
 import io.github.stealingdapenta.idletd.Idletd;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -11,7 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,71 +18,89 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static net.royawesome.jlibnoise.MathHelper.round;
 
 public class DamageIndicatorListener implements Listener {
+    private static final TextColor MAGIC = TextColor.color(95, 10, 95);
+    private static final TextColor MELEE = TextColor.color(100, 100, 100);
+    private static final TextColor POISON = TextColor.color(0, 100, 20);
+    private static final TextColor FIRE = TextColor.color(200, 90, 25);
+    private static final TextColor RANGED = TextColor.color(130, 70, 0);
+    private static final TextColor OTHER = TextColor.color(130, 130, 30);
 
     @EventHandler
-    public void displayDamageIndicator(EntityDamageByEntityEvent event) {
+    public void displayDamageIndicator(EntityDamageEvent event) {
         Entity damagedEntity = event.getEntity();
 
         if (!(damagedEntity instanceof LivingEntity livingDamagedEntity)) {
             return;
         }
 
-        Location initialLocation = this.calculateHitLocation(event.getDamager().getLocation(), livingDamagedEntity.getLocation());
+        Location initialLocation = this.getHitLocation(livingDamagedEntity);
         double damageDealt = event.getDamage();
-        this.animateArmorStand(initialLocation, damageDealt);
+        TextColor textColor = this.calculateColor(event.getCause());
+        this.animateArmorStand(initialLocation, damageDealt, textColor);
     }
 
-    private ArmorStand createArmorStand(Location initialLocation, double damageDealt) {
+    private ArmorStand createArmorStand(Location initialLocation, double damageDealt, TextColor textColor) {
         ArmorStand armorStand = initialLocation.getWorld().spawn(initialLocation, ArmorStand.class);
-        armorStand.setVisible(false);
 
-        armorStand.customName(Component.text(round(damageDealt, 2), TextColor.color(255, 75, 0), TextDecoration.BOLD));
+        armorStand.customName(Component.text(round(damageDealt, 2), textColor));
         armorStand.setCustomNameVisible(true);
+        armorStand.setVisible(false);
+        armorStand.setCollidable(false);
+        armorStand.setInvulnerable(true);
+        armorStand.setMarker(true);
+        armorStand.setGravity(true);
+        armorStand.setSmall(true);
 
         return armorStand;
     }
 
-    public void animateArmorStand(Location initialLocation, double damageDealt) {
-        ArmorStand armorStand = this.createArmorStand(initialLocation, damageDealt);
+    private TextColor calculateColor(EntityDamageEvent.DamageCause cause) {
+        return switch (cause) {
+            case MAGIC -> MAGIC;
+            case ENTITY_ATTACK, ENTITY_SWEEP_ATTACK, THORNS -> MELEE;
+            case POISON -> POISON;
+            case FIRE, FIRE_TICK, LAVA, HOT_FLOOR -> FIRE;
+            case PROJECTILE -> RANGED;
+            default -> OTHER;
+        };
+    }
+
+
+    public void animateArmorStand(Location initialLocation, double damageDealt, TextColor textColor) {
+        ArmorStand armorStand = this.createArmorStand(initialLocation, damageDealt, textColor);
 
         // Define initial velocity (upward motion)
-        Vector velocity = new Vector(0, 0.02, 0); // Adjust the y-component for the desired speed
+        double upwardSpeed = 0.15;
+        Vector velocity = new Vector(0, upwardSpeed, 0);
 
         // Add randomness to velocity
         double randomX = Math.random() * 0.1 - 0.05; // Random value between -0.05 and 0.05
-        double randomY = Math.random() * 0.1 - 0.05;
-        double randomZ = Math.random() * 0.1 - 0.05;
-        velocity.add(new Vector(randomX, randomY, randomZ));
+        double randomZ = Math.random() * 0.1 - 0.05; // Random value between -0.05 and 0.05
+        velocity.add(new Vector(randomX, 0, randomZ));
 
         // Simulate animation using Bukkit's scheduler
-        final AtomicInteger steps = new AtomicInteger(150); // Number of animation steps
-        int delay = 4; // Delay between animation steps in server ticks (adjust as needed)
+        final AtomicInteger steps = new AtomicInteger(30); // Number of animation steps
+        int period = 0; // Delay between animation steps in server ticks (adjust as needed)
 
-        Bukkit.getScheduler().runTaskTimer(Idletd.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskTimer(Idletd.getInstance(), task -> {
             // Update ArmorStand position
             armorStand.teleport(armorStand.getLocation().add(velocity));
 
             // Apply gravity (decrease y-component)
-            velocity.subtract(new Vector(randomX, 0.002, randomZ));
+            velocity.subtract(new Vector(0, 0.01, 0));
 
             int remainingSteps = steps.decrementAndGet();
             if (remainingSteps <= 0) {
                 armorStand.remove();
+                task.cancel();
             }
-        }, delay, 600);
+        }, 0, period);
     }
 
-
-    private Location calculateHitLocation(Location start, Location end) {
-        // Calculate a point along the line of sight
-        Vector startVec = start.toVector();
-        Vector endVec = end.toVector();
-
-        // Calculate the midpoint between start and end
-        Vector midpoint = startVec.add(endVec.subtract(startVec).multiply(0.5));
-
-        // Convert the resulting vector back to a location
-        return midpoint.toLocation(start.getWorld());
+    public Location getHitLocation(Entity targetEntity) {
+        Location targetLocation = targetEntity.getLocation();
+        double height = 1;
+        return targetLocation.add(0d, height, 0d);
     }
 
 }
