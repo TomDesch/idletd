@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd;
 
 import io.github.stealingdapenta.idletd.database.DatabaseManager;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
+import io.github.stealingdapenta.idletd.listener.DamageIndicatorListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
 import io.github.stealingdapenta.idletd.listener.TrackerListener;
 import io.github.stealingdapenta.idletd.service.command.SpawnZombieCommand;
@@ -41,6 +42,7 @@ public class Idletd extends JavaPlugin {
     private final TrackerListener trackerListener = new TrackerListener(trackerItem, customMobHandler);
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener();
+    private final DamageIndicatorListener damageIndicatorListener = new DamageIndicatorListener();
 
     public static Idletd getInstance() {
         return instance;
@@ -78,6 +80,7 @@ public class Idletd extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(trackerListener, getInstance());
         Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
         Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(damageIndicatorListener, getInstance());
     }
 
     @Override
