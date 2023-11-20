@@ -98,7 +98,6 @@ public class Idletd extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(damageIndicatorListener, getInstance());
         Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
     }
-
     private void pluginEnabledLog() {
         getLogger().info("IdleMCTD enabled.");
     }
