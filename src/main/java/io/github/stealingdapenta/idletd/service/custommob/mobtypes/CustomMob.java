@@ -1,6 +1,7 @@
-package io.github.stealingdapenta.idletd.service.custommob;
+package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -29,20 +30,16 @@ public abstract class CustomMob {
 
 
     public Mob summon(Location location) {
+        CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
+
         LivingEntity livingEntity = (LivingEntity) location.getWorld().spawnEntity(location, this.getEntityType()); // todo summon "this"
         livingEntity.setCanPickupItems(false);
         livingEntity.setRemoveWhenFarAway(false);
 
-        NamespacedKey namespacedKey = new NamespacedKey(Idletd.getInstance(), this.customMobHandler.getCUSTOM_MOB_TAG());
+        NamespacedKey namespacedKey = new NamespacedKey(Idletd.getInstance(), customMobHandler.getCUSTOM_MOB_TAG());
         livingEntity.getPersistentDataContainer().set(namespacedKey, PersistentDataType.BOOLEAN, true);
 
-        return this;
+        return (Mob) livingEntity;
 
     }
-
-    private void setTags(LivingEntity livingEntity) {
-        livingEntity.getPersistentDataContainer().set();
-    }
-
-    private void setTag(LivingEntity livingEntity,)
 }

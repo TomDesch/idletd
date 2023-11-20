@@ -31,4 +31,16 @@ public class MobWrapper {
         entity.customName(name);
         entity.setCustomNameVisible(true);
     }
+
+    // Method to handle mob death during the wave
+    public void handleDeath() {
+        // Add any logic you need when a mob dies during the wave
+        // For example, you might remove the mob from the living mobs list
+//        CustomMobHandler.getInstance().removeCustomMob(this);
+    }
+
+    // Getter method for the entity
+    public LivingEntity getEntity() {
+        return entity;
+    }
 }
