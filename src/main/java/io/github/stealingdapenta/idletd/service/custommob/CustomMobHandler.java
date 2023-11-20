@@ -4,43 +4,53 @@ import io.github.stealingdapenta.idletd.Idletd;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @RequiredArgsConstructor
 public class CustomMobHandler {
-    private final ArrayList<LivingEntity> livingCustomMobs = new ArrayList<>();
-    private final String CUSTOM_MOB_TAG = "custom_mob";
+    private static CustomMobHandler instance;
+    private final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
+    private final String CUSTOM_MOB_TAG = "idletd_mob";
+
+    public static CustomMobHandler getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new CustomMobHandler();
+        }
+        return instance;
+    }
 
     public String getCUSTOM_MOB_TAG() {
         return this.CUSTOM_MOB_TAG;
     }
 
-    public void removeDeadMobs() {
-        this.livingCustomMobs.removeIf(Entity::isDead);
+    public void addCustomMob(MobWrapper mobWrapper) {
+        this.livingCustomMobs.add(mobWrapper);
     }
 
-    public void addCustomMob(LivingEntity mob) {
-        this.livingCustomMobs.add(mob);
-    }
-
-    public List<LivingEntity> getLivingCustomMobs() {
+    public List<MobWrapper> getLivingCustomMobs() {
         return livingCustomMobs;
     }
 
-
-    public boolean isCustomMob(LivingEntity mob) {
-        NamespacedKey namespacedKey = new NamespacedKey(Idletd.getInstance(), this.getCUSTOM_MOB_TAG());
-        return Boolean.TRUE.equals(mob.getPersistentDataContainer().get(namespacedKey, PersistentDataType.BOOLEAN));
+    public boolean isCustomMob(MobWrapper mobWrapper) {
+        return Boolean.TRUE.equals(mobWrapper.getEntity().getPersistentDataContainer().get(new NamespacedKey(Idletd.getInstance(), this.getCUSTOM_MOB_TAG()), PersistentDataType.BOOLEAN));
     }
 
-    public void setNewTarget(LivingEntity mob, LivingEntity target) {
-        if (! (mob instanceof Creature entityCreature)) return; // todo error handling
+    public void setNewTarget(MobWrapper mobWrapper, LivingEntity target) {
+        if (!(mobWrapper.getEntity() instanceof Creature entityCreature)) return;
         entityCreature.setTarget(target);
     }
+
+    // Method to create a new custom mob during a wave
+    public MobWrapper spawnCustomMob(MobWrapperBuilder builder) {
+        MobWrapper mobWrapper = new MobWrapper(builder);
+        addCustomMob(mobWrapper);
+        return mobWrapper;
+    }
 }
+

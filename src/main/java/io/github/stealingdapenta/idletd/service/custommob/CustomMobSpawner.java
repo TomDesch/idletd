@@ -27,7 +27,7 @@ public class CustomMobSpawner {
 
     public void spawn(EntityType entityType, Location location) {
         LivingEntity livingEntity = (LivingEntity) location.getWorld().spawnEntity(location, entityType);
-        this.customMobHandler.addCustomMob(livingEntity);
+//        this.customMobHandler.addCustomMob(livingEntity);
 
         livingEntity.setCanPickupItems(false);
         livingEntity.setRemoveWhenFarAway(false);
