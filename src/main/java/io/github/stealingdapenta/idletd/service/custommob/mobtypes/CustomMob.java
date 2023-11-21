@@ -1,5 +1,7 @@
 package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
 
+import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.service.custommob.MobWrapperBuilder;
 import lombok.Getter;
@@ -11,6 +13,10 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Setter
@@ -19,6 +25,7 @@ public abstract class CustomMob {
 
     protected EntityType entityType;
     protected Mob mob;
+    protected Plot plot;
 
     protected double ARMOR = 1.0;
     protected double ATTACK_DAMAGE = 1.0;
@@ -47,7 +54,25 @@ public abstract class CustomMob {
                 .maxHealth(MAX_HEALTH)
                 .speed(MOVEMENT_SPEED);
 
-        mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob);
+        mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob).getSummonedEntity();
+
+        preventMobFromFallingTask();
+
         return mob;
+    }
+
+    private BukkitTask preventMobFromFallingTask() {
+        return new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (mob.isDead() || Objects.isNull(plot)) {
+                    cancel();
+                }
+                if (mob.getLocation().getY() < plot.getMobSpawnLocation().getY() - 5) {
+                    // Teleport the mob back to the spawn location
+                    mob.teleport(plot.getMobSpawnLocation());
+                }
+            }
+        }.runTaskTimer(Idletd.getInstance(), 0L, 30L);  // 20 ticks = 1 second
     }
 }
