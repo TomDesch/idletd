@@ -13,8 +13,6 @@ public class MobWrapperBuilder {
     double attackDamage;
     double attackKnockback;
     double armorToughness;
-    double attackSpeed;
-    double flyingSpeed;
     double knockbackResistance;
     double maxHealth;
     String playerUUID;
