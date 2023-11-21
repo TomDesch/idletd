@@ -55,7 +55,6 @@ public enum WaveConfiguration {
         if (level >= 1 && level <= values().length) {
             return values()[level - 1]; // -1 because ordinal counter starts from 0
         }
-        // todo Handle invalid level, return a default or throw an exception as needed
         Idletd.getInstance().getLogger().severe("Error trying to get wave by level.");
         return WAVE_1;
     }

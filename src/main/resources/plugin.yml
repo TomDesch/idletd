@@ -22,3 +22,10 @@ commands:
     usage:
         /plot
         /plot new
+
+  td:
+  idletd:
+  tower:
+  towerdefense:
+    description: Launches your Idle Tower Defense game!
+    usage: /<command>

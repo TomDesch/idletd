@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.service.custommob.MobWrapperBuilder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -13,9 +14,11 @@ import org.bukkit.entity.Mob;
 
 @RequiredArgsConstructor
 @Setter
+@Getter
 public abstract class CustomMob {
 
     protected EntityType entityType;
+    protected Mob mob;
 
     protected double ARMOR = 1.0;
     protected double ATTACK_DAMAGE = 1.0;
@@ -44,6 +47,7 @@ public abstract class CustomMob {
                 .maxHealth(MAX_HEALTH)
                 .speed(MOVEMENT_SPEED);
 
-        return (Mob) new CustomMobHandler().spawnCustomMob(customMob);
+        mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob);
+        return mob;
     }
 }

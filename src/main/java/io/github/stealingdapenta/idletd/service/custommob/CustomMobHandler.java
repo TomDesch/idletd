@@ -25,24 +25,29 @@ public class CustomMobHandler {
         return instance;
     }
 
-    public String getCUSTOM_MOB_TAG() {
-        return this.CUSTOM_MOB_TAG;
+    public String getCustomMobTag() {
+        return CUSTOM_MOB_TAG;
     }
 
     public NamespacedKey getCustomNameSpacedKey() {
-        return new NamespacedKey(Idletd.getInstance(), this.getCUSTOM_MOB_TAG());
+        return new NamespacedKey(Idletd.getInstance(), this.getCustomMobTag());
     }
 
     public void addCustomMob(MobWrapper mobWrapper) {
-        this.livingCustomMobs.add(mobWrapper);
+        livingCustomMobs.add(mobWrapper);
     }
 
-    public List<MobWrapper> getLivingCustomMobs() {
+    public List<MobWrapper> getUpdatedLivingCustomMobs() {
+        removeDeadMobsFromList();
         return livingCustomMobs;
     }
 
-    public boolean isCustomMob(MobWrapper mobWrapper) {
-        return Boolean.TRUE.equals(mobWrapper.getSummonedEntity().getPersistentDataContainer().get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+    public void removeDeadMobsFromList() {
+        livingCustomMobs.removeIf(mobWrapper -> mobWrapper.getSummonedEntity().isDead());
+    }
+
+    public boolean isCustomMob(LivingEntity livingEntity) {
+        return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer().get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
     }
 
     public void setNewTarget(MobWrapper mobWrapper, LivingEntity target) {
@@ -50,7 +55,6 @@ public class CustomMobHandler {
         entityCreature.setTarget(target);
     }
 
-    // Method to create a new custom mob during a wave
     public MobWrapper spawnCustomMob(MobWrapperBuilder builder) {
         MobWrapper mobWrapper = builder.build();
         addCustomMob(mobWrapper);
