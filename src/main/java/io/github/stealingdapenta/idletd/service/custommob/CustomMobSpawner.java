@@ -15,7 +15,7 @@ public class CustomMobSpawner {
         Vector direction = player.getLocation().getDirection().normalize().multiply(distance);
         Location front = loc.add(direction);
 
-        ZombieMob zombieMob = new ZombieMob();
+        ZombieMob zombieMob = new ZombieMob(null);
         zombieMob.summon(front);
     }
 }
