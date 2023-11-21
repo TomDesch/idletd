@@ -8,14 +8,6 @@ depend: [WorldGuard, FastAsyncWorldEdit]
 
 
 commands:
-  zombie:
-    description: Spawn a zombie.
-    usage: /<command>
-
-  tracker:
-    description: Give yourself the tracker item.
-    usage: /<command>
-
   p:
   plot:
     description:
