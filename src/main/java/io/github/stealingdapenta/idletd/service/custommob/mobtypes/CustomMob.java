@@ -64,11 +64,12 @@ public abstract class CustomMob {
                 if (Objects.isNull(plot) || mob.isDead()) {
                     cancel();
                 }
-                if (mob.getLocation().getY() < plot.getMobSpawnLocation().getY() - 5) {
-                    // Teleport the mob back to the spawn location
+
+                if (mob.getFallDistance() > 5) {
+                    mob.setFallDistance(0); // prevents fall dmg
                     mob.teleport(plot.getMobSpawnLocation());
                 }
             }
-        }.runTaskTimer(Idletd.getInstance(), 0L, 15L);
+        }.runTaskTimer(Idletd.getInstance(), 0L, 30L);
     }
 }
