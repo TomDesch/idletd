@@ -11,6 +11,7 @@ import io.github.stealingdapenta.idletd.listener.TrackerListener;
 import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.command.SpawnZombieCommand;
+import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.service.command.TrackerCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.service.customitem.InventoryHandler;
@@ -49,14 +50,15 @@ public class Idletd extends JavaPlugin {
 
     // Commands
     private final TrackerCommand trackerCommand = new TrackerCommand(inventoryHandler, trackerItem);
-    private final CustomMobSpawner customMobSpawner = new CustomMobSpawner(customMobHandler);
+    private final CustomMobSpawner customMobSpawner = new CustomMobSpawner();
     private final SpawnZombieCommand spawnZombieCommand = new SpawnZombieCommand(customMobSpawner);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
+    private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand();
 
     // Listeners
     private final TrackerListener trackerListener = new TrackerListener(trackerItem, customMobHandler);
     private final SpawnListener spawnListener = new SpawnListener();
-    private final CustomMobListener customMobListener = new CustomMobListener();
+    private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
     private final DamageIndicatorListener damageIndicatorListener = new DamageIndicatorListener();
     private final PlotCommand plotCommand = new PlotCommand(plotService);
 
@@ -82,9 +84,16 @@ public class Idletd extends JavaPlugin {
 
     private void registerCommands() {
         Objects.requireNonNull(this.getCommand("zombie")).setExecutor(spawnZombieCommand);
+
         Objects.requireNonNull(this.getCommand("tracker")).setExecutor(trackerCommand);
+
         Objects.requireNonNull(this.getCommand("plot")).setExecutor(plotCommand);
         Objects.requireNonNull(this.getCommand("p")).setExecutor(plotCommand);
+
+        Objects.requireNonNull(this.getCommand("td")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("idletd")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("tower")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("towerdefense")).setExecutor(towerDefenseCommand);
     }
 
     public static boolean isShuttingDown() {

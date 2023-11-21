@@ -38,7 +38,7 @@ public class TrackerListener implements Listener {
                              .append(Component.text(clickedEntity.getName()))
                              .append(Component.text(". How cruel.", TextColor.color(52, 75, 123))));
 
-            this.customMobHandler.getLivingCustomMobs().forEach(mob -> this.customMobHandler.setNewTarget(mob, livingClickedEntity));
+            this.customMobHandler.getUpdatedLivingCustomMobs().forEach(mob -> this.customMobHandler.setNewTarget(mob, livingClickedEntity));
         }
     }
 
