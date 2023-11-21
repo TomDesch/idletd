@@ -12,10 +12,7 @@ import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.command.SpawnZombieCommand;
 import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
-import io.github.stealingdapenta.idletd.service.command.TrackerCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
-import io.github.stealingdapenta.idletd.service.customitem.InventoryHandler;
-import io.github.stealingdapenta.idletd.service.customitem.TrackerItem;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobSpawner;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
@@ -49,14 +46,10 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
 
     // Commands
-    private final TrackerCommand trackerCommand = new TrackerCommand(inventoryHandler, trackerItem);
-    private final CustomMobSpawner customMobSpawner = new CustomMobSpawner();
-    private final SpawnZombieCommand spawnZombieCommand = new SpawnZombieCommand(customMobSpawner);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand();
 
     // Listeners
-    private final TrackerListener trackerListener = new TrackerListener(trackerItem, customMobHandler);
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
     private final DamageIndicatorListener damageIndicatorListener = new DamageIndicatorListener();
@@ -83,10 +76,6 @@ public class Idletd extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(this.getCommand("zombie")).setExecutor(spawnZombieCommand);
-
-        Objects.requireNonNull(this.getCommand("tracker")).setExecutor(trackerCommand);
-
         Objects.requireNonNull(this.getCommand("plot")).setExecutor(plotCommand);
         Objects.requireNonNull(this.getCommand("p")).setExecutor(plotCommand);
 
@@ -101,7 +90,6 @@ public class Idletd extends JavaPlugin {
     }
 
     private void registerEvents() {
-        Bukkit.getPluginManager().registerEvents(trackerListener, getInstance());
         Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
         Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
         Bukkit.getPluginManager().registerEvents(damageIndicatorListener, getInstance());
