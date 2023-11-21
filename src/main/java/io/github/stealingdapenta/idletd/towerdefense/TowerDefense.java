@@ -15,7 +15,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -24,7 +23,7 @@ import java.util.Random;
 @Getter
 public class TowerDefense {
     private final Random random = new Random();
-    private final List<CustomMob> livingMobs = Collections.synchronizedList(new ArrayList<>());
+    private final List<CustomMob> livingMobs = new ArrayList<>();
     private int stageLevel;
     private WaveConfiguration wave;
     private Player player;

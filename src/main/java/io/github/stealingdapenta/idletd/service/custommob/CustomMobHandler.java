@@ -17,6 +17,7 @@ public class CustomMobHandler {
     private static CustomMobHandler instance;
     private final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
     private final String CUSTOM_MOB_TAG = "idletd_mob";
+    private final String PLAYER_TAG = "related_p";
 
     public static CustomMobHandler getInstance() {
         if (Objects.isNull(instance)) {
@@ -25,12 +26,20 @@ public class CustomMobHandler {
         return instance;
     }
 
+    public String getPlayerTag() {
+        return PLAYER_TAG;
+    }
+
     public String getCustomMobTag() {
         return CUSTOM_MOB_TAG;
     }
 
     public NamespacedKey getCustomNameSpacedKey() {
         return new NamespacedKey(Idletd.getInstance(), this.getCustomMobTag());
+    }
+
+    public NamespacedKey getPlayerNameSpacedKey() {
+        return new NamespacedKey(Idletd.getInstance(), this.getPlayerTag());
     }
 
     public void addCustomMob(MobWrapper mobWrapper) {

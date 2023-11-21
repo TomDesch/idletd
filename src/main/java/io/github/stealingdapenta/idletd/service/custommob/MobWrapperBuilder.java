@@ -8,15 +8,16 @@ public class MobWrapperBuilder {
     EntityType entityType;
     Location location;
     TextComponent name;
-    double speed = 1.0;
-    double armor = 1.0;
-    double attackDamage = 1.0;
-    double attackKnockback = 1.0;
-    double armorToughness = 1.0;
-    double attackSpeed = 1.0;
-    double flyingSpeed = 1.0;
-    double knockbackResistance = 1.0;
-    double maxHealth = 10.0;
+    double speed;
+    double armor;
+    double attackDamage;
+    double attackKnockback;
+    double armorToughness;
+    double attackSpeed;
+    double flyingSpeed;
+    double knockbackResistance;
+    double maxHealth;
+    String playerUUID;
 
     public MobWrapperBuilder entityType(EntityType entityType) {
         this.entityType = entityType;
@@ -58,16 +59,6 @@ public class MobWrapperBuilder {
         return this;
     }
 
-    public MobWrapperBuilder attackSpeed(double attackSpeed) {
-        this.attackSpeed = attackSpeed;
-        return this;
-    }
-
-    public MobWrapperBuilder flyingSpeed(double flyingSpeed) {
-        this.flyingSpeed = flyingSpeed;
-        return this;
-    }
-
     public MobWrapperBuilder knockbackResistance(double knockbackResistance) {
         this.knockbackResistance = knockbackResistance;
         return this;
@@ -75,6 +66,11 @@ public class MobWrapperBuilder {
 
     public MobWrapperBuilder maxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
+        return this;
+    }
+
+    public MobWrapperBuilder playerUUID(String playerUUID) {
+        this.playerUUID = playerUUID;
         return this;
     }
 

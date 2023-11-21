@@ -7,7 +7,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Consumer;
 
@@ -23,13 +22,13 @@ public class Countdown extends BukkitRunnable {
         this.onCountdownEnd = onCountdownEnd;
 
         // Create a boss bar for the player
-        this.bossBar = Bukkit.createBossBar("Countdown", BarColor.BLUE, BarStyle.SEGMENTED_10);
+        this.bossBar = Bukkit.createBossBar("Commencing countdown!", BarColor.BLUE, BarStyle.SEGMENTED_10);
         bossBar.addPlayer(player);
     }
 
-    public static BukkitTask startCountdown(Player player, int time, long delay, Consumer<Player> onCountdownEnd) {
+    public static void startCountdown(Player player, int time, long delay, Consumer<Player> onCountdownEnd) {
         Countdown countdownTask = new Countdown(player, time, onCountdownEnd);
-        return countdownTask.runTaskTimer(Idletd.getInstance(), delay, 20L); // Run every 1 second (20 ticks)
+        countdownTask.runTaskTimer(Idletd.getInstance(), delay, 20L);
     }
 
     @Override
