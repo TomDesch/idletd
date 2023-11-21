@@ -14,8 +14,6 @@ import static org.bukkit.attribute.Attribute.GENERIC_ARMOR;
 import static org.bukkit.attribute.Attribute.GENERIC_ARMOR_TOUGHNESS;
 import static org.bukkit.attribute.Attribute.GENERIC_ATTACK_DAMAGE;
 import static org.bukkit.attribute.Attribute.GENERIC_ATTACK_KNOCKBACK;
-import static org.bukkit.attribute.Attribute.GENERIC_ATTACK_SPEED;
-import static org.bukkit.attribute.Attribute.GENERIC_FLYING_SPEED;
 import static org.bukkit.attribute.Attribute.GENERIC_KNOCKBACK_RESISTANCE;
 import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
 import static org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED;
@@ -42,8 +40,6 @@ public class MobWrapper {
             setAttribute(livingEntity, GENERIC_ATTACK_DAMAGE, builder.attackDamage);
             setAttribute(livingEntity, GENERIC_ATTACK_KNOCKBACK, builder.attackKnockback);
             setAttribute(livingEntity, GENERIC_ARMOR_TOUGHNESS, builder.armorToughness);
-            setAttribute(livingEntity, GENERIC_ATTACK_SPEED, builder.attackSpeed);
-            setAttribute(livingEntity, GENERIC_FLYING_SPEED, builder.flyingSpeed);
             setAttribute(livingEntity, GENERIC_KNOCKBACK_RESISTANCE, builder.knockbackResistance);
 
             livingEntity.getPersistentDataContainer().set(customMobHandler.getCustomNameSpacedKey(), PersistentDataType.BOOLEAN, true);

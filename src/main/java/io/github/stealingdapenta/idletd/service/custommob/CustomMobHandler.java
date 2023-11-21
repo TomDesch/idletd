@@ -52,7 +52,13 @@ public class CustomMobHandler {
     }
 
     public void removeDeadMobsFromList() {
-        livingCustomMobs.removeIf(mobWrapper -> mobWrapper.getSummonedEntity().isDead());
+        livingCustomMobs.removeIf(mobWrapper -> {
+            LivingEntity livingMob = mobWrapper.getSummonedEntity();
+            if (Objects.nonNull(livingMob)) {
+                return livingMob.isDead();
+            }
+            return true;
+        });
     }
 
     public boolean isCustomMob(LivingEntity livingEntity) {

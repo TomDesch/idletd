@@ -3,6 +3,7 @@ package io.github.stealingdapenta.idletd.towerdefense;
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
+import io.github.stealingdapenta.idletd.service.custommob.mobtypes.SkeletonMob;
 import io.github.stealingdapenta.idletd.service.custommob.mobtypes.ZombieMob;
 import io.github.stealingdapenta.idletd.service.utils.Countdown;
 import lombok.Getter;
@@ -59,6 +60,7 @@ public class TowerDefense {
         setWaveActive(true);
         Countdown.startCountdown(player, 5, 20L, end -> {
             waveStartTime = System.currentTimeMillis();
+            wave = WaveConfiguration.getByLevel(stageLevel);
             player.sendMessage(">> Starting wave " + getStageLevel() + "!"); // todo temporary
             createAsyncWaveTask();
 
@@ -89,7 +91,7 @@ public class TowerDefense {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (isWaveEnd() && isWaveActive()) {
+                if (isWaveEnd() && !isWaveActive()) {
                     getWaveDuration(); // todo save
                     player.sendMessage("You took " + getWaveDuration() + " to complete wave " + getStageLevel() + "!"); // todo temporary
                     setStageLevel(getStageLevel() + 1);
@@ -133,6 +135,7 @@ public class TowerDefense {
 
         return switch (wave.chooseMobType()) {
             case ZOMBIE -> new ZombieMob(plot);
+            case SKELETON -> new SkeletonMob(plot);
             default -> new ZombieMob(plot);
         };
     }
