@@ -1,45 +1,49 @@
 package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
-import lombok.Getter;
+import io.github.stealingdapenta.idletd.service.custommob.MobWrapperBuilder;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
-import org.bukkit.persistence.PersistentDataType;
 
-@Getter
+@RequiredArgsConstructor
+@Setter
 public abstract class CustomMob {
 
     protected EntityType entityType;
 
-    protected double GENERIC_ARMOR = 1.0; //     Armor bonus of an Entity.
-    protected double GENERIC_ATTACK_DAMAGE = 1.0; //    Armor durability bonus of an Entity.
-    protected double GENERIC_ATTACK_KNOCKBACK = 1.0;    //     Attack damage of an Entity.
-    protected double GENERIC_ARMOR_TOUGHNESS = 1.0;    //     Attack knockback of an Entity.
-    protected double GENERIC_ATTACK_SPEED = 1.0;    //     Attack speed of an Entity.
-    protected double GENERIC_FLYING_SPEED = 1.0;    //     Flying speed of an Entity.
-    protected double GENERIC_FOLLOW_RANGE = 1.0;    //    Range at which an Entity will follow others.
-    protected double GENERIC_KNOCKBACK_RESISTANCE = 1.0;    //    Resistance of an Entity to knockback.
-    protected double GENERIC_LUCK = 1.0;    //    Luck bonus of an Entity.
-    protected double GENERIC_MAX_ABSORPTION = 1.0;    //    Maximum absorption of an Entity.
-    protected double GENERIC_MAX_HEALTH = 1.0;    //    Maximum health of an Entity.
-    protected double GENERIC_MOVEMENT_SPEED = 1.0;    //    Movement speed of an Entity.
+    protected double ARMOR = 1.0;
+    protected double ATTACK_DAMAGE = 1.0;
+    protected double ATTACK_KNOCKBACK = 1.0;
+    protected double ARMOR_TOUGHNESS = 1.0;
+    protected double ATTACK_SPEED = 1.0;
+    protected double FLYING_SPEED = 1.0;
+    protected double KNOCKBACK_RESISTANCE = 1.0;
+    protected double MAX_HEALTH = 10.0;
+    protected double MOVEMENT_SPEED = 1.0;
+    protected TextComponent name = Component.text("Custom mob", TextColor.color(146, 9, 9)).toBuilder().build();
 
 
     public Mob summon(Location location) {
-        CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
+        MobWrapperBuilder customMob = new MobWrapperBuilder()
+                .location(location)
+                .name(name)
+                .entityType(entityType)
+                .armor(ARMOR)
+                .attackDamage(ATTACK_DAMAGE)
+                .attackKnockback(ATTACK_KNOCKBACK)
+                .armorToughness(ARMOR_TOUGHNESS)
+                .attackSpeed(ATTACK_SPEED)
+                .flyingSpeed(FLYING_SPEED)
+                .knockbackResistance(KNOCKBACK_RESISTANCE)
+                .maxHealth(MAX_HEALTH)
+                .speed(MOVEMENT_SPEED);
 
-        LivingEntity livingEntity = (LivingEntity) location.getWorld().spawnEntity(location, this.getEntityType()); // todo summon "this"
-        livingEntity.setCanPickupItems(false);
-        livingEntity.setRemoveWhenFarAway(false);
-
-        NamespacedKey namespacedKey = new NamespacedKey(Idletd.getInstance(), customMobHandler.getCUSTOM_MOB_TAG());
-        livingEntity.getPersistentDataContainer().set(namespacedKey, PersistentDataType.BOOLEAN, true);
-
-        return (Mob) livingEntity;
-
+        return (Mob) new CustomMobHandler().spawnCustomMob(customMob);
     }
 }

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
@@ -18,9 +17,7 @@ public class SpawnZombieCommand implements CommandExecutor {
         commandSender.sendMessage("Summoning zombie");
         Player player = (Player) commandSender;
 
-        this.customMobSpawner.spawnInFrontOfPlayer(EntityType.ZOMBIE, player, 10);
-
-
+        this.customMobSpawner.spawnInFrontOfPlayer(player, 10);
         return true;
     }
 }
