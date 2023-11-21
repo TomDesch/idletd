@@ -47,6 +47,7 @@ public class MobWrapper {
             setAttribute(livingEntity, GENERIC_KNOCKBACK_RESISTANCE, builder.knockbackResistance);
 
             livingEntity.getPersistentDataContainer().set(customMobHandler.getCustomNameSpacedKey(), PersistentDataType.BOOLEAN, true);
+            livingEntity.getPersistentDataContainer().set(customMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING, builder.playerUUID);
         });
     }
 
