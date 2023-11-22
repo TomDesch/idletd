@@ -4,7 +4,7 @@ main: io.github.stealingdapenta.idletd.Idletd
 author: StealingDaPenta
 description: The best idle Minecraft Tower Defense game!
 api-version: 1.20
-depend: [WorldGuard, FastAsyncWorldEdit]
+depend: [WorldGuard, FastAsyncWorldEdit, Citizens]
 
 
 commands:
