@@ -33,25 +33,13 @@ public class TowerDefense {
     private Plot plot;
 
     public TowerDefense(Player player) {
-        stageLevel = 1;
+        stageLevel = 1; // todo check if a save exists; if yes: set the level; else 1
         wave = WaveConfiguration.getByLevel(stageLevel);
         this.player = player;
         try {
             plot = Plot.getPlotByUUID(player.getUniqueId().toString());
         } catch (SQLException e) {
             Idletd.getInstance().getLogger().severe("Error finding player plot when starting TD game. (1)");
-            Idletd.getInstance().getLogger().severe(e.getMessage());
-        }
-    }
-
-    public TowerDefense(Player player, int level) {
-        stageLevel = level;
-        wave = WaveConfiguration.getByLevel(stageLevel);
-        this.player = player;
-        try {
-            plot = Plot.getPlotByUUID(player.getUniqueId().toString());
-        } catch (SQLException e) {
-            Idletd.getInstance().getLogger().severe("Error finding player plot when starting TD game. (2)");
             Idletd.getInstance().getLogger().severe(e.getMessage());
         }
     }
