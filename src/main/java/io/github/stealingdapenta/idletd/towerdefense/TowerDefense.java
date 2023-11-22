@@ -33,14 +33,14 @@ public class TowerDefense {
     private Plot plot;
 
     public TowerDefense(Player player) {
-        stageLevel = 1; // todo check if a save exists; if yes: set the level; else 1
+        stageLevel = 1; // todo check if a save exists; if yes: set the level; else 1 <= CRUCIAL
         wave = WaveConfiguration.getByLevel(stageLevel);
         this.player = player;
         try {
             plot = Plot.getPlotByUUID(player.getUniqueId().toString());
         } catch (SQLException e) {
             Idletd.getInstance().getLogger().severe("Error finding player plot when starting TD game. (1)");
-            Idletd.getInstance().getLogger().severe(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -83,6 +83,7 @@ public class TowerDefense {
                     getWaveDuration(); // todo save
                     player.sendMessage("You took " + getWaveDuration() + " to complete wave " + getStageLevel() + "!"); // todo temporary
                     setStageLevel(getStageLevel() + 1);
+                    // todo Make waves generate infinite new ones; e.g. by taking re-looping over the fixed enum & multiplying the mob levels (using modulo) <= CRUCIAL
                     startWave();
                     cancel();
                 }

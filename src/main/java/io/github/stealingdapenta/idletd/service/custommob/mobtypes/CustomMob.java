@@ -51,7 +51,7 @@ public abstract class CustomMob {
                 .speed(MOVEMENT_SPEED);
 
         mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob).getSummonedEntity();
-
+        // todo set Target to the main agent of the plot (we have this.plot)
         preventMobFromFallingTask();
 
         return mob;
