@@ -91,11 +91,19 @@ public class PlotService {
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
     }
 
+    private Location calculateLocation(Plot plot, Vector offset) {
+        double x = plot.getStartX() + offset.getX();
+        double y = offset.getY();  // Y offset is absolute
+        double z = plot.getStartZ() + offset.getZ();
+        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), x, y, z);
+    }
+
     private Location calculateTowerLocation(Plot plot) {
-        double towerX = plot.getStartX() + RELATIVE_TOWER_COORDINATES.getX();
-        double towerY = RELATIVE_TOWER_COORDINATES.getY();
-        double towerZ = plot.getStartZ() + RELATIVE_TOWER_COORDINATES.getZ();
-        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), towerX, towerY, towerZ);
+        return calculateLocation(plot, RELATIVE_TOWER_COORDINATES);
+    }
+
+    public Location getPlayerSpawnPoint(Plot plot) {
+        return calculateLocation(plot, RELATIVE_PLAYER_SPAWN_COORDINATES);
     }
 
     public Plot findOwnedPlot(Player player) {
@@ -107,13 +115,6 @@ public class PlotService {
             logger.warning("SOMETHINGS WRONG I CAN FEEL IT 35");
         }
         return null;
-    }
-
-    public Location getPlayerSpawnPoint(Plot plot) {
-        double x = plot.getStartX() + RELATIVE_PLAYER_SPAWN_COORDINATES.getX();
-        double y = RELATIVE_PLAYER_SPAWN_COORDINATES.getY();
-        double z = plot.getStartZ() + RELATIVE_PLAYER_SPAWN_COORDINATES.getZ();
-        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), x, y, z);
     }
 
     public int getLastGeneratedRow() {
