@@ -22,13 +22,19 @@ import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
 @Getter
 @Setter
 public class IdlePlayerManager {
-    public static final List<IdlePlayer> onlinePlayers = new ArrayList<>();
     private static final Logger logger = Idletd.getInstance().getLogger();
-    public static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
-    public static volatile Set<UUID> noLoginAllowed = new HashSet<>();
-
+    private static final List<IdlePlayer> onlinePlayers = new ArrayList<>();
+    private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
+    private static volatile Set<UUID> noLoginAllowed = new HashSet<>();
     private final IdlePlayerService idlePlayerService;
 
+    public static Cache<UUID, IdlePlayer> getOfflinePlayerCache() {
+        return offlinePlayerCache;
+    }
+
+    public static Set<UUID> getNoLoginAllowed() {
+        return noLoginAllowed;
+    }
 
     public boolean registerOnlinePlayer(IdlePlayer idlePlayer) {
         if (onlinePlayers.contains(idlePlayer)) return false;
@@ -63,7 +69,7 @@ public class IdlePlayerManager {
             logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer).getName());
             e.printStackTrace();
         } finally {
-            if (!isShuttingDown) {
+            if (!isShuttingDown()) {
                 deregisterOnlinePlayer(idlePlayer);
                 noLoginAllowed.remove(idlePlayer.getPlayerUUIDAsUUID());
             }
