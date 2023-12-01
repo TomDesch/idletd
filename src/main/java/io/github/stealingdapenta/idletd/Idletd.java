@@ -4,17 +4,13 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
-import io.github.stealingdapenta.idletd.listener.DamageIndicatorListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
-import io.github.stealingdapenta.idletd.listener.TrackerListener;
 import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
-import io.github.stealingdapenta.idletd.service.command.SpawnZombieCommand;
 import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
-import io.github.stealingdapenta.idletd.service.custommob.CustomMobSpawner;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,23 +33,18 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerRepository idlePlayerRepository = new IdlePlayerRepository();
 
     // Handlers and services
-    private final InventoryHandler inventoryHandler = new InventoryHandler();
-    private final TrackerItem trackerItem = new TrackerItem();
     private final CustomMobHandler customMobHandler = new CustomMobHandler();
     private final SchematicHandler schematicHandler = new SchematicHandler();
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
+    private final PlotCommand plotCommand = new PlotCommand(plotService);
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
-
     // Commands
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand();
-
     // Listeners
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
-    private final DamageIndicatorListener damageIndicatorListener = new DamageIndicatorListener();
-    private final PlotCommand plotCommand = new PlotCommand(plotService);
 
     public static void shutDown() {
         shuttingDown = true;
@@ -61,6 +52,10 @@ public class Idletd extends JavaPlugin {
 
     public static Idletd getInstance() {
         return instance;
+    }
+
+    public static boolean isShuttingDown() {
+        return shuttingDown;
     }
 
     @Override
@@ -85,16 +80,12 @@ public class Idletd extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("towerdefense")).setExecutor(towerDefenseCommand);
     }
 
-    public static boolean isShuttingDown() {
-        return shuttingDown;
-    }
-
     private void registerEvents() {
         Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
         Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
-        Bukkit.getPluginManager().registerEvents(damageIndicatorListener, getInstance());
         Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
     }
+
     private void pluginEnabledLog() {
         getLogger().info("IdleMCTD enabled.");
     }

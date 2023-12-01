@@ -2,10 +2,13 @@ package io.github.stealingdapenta.idletd.towerdefense;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.plot.Plot;
+import io.github.stealingdapenta.idletd.plot.PlotRepository;
+import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.service.custommob.mobtypes.SkeletonMob;
 import io.github.stealingdapenta.idletd.service.custommob.mobtypes.ZombieMob;
 import io.github.stealingdapenta.idletd.service.utils.Countdown;
+import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -14,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,23 +27,21 @@ import java.util.Random;
 public class TowerDefense {
     private final Random random = new Random();
     private final List<CustomMob> livingMobs = new ArrayList<>();
-    private int stageLevel;
+    private final SchematicHandler schematicHandler = new SchematicHandler();
     private WaveConfiguration wave;
     private Player player;
     private long waveStartTime;
     private boolean waveActive;
     private Plot plot;
+    private final PlotRepository plotRepository = new PlotRepository();
+    private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
+    private int stageLevel = 1;
 
     public TowerDefense(Player player) {
         stageLevel = 1; // todo check if a save exists; if yes: set the level; else 1 <= CRUCIAL
         wave = WaveConfiguration.getByLevel(stageLevel);
         this.player = player;
-        try {
-            plot = Plot.getPlotByUUID(player.getUniqueId().toString());
-        } catch (SQLException e) {
-            Idletd.getInstance().getLogger().severe("Error finding player plot when starting TD game. (1)");
-            e.printStackTrace();
-        }
+        plot = plotService.findOwnedPlot(player); // todo plot might not be found
     }
 
     public void startWave() {

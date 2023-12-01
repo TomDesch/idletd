@@ -13,7 +13,7 @@ import java.util.Comparator;
 public class EntityTracker {
     private final CustomMobHandler customMobHandler;
 
-    // todo add a setting in the future where the player can choose weather the agent targets:
+    // todo add a setting in the future where the player can choose whether the agent targets:
     // the closest / furthest / healthiest / weakest enemy
 
     private LivingEntity getNearestEnemy(Location location, int radius) {

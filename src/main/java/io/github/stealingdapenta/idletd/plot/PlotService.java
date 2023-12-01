@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -28,8 +27,6 @@ import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE
 public class PlotService {
     private static final int PLOT_SIZE = 500;
     private static final Logger logger = Idletd.getInstance().getLogger();
-    private static final Vector RELATIVE_TOWER_COORDINATES = new Vector(200, 80, 50);
-    private static final Vector RELATIVE_PLAYER_SPAWN_COORDINATES = new Vector(200, 90, 43);
     private final SchematicHandler schematicHandler;
     private final PlotRepository plotRepository;
     private Plot lastGeneratedPlot = null;
@@ -86,24 +83,9 @@ public class PlotService {
     }
 
     public void pasteTowerInPlot(Plot plot) {
-        Location pasteLocation = calculateTowerLocation(plot);
+        Location pasteLocation = plot.calculateTowerLocation();
         logger.info("Commencing pasting new structure for plot ID: " + plot.getId());
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
-    }
-
-    private Location calculateLocation(Plot plot, Vector offset) {
-        double x = plot.getStartX() + offset.getX();
-        double y = offset.getY();  // Y offset is absolute
-        double z = plot.getStartZ() + offset.getZ();
-        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), x, y, z);
-    }
-
-    private Location calculateTowerLocation(Plot plot) {
-        return calculateLocation(plot, RELATIVE_TOWER_COORDINATES);
-    }
-
-    public Location getPlayerSpawnPoint(Plot plot) {
-        return calculateLocation(plot, RELATIVE_PLAYER_SPAWN_COORDINATES);
     }
 
     public Plot findOwnedPlot(Player player) {

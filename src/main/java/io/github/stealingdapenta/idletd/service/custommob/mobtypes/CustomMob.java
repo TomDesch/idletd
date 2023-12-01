@@ -35,7 +35,6 @@ public abstract class CustomMob {
     protected double MOVEMENT_SPEED = 0.2;
     protected TextComponent name = Component.text("Custom mob", TextColor.color(146, 9, 9)).toBuilder().build();
 
-
     public Mob summon(Location location) {
         MobWrapperBuilder customMob = new MobWrapperBuilder()
                 .playerUUID(plot.getPlayerUUID())

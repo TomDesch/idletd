@@ -5,6 +5,7 @@ import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.skin.SkinBuilder;
 import io.github.stealingdapenta.idletd.skin.SkinManager;
 import io.github.stealingdapenta.idletd.skin.SkinProfile;
+import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 public class MainAgent {
     // skin
     // position -> 100% static
@@ -49,7 +51,7 @@ public class MainAgent {
 
     private final Player player;
     private final Plot plot;
-    private final Location position;
+    //    private final Location position;
     private final SkinManager skinManager;
     private final List<Integer> skins = new ArrayList<>();
     private NPC npc;
@@ -57,11 +59,13 @@ public class MainAgent {
     private int levelHealth; // stuff like this should be stored as a level; and when initialized, calculated with a formula; e.g. lv * 2 for hp; and then possibly add multipliers
     private int currentSkin;
 
+//    private final PlotService plotService; todo add agent service
+
 
     public MainAgent(Player player, Plot plot, Location position) {
         this.player = player;
         this.plot = plot;
-        this.position = calculatePosition();
+//        this.position = calculatePosition();
         // todo link the object to the plot; and only spawn one <= CRUCIAL
         // if there already is one, dont spawn a new one
         this.skinManager = new SkinManager();
@@ -72,13 +76,13 @@ public class MainAgent {
         return Objects.nonNull(citizens) && citizens.isEnabled();
     }
 
-    private Location calculatePosition() {
-        Location spawnLocation = plot.getPlayerSpawnPoint();
-        spawnLocation.add(0d, -10d, -8d);
-        spawnLocation.setYaw(180); // Facing north
-        spawnLocation.setPitch(0);
-        return spawnLocation;
-    }
+//    private Location calculatePosition() {
+//        Location spawnLocation = plotService.getPlayerSpawnPoint(plot);
+//        spawnLocation.add(0d, -10d, -8d);
+//        spawnLocation.setYaw(180); // Facing north
+//        spawnLocation.setPitch(0);
+//        return spawnLocation;
+//    }
 
     public void setCurrentSkin(int currentSkin) {
         this.currentSkin = currentSkin;
