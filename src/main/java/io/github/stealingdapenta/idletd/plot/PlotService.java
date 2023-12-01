@@ -40,6 +40,10 @@ public class PlotService {
         return plot;
     }
 
+    public Plot getPlot(long id) {
+        return this.plotRepository.getPlotById(id);
+    }
+
     public Plot generatePlotForPlayer(Player player) {
         logger.info("Commencing plot generation for " + player.getName());
 
@@ -88,13 +92,13 @@ public class PlotService {
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
     }
 
-    public Plot findOwnedPlot(Player player) {
+    public Plot findPlot(Player player) {
         CompletableFuture<Plot> asyncPlot = this.plotRepository.asyncGetPlotByUUID(player.getUniqueId().toString());
         try {
             return asyncPlot.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            logger.warning("SOMETHINGS WRONG I CAN FEEL IT 35");
+            logger.warning("Error finding plot for player.");
         }
         return null;
     }

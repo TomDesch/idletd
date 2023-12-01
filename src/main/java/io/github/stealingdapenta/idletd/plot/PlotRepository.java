@@ -19,8 +19,7 @@ public class PlotRepository {
     private static final Logger logger = Idletd.getInstance().getLogger();
 
     public static void insertPlot(Plot plot) {
-        try (Connection connection = getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO plots (STARTX, STARTZ, PLAYERUUID) VALUES (?, ?, ?)")) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO plots (STARTX, STARTZ, PLAYERUUID) VALUES (?, ?, ?)")) {
             statement.setInt(1, plot.getStartX());
             statement.setInt(2, plot.getStartZ());
             statement.setString(3, plot.getPlayerUUID());
@@ -31,10 +30,27 @@ public class PlotRepository {
         }
     }
 
+    public Plot getPlotById(long plotId) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM plots WHERE ID = ?")) {
+
+            statement.setLong(1, plotId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return convertResultSet(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting Plot by ID.");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     public Plot getLatestPlot() {
-        try (Connection connection = getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM PLOT ORDER BY ID DESC LIMIT 1");
-             ResultSet resultSet = statement.executeQuery()) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM PLOT ORDER BY ID DESC LIMIT 1"); ResultSet resultSet =
+                statement.executeQuery()) {
             if (resultSet.next()) {
                 return convertResultSet(resultSet);
             }
@@ -50,8 +66,7 @@ public class PlotRepository {
     }
 
     public Plot findPlot(String playerUUID) {
-        try (Connection connection = getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM PLOT WHERE PLAYERUUID = ? LIMIT 1")) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM PLOT WHERE PLAYERUUID = ? LIMIT 1")) {
             statement.setString(1, playerUUID);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -66,11 +81,7 @@ public class PlotRepository {
     }
 
     private Plot convertResultSet(ResultSet resultSet) throws SQLException {
-        return Plot.builder().id(resultSet.getInt("ID"))
-                   .startX(resultSet.getInt("STARTX"))
-                   .startZ(resultSet.getInt("STARTZ"))
-                   .playerUUID(UUID.fromString(resultSet.getString("PLAYERUUID")))
-                   .build();
+        return Plot.builder().id(resultSet.getLong("ID")).startX(resultSet.getInt("STARTX")).startZ(resultSet.getInt("STARTZ")).playerUUID(UUID.fromString(resultSet.getString("PLAYERUUID"))).build();
     }
 
     public CompletableFuture<Plot> asyncGetLatestPlot() {
