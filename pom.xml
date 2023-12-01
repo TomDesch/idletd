@@ -143,12 +143,12 @@
                                     </excludes>
                                 </filter>
                             </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>fr.mrmicky.fastboard</pattern>
-                                    <shadedPattern>io.github.stealingdapenta.fastboard</shadedPattern>
-                                </relocation>
-                            </relocations>
+                            <!--                            <relocations>-->
+                            <!--                                <relocation>-->
+                            <!--                                    <pattern>fr.mrmicky.fastboard</pattern>-->
+                            <!--                                    <shadedPattern>io.github.stealingdapenta.fastboard</shadedPattern>-->
+                            <!--                                </relocation>-->
+                            <!--                            </relocations>-->
                         </configuration>
                     </execution>
                 </executions>

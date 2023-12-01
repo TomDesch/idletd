@@ -1,7 +1,6 @@
 package io.github.stealingdapenta.idletd.service.agent;
 
 import io.github.stealingdapenta.idletd.plot.Plot;
-import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import net.citizensnpcs.api.ai.Goal;
 import net.citizensnpcs.api.ai.GoalSelector;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,7 +17,6 @@ public class MainAgentGoal implements Goal {
     public MainAgentGoal(Player player, Plot plot) {
         this.player = player;
         this.plot = plot;
-        this.customMobHandler = CustomMobHandler.getInstance();
 
         this.centerLocation = calculatePosition();
 
