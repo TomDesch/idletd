@@ -14,39 +14,50 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-import java.sql.SQLException;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
-import static io.github.stealingdapenta.idletd.plot.Plot.asyncGetLatestPlot;
-import static io.github.stealingdapenta.idletd.plot.Plot.asyncGetPlotByUUID;
-import static io.github.stealingdapenta.idletd.plot.Plot.findOwnedPlot;
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE_WORLD;
 
 @RequiredArgsConstructor
-public class PlotHandler {
+public class PlotService {
     private static final int PLOT_SIZE = 500;
+    private static final Logger logger = Idletd.getInstance().getLogger();
+    private static final Vector RELATIVE_TOWER_COORDINATES = new Vector(200, 80, 50);
+    private static final Vector RELATIVE_PLAYER_SPAWN_COORDINATES = new Vector(200, 90, 43);
     private final SchematicHandler schematicHandler;
+    private final PlotRepository plotRepository;
     private Plot lastGeneratedPlot = null;
 
+    public Plot generatePlotWithTower(Player player) {
+        logger.info("Commencing plot generation.");
+        Plot plot = this.generatePlotForPlayer(player);
+
+        logger.info("Started pasting structure in plot.");
+        this.pasteTowerInPlot(plot);
+        return plot;
+    }
+
     public Plot generatePlotForPlayer(Player player) {
+        logger.info("Commencing plot generation for " + player.getName());
 
-        player.sendMessage("Starting plot generation 1"); // todo remove
-
-        Plot existingPlot = findOwnedPlot(player);
+        Plot existingPlot = plotRepository.findPlot(player);
         if (Objects.nonNull(existingPlot)) {
-            Idletd.getInstance().getLogger().warning(player.getName() + " already has a plot.");
-            player.sendMessage("Starting plot generation 2: found existing plot: " + existingPlot.getStartX());  // todo remove
+            logger.warning(player.getName() + " already has a plot.");
+            player.sendMessage("You already have a plot.");
             return existingPlot;
         }
 
         int lastGeneratedRow = this.getLastGeneratedRow();
         int lastGeneratedColumn = this.getLastGeneratedColumn();
 
-        player.sendMessage("Starting plot generation 3, row, column: " + lastGeneratedRow + " " + lastGeneratedColumn); // todo remove
+        logger.info("Starting plot generation for row, column: " + lastGeneratedRow + ", " + lastGeneratedColumn);
+
 
         int currentRow = lastGeneratedRow;
         int currentColumn = lastGeneratedColumn + 1;
@@ -59,30 +70,50 @@ public class PlotHandler {
         int startX = currentColumn * PLOT_SIZE;
         int startZ = currentRow * PLOT_SIZE;
 
-        player.sendMessage("Starting plot generation 27 new x and Z: " + startX + " " + startZ); // todo remove
+        logger.info("Plot generation new x and Z: " + startX + " " + startZ);
 
-
-        Plot plot = new Plot(startX, startZ, player.getUniqueId());
+        Plot plot = Plot.builder()
+                        .startX(startX)
+                        .startZ(startZ)
+                        .playerUUID(player.getUniqueId())
+                        .build();
         generatePlot(plot);
-        try {
-            Plot.insertPlot(plot);
-            this.lastGeneratedPlot = plot;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        PlotRepository.insertPlot(plot);
+        this.lastGeneratedPlot = plot;
 
-        player.sendMessage("Starting plot generation 100: finishing"); // todo remove
-
+        logger.info("Finishing plot generation.");
         return plot;
     }
 
     public void pasteTowerInPlot(Plot plot) {
-        int pasteX = plot.getStartX() + 200;
-        int pasteY = 80;
-        int pasteZ = plot.getStartZ() + 50;
-        Location pasteLocation = new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), pasteX, pasteY, pasteZ);
-        Idletd.getInstance().getLogger().info("Commencing pasting new structure at (X, Y, Z): (" + pasteX + ", " + pasteY + ", " + pasteZ + ").");
+        Location pasteLocation = calculateTowerLocation(plot);
+        logger.info("Commencing pasting new structure for plot ID: " + plot.getId());
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
+    }
+
+    private Location calculateTowerLocation(Plot plot) {
+        double towerX = plot.getStartX() + RELATIVE_TOWER_COORDINATES.getX();
+        double towerY = RELATIVE_TOWER_COORDINATES.getY();
+        double towerZ = plot.getStartZ() + RELATIVE_TOWER_COORDINATES.getZ();
+        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), towerX, towerY, towerZ);
+    }
+
+    public Plot findOwnedPlot(Player player) {
+        CompletableFuture<Plot> asyncPlot = this.plotRepository.asyncGetPlotByUUID(player.getUniqueId().toString());
+        try {
+            return asyncPlot.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            logger.warning("SOMETHINGS WRONG I CAN FEEL IT 35");
+        }
+        return null;
+    }
+
+    public Location getPlayerSpawnPoint(Plot plot) {
+        double x = plot.getStartX() + RELATIVE_PLAYER_SPAWN_COORDINATES.getX();
+        double y = RELATIVE_PLAYER_SPAWN_COORDINATES.getY();
+        double z = plot.getStartZ() + RELATIVE_PLAYER_SPAWN_COORDINATES.getZ();
+        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), x, y, z);
     }
 
     public int getLastGeneratedRow() {
@@ -90,9 +121,8 @@ public class PlotHandler {
         if (plot != null) {
             return plot.getStartZ() / PLOT_SIZE;
         }
-        // Handle the case when the plot is null
-        Idletd.getInstance().getLogger().warning("SOMETHINGS WRONG I CAN FEEL IT 2");
-        return -1; // Or some other appropriate value
+        logger.warning("Error fetching last generated plot row.");
+        return -1;
     }
 
     public int getLastGeneratedColumn() {
@@ -100,20 +130,19 @@ public class PlotHandler {
         if (plot != null) {
             return plot.getStartX() / PLOT_SIZE;
         }
-        // Handle the case when the plot is null
-        Idletd.getInstance().getLogger().warning("SOMETHINGS WRONG I CAN FEEL IT 1");
-        return -1; // Or some other appropriate value
+        logger.warning("Error fetching last generated plot column.");
+        return -1;
     }
 
 
     public Plot getLastGeneratedPlot() {
         if (lastGeneratedPlot == null) {
-            CompletableFuture<Plot> asyncPlot = asyncGetLatestPlot();
+            CompletableFuture<Plot> asyncPlot = plotRepository.asyncGetLatestPlot();
             try {
                 lastGeneratedPlot = asyncPlot.get(); // This blocks until the async operation completes
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace(); // Handle exceptions appropriately
-                Idletd.getInstance().getLogger().warning("SOMETHINGS WRONG I CAN FEEL IT 3");
+                logger.warning("SOMETHINGS WRONG I CAN FEEL IT 3");
             }
         }
         return lastGeneratedPlot;
@@ -129,11 +158,11 @@ public class PlotHandler {
         int maxPointX = plot.getStartX() + PLOT_SIZE;
         int maxPointZ = plot.getStartZ() + PLOT_SIZE;
 
-        Idletd.getInstance().getLogger().info("Generating plot at (X, Y, Z): (" + minPointX + ", Y, " + minPointZ + ").");
+        logger.info("Generating plot at (X, Y, Z): (" + minPointX + ", Y, " + minPointZ + ").");
 
-        ProtectedCuboidRegion region = new ProtectedCuboidRegion(plot.getPlayerUUID(), BlockVector3.at(minPointX, bukkitWorld.getMinHeight(), minPointZ), BlockVector3.at(maxPointX,
-                                                                                                                                                                          bukkitWorld.getMaxHeight(),
-                                                                                                                                                                          maxPointZ));
+        ProtectedCuboidRegion region = new ProtectedCuboidRegion(plot.getPlayerUUID(),
+                                                                 BlockVector3.at(minPointX, bukkitWorld.getMinHeight(), minPointZ),
+                                                                 BlockVector3.at(maxPointX, bukkitWorld.getMaxHeight(), maxPointZ));
 
         // Protection flags for the plot
         region.setFlag(Flags.DAMAGE_ANIMALS, StateFlag.State.ALLOW);
