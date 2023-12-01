@@ -1,10 +1,11 @@
 package io.github.stealingdapenta.idletd;
 
-import io.github.stealingdapenta.idletd.database.DatabaseManager;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
 import io.github.stealingdapenta.idletd.listener.DamageIndicatorListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
 import io.github.stealingdapenta.idletd.listener.TrackerListener;
+import io.github.stealingdapenta.idletd.plot.PlotRepository;
+import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.command.SpawnZombieCommand;
 import io.github.stealingdapenta.idletd.service.command.TrackerCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
@@ -12,6 +13,7 @@ import io.github.stealingdapenta.idletd.service.customitem.InventoryHandler;
 import io.github.stealingdapenta.idletd.service.customitem.TrackerItem;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobSpawner;
+import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.Objects;
 
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
@@ -31,13 +32,14 @@ public class Idletd extends JavaPlugin {
     private final InventoryHandler inventoryHandler = new InventoryHandler();
     private final TrackerItem trackerItem = new TrackerItem();
     private final CustomMobHandler customMobHandler = new CustomMobHandler();
-
+    private final SchematicHandler schematicHandler = new SchematicHandler();
+    private final PlotRepository plotRepository = new PlotRepository();
+    private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
+    private final PlotCommand plotCommand = new PlotCommand(plotService);
     // Commands
     private final TrackerCommand trackerCommand = new TrackerCommand(inventoryHandler, trackerItem);
     private final CustomMobSpawner customMobSpawner = new CustomMobSpawner(customMobHandler);
     private final SpawnZombieCommand spawnZombieCommand = new SpawnZombieCommand(customMobSpawner);
-    private final PlotCommand plotCommand = new PlotCommand();
-
     // Listeners
     private final TrackerListener trackerListener = new TrackerListener(trackerItem, customMobHandler);
     private final SpawnListener spawnListener = new SpawnListener();
@@ -56,15 +58,6 @@ public class Idletd extends JavaPlugin {
 
         this.registerCommands();
         this.registerEvents();
-
-
-        try {
-            DatabaseManager.createTables();
-            DatabaseManager.populateTables();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            getLogger().warning(e.getMessage());
-        }
 
         this.pluginEnabledLog();
     }
@@ -117,7 +110,7 @@ public class Idletd extends JavaPlugin {
         }
 
         this.copyResource("schematics" + File.separator + TOWER_DEFENSE_SCHEMATIC.getFileName(),
-                new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
+                          new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
     }
 
     private void copyResource(String resourcePath, File targetFile) {
