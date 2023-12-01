@@ -5,7 +5,7 @@
 
     <groupId>io.github.stealingdapenta</groupId>
     <artifactId>idletd</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>idletd</name>
     <description>Minecraft idle tower defense game.</description>
 
@@ -68,6 +68,13 @@
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.2.16-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1-jre</version> <!-- or the latest version -->
+        </dependency>
+
     </dependencies>
 
     <build>
