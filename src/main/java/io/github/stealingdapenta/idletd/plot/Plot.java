@@ -1,7 +1,6 @@
 package io.github.stealingdapenta.idletd.plot;
 
 import io.github.stealingdapenta.idletd.Idletd;
-import io.github.stealingdapenta.idletd.service.utils.World;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,23 +11,35 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 import static io.github.stealingdapenta.idletd.database.DatabaseManager.insertIfNotExists;
+import static io.github.stealingdapenta.idletd.database.GenericSQLBuilder.buildCreateTableSQL;
+import static io.github.stealingdapenta.idletd.database.GenericSQLBuilder.buildInsertSQL;
 import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE_WORLD;
 
 @Builder
 @Data
 @AllArgsConstructor
 public class Plot {
-    private static final String CREATE_PLOT_TABLE_SQL =
-            "CREATE TABLE IF NOT EXISTS plots (" + "id INT AUTO_INCREMENT PRIMARY KEY," + "startX INT NOT NULL," + "startZ INT NOT NULL," + "playerUUID " + "VARCHAR(36) NOT NULL)";
-    private static final String INSERT_PLOT_SQL = "INSERT INTO plots (startX, startZ, playerUUID) VALUES (?, ?, ?)";
-    private static final String GET_LATEST_PLOT_SQL = "SELECT * FROM plots ORDER BY id DESC LIMIT 1";
-    private static final String GET_PLOT_BY_UUID_SQL = "SELECT * FROM plots WHERE playerUUID = ? LIMIT 1";
+    private static final String TABLE_NAME = "plot";
+    private static final String GET_LATEST_PLOT_SQL = "SELECT * FROM " + TABLE_NAME + " ORDER BY id DESC LIMIT 1";
+    private static final String GET_PLOT_BY_UUID_SQL = "SELECT * FROM " + TABLE_NAME + " WHERE playerUUID = ? LIMIT 1";
+    private static final Logger logger = Idletd.getInstance().getLogger();
+
+
+    private static final Map<String, String> TABLE_DEFINITION = Map.of(
+            "id", "INT AUTO_INCREMENT PRIMARY KEY",
+            "startX", "INT NOT NULL",
+            "startZ", "INT NOT NULL",
+            "playerUUID", "VARCHAR(36) NOT NULL");
+
 
     private int id;
     private int startX;
@@ -42,24 +53,28 @@ public class Plot {
     }
 
     public static void createPlotTable() throws SQLException {
-        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(CREATE_PLOT_TABLE_SQL)) {
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(buildCreateTableSQL(TABLE_NAME, TABLE_DEFINITION))) {
             statement.execute();
         }
     }
 
-    public static void populatePlotTable() {
-        String tableName = "plots";
+    public static void populatePlotTable(int startX, int startZ, String playerUUID) {
         String[] columns = {"startX", "startZ", "playerUUID"};
-        Object[] values = {0, 0, "SERVER"};
+        Object[] values = {startX, startZ, playerUUID};
         try {
-            insertIfNotExists(tableName, columns, values);
+            insertIfNotExists(TABLE_NAME, columns, values);
         } catch (SQLException e) {
+            logger.warning("Error executing populate Plot table.");
             e.printStackTrace();
         }
     }
 
     public static void insertPlot(Plot plot) throws SQLException {
-        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(INSERT_PLOT_SQL)) {
+        Set<String> insertColumns = Set.of("startX", "startZ", "playerUUID");
+
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(buildInsertSQL(TABLE_NAME, insertColumns))) {
             statement.setInt(1, plot.getStartX());
             statement.setInt(2, plot.getStartZ());
             statement.setString(3, plot.getPlayerUUID());
@@ -81,6 +96,7 @@ public class Plot {
             try {
                 return getLatestPlot();
             } catch (SQLException e) {
+                logger.warning("Error executing asyncGetLatestPlot.");
                 e.printStackTrace();
                 return null;
             }
@@ -103,6 +119,7 @@ public class Plot {
             try {
                 return getPlotByUUID(playerUUID);
             } catch (SQLException e) {
+                logger.warning("Error executing asyncGetPlotByUUID.");
                 e.printStackTrace();
                 return null;
             }
@@ -112,12 +129,12 @@ public class Plot {
     public static Plot findOwnedPlot(Player player) {
         CompletableFuture<Plot> asyncPlot = asyncGetPlotByUUID(player.getUniqueId().toString());
         try {
-            return asyncPlot.get(); // This blocks until the async operation completes
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace(); // Handle exceptions appropriately
-            Idletd.getInstance().getLogger().warning("SOMETHINGS WRONG I CAN FEEL IT 35");
+            return asyncPlot.get();
+        } catch (ExecutionException | InterruptedException e) {
+            logger.warning("Error executing findOwnedPlot.");
+            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public Location getPlayerSpawnPoint() {
