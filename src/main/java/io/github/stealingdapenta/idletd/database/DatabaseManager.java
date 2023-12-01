@@ -31,7 +31,7 @@ public class DatabaseManager {
     }
 
     public static void populateTables() throws SQLException {
-        populatePlotTable();
+        populatePlotTable(0, 0, "SERVER");
     }
 
     public static void insertIfNotExists(String tableName, String[] columns, Object[] values) throws SQLException {
