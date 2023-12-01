@@ -28,7 +28,7 @@ public class GoToPlotCommand implements CommandExecutor {
             existingPlot = this.plotService.generatePlotWithTower(player);
         }
 
-        player.teleport(plotService.getPlayerSpawnPoint(existingPlot));
+        player.teleport(existingPlot.getPlayerSpawnPoint());
         return true;
     }
 }

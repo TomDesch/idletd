@@ -36,7 +36,7 @@ public class CreatePlotCommand implements CommandExecutor {
         Plot plot = this.plotService.generatePlotWithTower(player);
 
         player.sendMessage("Teleporting you to your new plot.");
-        player.teleport(plotService.getPlayerSpawnPoint(plot));
+        player.teleport(plot.getPlayerSpawnPoint());
         return true;
     }
 }

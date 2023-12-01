@@ -5,7 +5,6 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 
 public class MainAgentBehaviour implements Behavior {
 
-
     @Override
     public void reset() {
 //        state = null;
