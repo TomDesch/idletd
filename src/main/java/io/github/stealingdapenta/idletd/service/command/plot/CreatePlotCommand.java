@@ -25,7 +25,7 @@ public class CreatePlotCommand implements CommandExecutor {
             return false;
         }
 
-        Plot existingPlot = this.plotService.findOwnedPlot(player);
+        Plot existingPlot = this.plotService.findPlot(player);
 
         if (Objects.nonNull(existingPlot)) {
             logger.info(player.getName() + " already has a plot.");

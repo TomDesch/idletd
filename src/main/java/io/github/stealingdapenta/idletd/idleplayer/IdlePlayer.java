@@ -13,15 +13,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class IdlePlayer {
 
-    private int id;
-    private String playerUUID;
+    private UUID playerUUID;
     private double balance;
     private Long fkPlot;
 
-    public UUID getPlayerUUIDAsUUID() {
-        return UUID.fromString(playerUUID);
+    public String getPlayerUUIDAsString() {
+        return playerUUID.toString();
     }
 
+    // future ideas
     //    private Long fkAchievements;
 //    private Long fkStatistics;
 //    private Long fkPermissions;

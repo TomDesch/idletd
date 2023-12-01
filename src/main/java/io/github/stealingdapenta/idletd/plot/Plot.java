@@ -20,7 +20,7 @@ public class Plot {
     private static final Vector RELATIVE_PLAYER_SPAWN_COORDINATES = new Vector(200, 90, 43);
     private static final Vector RELATIVE_MOB_SPAWN_COORDINATES = new Vector(200, 81, -13);
 
-    private int id;
+    private long id;
     private int startX;
     private int startZ;
     private UUID playerUUID;

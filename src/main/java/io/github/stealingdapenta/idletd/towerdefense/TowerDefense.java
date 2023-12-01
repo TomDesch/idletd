@@ -1,98 +1,30 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
-import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.plot.Plot;
-import io.github.stealingdapenta.idletd.plot.PlotRepository;
-import io.github.stealingdapenta.idletd.plot.PlotService;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.SkeletonMob;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.ZombieMob;
-import io.github.stealingdapenta.idletd.service.utils.Countdown;
-import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.UUID;
 
-@Setter
-@Getter
+@Builder
+@Data
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class TowerDefense {
-    private final Random random = new Random();
-    private final List<CustomMob> livingMobs = new ArrayList<>();
-    private final SchematicHandler schematicHandler = new SchematicHandler();
+    // table fields
+    private UUID playerUUID;
+    private long plot;
+    private int stageLevel;
+
+    // calculated fields
     private WaveConfiguration wave;
-    private Player player;
     private long waveStartTime;
     private boolean waveActive;
-    private Plot plot;
-    private final PlotRepository plotRepository = new PlotRepository();
-    private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
-    private int stageLevel = 1;
-
-    public TowerDefense(Player player) {
-        stageLevel = 1; // todo check if a save exists; if yes: set the level; else 1 <= CRUCIAL
-        wave = WaveConfiguration.getByLevel(stageLevel);
-        this.player = player;
-        plot = plotService.findOwnedPlot(player); // todo plot might not be found
-    }
-
-    public void startWave() {
-        setWaveActive(true);
-        Countdown.startCountdown(player, 5, 20L, end -> {
-            waveStartTime = System.currentTimeMillis();
-            wave = WaveConfiguration.getByLevel(stageLevel);
-            player.sendMessage(">> Starting wave " + getStageLevel() + "!"); // todo temporary
-            createAsyncWaveTask();
-
-            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-
-            for (int i = 0; i < wave.getNumMobs(); i++) {
-                int finalI = i;  // Capture the value of i for each iteration
-                long delayBetweenMobs = 20L * i; // 20 ticks = 1 second
-
-
-                scheduler.runTaskLater(Idletd.getInstance(), () -> {
-                    CustomMob mob = generateRandomMob();
-                    mob.summon(plot.getMobSpawnLocation());
-                    livingMobs.add(mob);
-
-                    // If this is the final iteration
-                    if (finalI == wave.getNumMobs() - 1) {
-                        setWaveActive(false);
-                    }
-                }, delayBetweenMobs); // Delays summoning for each next mob to create a wave feeling.
-            }
-        });
-    }
-
-    private void createAsyncWaveTask() {
-        // todo update in the future to have one task that loops over all active tower defense games
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (isWaveEnd() && !isWaveActive()) {
-                    getWaveDuration(); // todo save
-                    player.sendMessage("You took " + getWaveDuration() + " to complete wave " + getStageLevel() + "!"); // todo temporary
-                    setStageLevel(getStageLevel() + 1);
-                    // todo Make waves generate infinite new ones; e.g. by taking re-looping over the fixed enum & multiplying the mob levels (using modulo) <= CRUCIAL
-                    startWave();
-                    cancel();
-                }
-
-                Bukkit.getScheduler().runTaskAsynchronously(Idletd.getInstance(), () -> updateLivingMobs());
-            }
-        }.runTaskTimer(Idletd.getInstance(), 40L, 20L); // 20 ticks = 1 second
-    }
-
+    private Plot fetchedPlot;
+    private IdlePlayer fetchedPlayer;
 
     public String getWaveDuration() {
         // Calculate elapsed time in milliseconds
@@ -105,32 +37,7 @@ public class TowerDefense {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    private void updateLivingMobs() {
-        livingMobs.removeIf(customMob -> {
-            Mob livingMob = customMob.getMob();
-            if (Objects.nonNull(livingMob)) {
-                return livingMob.isDead();
-            }
-            // theoretically, livingMobs can't contain customMobs without a Mob object, because they get summoned first, and
-            // added to the list after. However, if the summoning failed for some reason, then it might be possible.
-            // Removing them from the list then regardless.
-            return true;
-
-        });
+    public void increaseStageLevelWithOne() {
+        setStageLevel(getStageLevel() + 1);
     }
-
-    private CustomMob generateRandomMob() {
-        int mobLevel = 2 * stageLevel + random.nextInt((1 + stageLevel)); // todo Adjust as needed
-
-        return switch (wave.chooseMobType()) {
-            case ZOMBIE -> new ZombieMob(plot);
-            case SKELETON -> new SkeletonMob(plot);
-            default -> new ZombieMob(plot);
-        };
-    }
-
-    public boolean isWaveEnd() {
-        return livingMobs.isEmpty();
-    }
-
 }

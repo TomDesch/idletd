@@ -13,7 +13,11 @@ public class IdlePlayerService {
     private final IdlePlayerRepository idlePlayerRepository;
 
     public Player getPlayer(IdlePlayer idlePlayer) {
-        return getPlayer(idlePlayer.getPlayerUUIDAsUUID());
+        return getPlayer(idlePlayer.getPlayerUUID());
+    }
+
+    public Player getPlayer(String uuid) {
+        return getPlayer(UUID.fromString(uuid));
     }
 
     public Player getPlayer(UUID uuid) {
@@ -21,6 +25,11 @@ public class IdlePlayerService {
     }
 
     public IdlePlayer getIdlePlayer(Player player) {
-        return idlePlayerRepository.findIdlePlayerByUUID(player.getUniqueId().toString());
+        return getIdlePlayer(player.getUniqueId());
     }
+
+    public IdlePlayer getIdlePlayer(UUID uuid) {
+        return idlePlayerRepository.getIdlePlayer(uuid);
+    }
+
 }

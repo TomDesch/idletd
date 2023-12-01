@@ -50,17 +50,17 @@ public class IdlePlayerManager {
         // Generate player scoreboard
         // Generate stuff based on settings e.g. username
         // Handle lastLogin time etc
-        idlePlayerService.getPlayer(idlePlayer.getPlayerUUIDAsUUID()).setGlowing(false);
+        idlePlayerService.getPlayer(idlePlayer.getPlayerUUID()).setGlowing(false);
     }
 
 
     public void savePlayerData(IdlePlayer idlePlayer) {
-        if (Objects.isNull(idlePlayer) || noLoginAllowed.contains(idlePlayer.getPlayerUUIDAsUUID())) {
+        if (Objects.isNull(idlePlayer) || noLoginAllowed.contains(idlePlayer.getPlayerUUID())) {
             return;
         }
 
         // Protect data integrity by not allowing the player to log back in during this process.
-        noLoginAllowed.add(idlePlayer.getPlayerUUIDAsUUID());
+        noLoginAllowed.add(idlePlayer.getPlayerUUID());
 
         try {
             // todo saving data
@@ -71,7 +71,7 @@ public class IdlePlayerManager {
         } finally {
             if (!isShuttingDown()) {
                 deregisterOnlinePlayer(idlePlayer);
-                noLoginAllowed.remove(idlePlayer.getPlayerUUIDAsUUID());
+                noLoginAllowed.remove(idlePlayer.getPlayerUUID());
             }
         }
     }
