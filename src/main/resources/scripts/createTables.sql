@@ -1,7 +1,11 @@
+-- Create the PLOT table
 create TABLE IF NOT EXISTS PLOT (
  ID INT AUTO_INCREMENT PRIMARY KEY,
  STARTX INT NOT NULL,
  STARTZ INT NOT NULL,
  PLAYERUUID VARCHAR(36) NOT NULL);
 
+-- Insert Default value if needed
+insert into PLOT(STARTX, STARTZ, PLAYERUUID) values (0, 0, 'SERVER');
+COMMIT;
 
