@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
 import static io.github.stealingdapenta.idletd.Idletd.logger;
@@ -46,6 +47,7 @@ public class IdlePlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
 
         if (isShuttingDown()) {
             player.kick(Component.text(IDLETD_UNAVAILABLE));
@@ -54,20 +56,18 @@ public class IdlePlayerListener implements Listener {
 
         IdlePlayer idlePlayer;
 
-        IdlePlayer cachedIdlePlayer = getOfflinePlayerCache().getIfPresent(player.getUniqueId());
+        IdlePlayer cachedIdlePlayer = getOfflinePlayerCache().getIfPresent(uuid);
         if (Objects.nonNull(cachedIdlePlayer)) {
             idlePlayer = cachedIdlePlayer;
             idlePlayerManager.registerOnlinePlayer(idlePlayer);
-            getOfflinePlayerCache().invalidate(player.getUniqueId());
+            getOfflinePlayerCache().invalidate(uuid);
         } else {
-            // todo get player from DB (async)
-            // what if player not in DB?
-            // generate new IdlePlayer in db
+            idlePlayer = idlePlayerService.getIdlePlayer(uuid);
+
+            if (Objects.isNull(idlePlayer)) {
+                idlePlayer = idlePlayerService.createNewIdlePlayer(uuid);
+            }
             // broadcast welcome msg
-            idlePlayer = IdlePlayer.builder()
-                                   .playerUUID(player.getUniqueId())
-                                   .balance(0)
-                                   .build();
         }
 
         idlePlayerManager.postLogin(idlePlayer);

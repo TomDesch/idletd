@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 @RequiredArgsConstructor
 public class IdlePlayerService {
     private final IdlePlayerRepository idlePlayerRepository;
@@ -30,4 +32,25 @@ public class IdlePlayerService {
         return idlePlayerRepository.getIdlePlayer(uuid);
     }
 
+    public IdlePlayer createNewIdlePlayer(UUID uuid) {
+        logger.info("Generating new IdlePlayer for " + uuid);
+
+        IdlePlayer idlePlayer = IdlePlayer.builder()
+                                          .playerUUID(uuid)
+                                          .balance(0)
+                                          .build();
+
+        logger.info("Saving new idlePlayer.");
+        saveIdlePlayer(idlePlayer);
+
+        return idlePlayer;
+    }
+
+    public void saveIdlePlayer(IdlePlayer idlePlayer) {
+        idlePlayerRepository.saveIdlePlayer(idlePlayer);
+    }
+
+    public void updateIdlePlayer(IdlePlayer idlePlayer) {
+        idlePlayerRepository.updateIdlePlayer(idlePlayer);
+    }
 }

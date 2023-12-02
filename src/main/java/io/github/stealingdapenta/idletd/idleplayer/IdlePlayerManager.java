@@ -61,8 +61,7 @@ public class IdlePlayerManager {
         noLoginAllowed.add(idlePlayer.getPlayerUUID());
 
         try {
-            // todo saving data
-
+            idlePlayerService.updateIdlePlayer(idlePlayer);
         } catch (Exception e) {
             logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer).getName());
             e.printStackTrace();
