@@ -79,7 +79,20 @@ public class PlotRepository {
     }
 
     private Plot convertResultSet(ResultSet resultSet) throws SQLException {
-        return Plot.builder().id(resultSet.getLong("ID")).startX(resultSet.getInt("STARTX")).startZ(resultSet.getInt("STARTZ")).playerUUID(UUID.fromString(resultSet.getString("PLAYERUUID"))).build();
+        String uuidString = resultSet.getString("PLAYERUUID");
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(uuidString);
+        } catch (IllegalArgumentException e) {
+            logger.info("Failed to convert " + uuidString + " to UUID object. Moving on.");
+            uuid = null;
+        }
+
+        return Plot.builder()
+                   .id(resultSet.getLong("ID"))
+                   .startX(resultSet.getInt("STARTX"))
+                   .startZ(resultSet.getInt("STARTZ"))
+                   .playerUUID(uuid).build();
     }
 
     public CompletableFuture<Plot> asyncGetLatestPlot() {

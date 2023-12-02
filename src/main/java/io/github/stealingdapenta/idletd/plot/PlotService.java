@@ -127,7 +127,7 @@ public class PlotService {
                 lastGeneratedPlot = asyncPlot.get(); // This blocks until the async operation completes
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace(); // Handle exceptions appropriately
-                logger.warning("SOMETHINGS WRONG I CAN FEEL IT 3");
+                logger.warning("Error getting last generated plot.");
             }
         }
         return lastGeneratedPlot;
