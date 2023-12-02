@@ -116,7 +116,7 @@ public class TowerDefenseService {
         livingMobs.removeIf(customMob -> {
             Mob livingMob = customMob.getMob();
             if (Objects.nonNull(livingMob)) {
-                return livingMob.isDead();
+                return !livingMob.isValid();
             }
             // theoretically, livingMobs can't contain customMobs without a Mob object, because they get summoned first, and
             // added to the list after. However, if the summoning failed for some reason, then it might be possible.
