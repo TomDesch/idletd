@@ -29,7 +29,7 @@ public class CreatePlotCommand implements CommandExecutor {
         if (Objects.nonNull(existingPlot)) {
             logger.info(player.getName() + " already has a plot.");
             player.sendMessage("You already have an existing plot. ID:" + existingPlot.getId());
-            return false;
+            return true;
         }
 
         Plot plot = this.plotService.generatePlotWithTower(player);

@@ -12,7 +12,7 @@ import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 public class IdlePlayerRepository {
 
-    public static void insertIdlePlayer(IdlePlayer idlePlayer) {
+    public void saveIdlePlayer(IdlePlayer idlePlayer) {
         try (Connection connection = DatabaseManager.getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO IDLE_PLAYER (PLAYERUUID, BALANCE, FK_PLOT) VALUES (?, ?, ?)")) {
 
@@ -20,13 +20,13 @@ public class IdlePlayerRepository {
 
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error inserting IdlePlayer.");
+            logger.severe("Error inserting IdlePlayer. " + idlePlayer.getPlayerUUID());
             e.printStackTrace();
         }
     }
 
 
-    private static void prepareIdlePlayerStatement(IdlePlayer idlePlayer, PreparedStatement statement) throws SQLException {
+    private void prepareIdlePlayerStatement(IdlePlayer idlePlayer, PreparedStatement statement) throws SQLException {
         statement.setString(1, idlePlayer.getPlayerUUID().toString());
         statement.setDouble(2, idlePlayer.getBalance());
         statement.setLong(3, idlePlayer.getFkPlot());
