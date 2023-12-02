@@ -15,35 +15,26 @@ import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataS
 @RequiredArgsConstructor
 public class TowerDefenseRepository {
 
-    public Long insertTowerDefense(TowerDefense towerDefense) {
+    public void insertTowerDefense(TowerDefense towerDefense) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO TOWER_DEFENSE (FK_IDLE_PLAYER, FK_PLOT, STAGE_LEVEL, WAVE_START_TIME, WAVE_ACTIVE) VALUES (?, ?, ?, ?, ?)",
+                     "INSERT INTO TOWER_DEFENSE (PLAYERUUID, FK_PLOT, STAGE_LEVEL) VALUES (?, ?, ?)",
                      Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, towerDefense.getPlayerUUID().toString());
             statement.setLong(2, towerDefense.getPlot());
             statement.setInt(3, towerDefense.getStageLevel());
-            statement.setLong(4, towerDefense.getWaveStartTime());
-            statement.setBoolean(5, towerDefense.isWaveActive());
 
             statement.execute();
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getLong(1);
-                }
-            }
         } catch (SQLException e) {
             logger.severe("Error inserting TowerDefense: " + e.getMessage());
         }
-        return null;
     }
 
     public TowerDefense getTowerDefense(UUID uuid) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "SELECT * FROM TOWER_DEFENSE WHERE FK_IDLE_PLAYER = ?")) {
+                     "SELECT * FROM TOWER_DEFENSE WHERE PLAYERUUID = ?")) {
 
             statement.setString(1, uuid.toString());
 
@@ -61,11 +52,9 @@ public class TowerDefenseRepository {
     public void updateTowerDefense(TowerDefense towerDefense) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE TOWER_DEFENSE SET FK_PLOT=?, STAGE_LEVEL=?, WAVE_START_TIME=?, WAVE_ACTIVE=? WHERE FK_IDLE_PLAYER=?")) {
+                     "UPDATE TOWER_DEFENSE SET FK_PLOT=?, STAGE_LEVEL=? WHERE PLAYERUUID=?")) {
 
             prepareTowerDefenseStatement(towerDefense, statement);
-            statement.setString(5, towerDefense.getPlayerUUID().toString());
-
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -76,7 +65,7 @@ public class TowerDefenseRepository {
     public void deleteTowerDefense(long fkIdlePlayer) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "DELETE FROM TOWER_DEFENSE WHERE FK_IDLE_PLAYER = ?")) {
+                     "DELETE FROM TOWER_DEFENSE WHERE PLAYERUUID = ?")) {
 
             statement.setLong(1, fkIdlePlayer);
             statement.executeUpdate();
@@ -89,17 +78,15 @@ public class TowerDefenseRepository {
     private void prepareTowerDefenseStatement(TowerDefense towerDefense, PreparedStatement statement) throws SQLException {
         statement.setLong(1, towerDefense.getPlot());
         statement.setInt(2, towerDefense.getStageLevel());
-        statement.setLong(3, towerDefense.getWaveStartTime());
-        statement.setBoolean(4, towerDefense.isWaveActive());
+        statement.setString(3, towerDefense.getPlayerUUID().toString());
+
     }
 
     private TowerDefense convertResultSet(ResultSet resultSet) throws SQLException {
         return TowerDefense.builder()
-                           .playerUUID(UUID.fromString(resultSet.getString("FK_IDLE_PLAYER")))
+                           .playerUUID(UUID.fromString(resultSet.getString("PLAYERUUID")))
                            .plot(resultSet.getLong("FK_PLOT"))
                            .stageLevel(resultSet.getInt("STAGE_LEVEL"))
-                           .waveStartTime(resultSet.getLong("WAVE_START_TIME"))
-                           .waveActive(resultSet.getBoolean("WAVE_ACTIVE"))
                            .build();
     }
 }
