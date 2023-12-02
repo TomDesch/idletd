@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 @RequiredArgsConstructor
 public class SchematicHandler {
 
@@ -30,7 +32,7 @@ public class SchematicHandler {
             Clipboard clipboardWithSchematic = this.loadSchematic(schematic);
             this.pasteSchematic(clipboardWithSchematic, location);
         } catch (IOException | WorldEditException e) {
-            Idletd.getInstance().getLogger().warning("Error while pasting schematic: " + e.getMessage());
+            logger.warning("Error while pasting schematic: " + e.getMessage());
         }
     }
 
@@ -54,7 +56,7 @@ public class SchematicHandler {
 
     public File loadSchematicFile(String filename) {
         File schematicFile = new File(Idletd.getInstance().getIdleTdFolder(), "schematics" + File.separator + filename);
-        Idletd.getInstance().getLogger().info("Constructed File Path: " + schematicFile.getAbsolutePath());
+        logger.info("Constructed File Path: " + schematicFile.getAbsolutePath());
         return schematicFile;
     }
 

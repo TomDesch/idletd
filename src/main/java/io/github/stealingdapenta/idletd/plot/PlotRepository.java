@@ -16,20 +16,20 @@ import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataS
 @RequiredArgsConstructor
 public class PlotRepository {
 
-    public static void insertPlot(Plot plot) {
-        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO plots (STARTX, STARTZ, PLAYERUUID) VALUES (?, ?, ?)")) {
+    public static void savePlot(Plot plot) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO PLOT (STARTX, STARTZ, PLAYERUUID) VALUES (?, ?, ?)")) {
             statement.setInt(1, plot.getStartX());
             statement.setInt(2, plot.getStartZ());
             statement.setString(3, plot.getPlayerUUID());
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error inserting plot.");
+            logger.severe("Error saving plot.");
             e.printStackTrace();
         }
     }
 
     public Plot getPlotById(long plotId) {
-        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM plots WHERE ID = ?")) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM PLOT WHERE ID = ?")) {
 
             statement.setLong(1, plotId);
 
