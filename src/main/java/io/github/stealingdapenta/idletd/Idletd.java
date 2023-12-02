@@ -23,12 +23,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 
 public class Idletd extends JavaPlugin {
     private static volatile boolean shuttingDown = false;
     private static Idletd instance = null;
+    public static Logger logger;
+
 
     // Repositories
     private final PlotRepository plotRepository = new PlotRepository();
@@ -66,6 +69,7 @@ public class Idletd extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        logger = this.getLogger();
 
         this.copyResourcesToDataFolder();
 

@@ -1,6 +1,5 @@
 package io.github.stealingdapenta.idletd.listener;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
@@ -17,9 +16,9 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Objects;
-import java.util.logging.Logger;
 
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getNoLoginAllowed;
 import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getOfflinePlayerCache;
 
@@ -29,7 +28,6 @@ import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getO
 public class IdlePlayerListener implements Listener {
     private static final String IDLETD_UNAVAILABLE = "&cIdle TD is currently unavailable";
     private static final String WAIT_BEFORE_LOGGING = "&cPlease wait before logging in!";
-    private static final Logger logger = Idletd.getInstance().getLogger();
     private final IdlePlayerManager idlePlayerManager;
     private final IdlePlayerService idlePlayerService;
     private long lastNewPlayer = -1;
@@ -67,7 +65,7 @@ public class IdlePlayerListener implements Listener {
             // generate new IdlePlayer in db
             // broadcast welcome msg
             idlePlayer = IdlePlayer.builder()
-                                   .playerUUID(player.getUniqueId().toString())
+                                   .playerUUID(player.getUniqueId())
                                    .balance(0)
                                    .build();
         }

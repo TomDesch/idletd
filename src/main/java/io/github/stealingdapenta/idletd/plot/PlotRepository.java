@@ -1,6 +1,5 @@
 package io.github.stealingdapenta.idletd.plot;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
@@ -10,13 +9,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 @RequiredArgsConstructor
 public class PlotRepository {
-    private static final Logger logger = Idletd.getInstance().getLogger();
 
     public static void insertPlot(Plot plot) {
         try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO plots (STARTX, STARTZ, PLAYERUUID) VALUES (?, ?, ?)")) {

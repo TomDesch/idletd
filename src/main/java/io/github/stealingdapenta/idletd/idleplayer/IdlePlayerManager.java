@@ -2,7 +2,6 @@ package io.github.stealingdapenta.idletd.idleplayer;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import io.github.stealingdapenta.idletd.Idletd;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,15 +13,14 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 @RequiredArgsConstructor
 @Getter
 @Setter
 public class IdlePlayerManager {
-    private static final Logger logger = Idletd.getInstance().getLogger();
     private static final List<IdlePlayer> onlinePlayers = new ArrayList<>();
     private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
     private static volatile Set<UUID> noLoginAllowed = new HashSet<>();

@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class IdlePlayerService {
-    private static final Logger logger = Idletd.getInstance().getLogger();
     private final IdlePlayerRepository idlePlayerRepository;
 
     public Player getPlayer(IdlePlayer idlePlayer) {
