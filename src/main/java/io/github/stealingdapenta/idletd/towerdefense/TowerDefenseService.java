@@ -139,8 +139,8 @@ public class TowerDefenseService {
         return livingMobs.isEmpty();
     }
 
-    public Long saveTowerDefense(TowerDefense towerDefense) {
-        return towerDefenseRepository.insertTowerDefense(towerDefense);
+    public void saveTowerDefense(TowerDefense towerDefense) {
+        towerDefenseRepository.insertTowerDefense(towerDefense);
     }
 
     public TowerDefense getTowerDefense(UUID uuid) {
