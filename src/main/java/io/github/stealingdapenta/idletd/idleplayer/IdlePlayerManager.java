@@ -6,9 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -21,7 +19,7 @@ import static io.github.stealingdapenta.idletd.Idletd.logger;
 @Getter
 @Setter
 public class IdlePlayerManager {
-    private static final List<IdlePlayer> onlinePlayers = new ArrayList<>();
+    private static final Set<IdlePlayer> onlinePlayers = new HashSet<>();
     private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
     private static volatile Set<UUID> noLoginAllowed = new HashSet<>();
     private final IdlePlayerService idlePlayerService;
@@ -35,12 +33,10 @@ public class IdlePlayerManager {
     }
 
     public boolean registerOnlinePlayer(IdlePlayer idlePlayer) {
-        if (onlinePlayers.contains(idlePlayer)) return false;
         return onlinePlayers.add(idlePlayer);
     }
 
     public boolean deregisterOnlinePlayer(IdlePlayer idlePlayer) {
-        if (!onlinePlayers.contains(idlePlayer)) return false;
         return onlinePlayers.remove(idlePlayer);
     }
 
