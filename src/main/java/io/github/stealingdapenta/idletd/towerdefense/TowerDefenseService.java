@@ -37,8 +37,11 @@ public class TowerDefenseService {
 
     public TowerDefense findTowerDefense(IdlePlayer idlePlayer) {
         TowerDefense towerDefense = towerDefenseRepository.getTowerDefense(idlePlayer.getPlayerUUID());
-        fetchPlotIfNull(towerDefense);
-        fetchIdlePlayerIfNull(towerDefense);
+        if (Objects.nonNull(towerDefense)) {
+            fetchPlotIfNull(towerDefense);
+            fetchIdlePlayerIfNull(towerDefense);
+        }
+
         return towerDefense;
     }
 
