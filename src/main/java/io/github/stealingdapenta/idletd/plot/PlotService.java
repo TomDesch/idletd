@@ -30,7 +30,6 @@ public class PlotService {
     private Plot lastGeneratedPlot = null;
 
     public Plot generatePlotWithTower(Player player) {
-        logger.info("Commencing plot generation.");
         Plot plot = this.generatePlotForPlayer(player);
 
         logger.info("Started pasting structure in plot.");
@@ -69,15 +68,13 @@ public class PlotService {
         int startX = currentColumn * PLOT_SIZE;
         int startZ = currentRow * PLOT_SIZE;
 
-        logger.info("Plot generation new x and Z: " + startX + " " + startZ);
-
         Plot plot = Plot.builder()
                         .startX(startX)
                         .startZ(startZ)
                         .playerUUID(player.getUniqueId())
                         .build();
         generatePlot(plot);
-        PlotRepository.insertPlot(plot);
+        PlotRepository.savePlot(plot);
         this.lastGeneratedPlot = plot;
 
         logger.info("Finishing plot generation.");
@@ -86,7 +83,7 @@ public class PlotService {
 
     public void pasteTowerInPlot(Plot plot) {
         Location pasteLocation = plot.calculateTowerLocation();
-        logger.info("Commencing pasting new structure for plot ID: " + plot.getId());
+        logger.info("Commencing pasting new structure for plot.");
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
     }
 
@@ -118,7 +115,6 @@ public class PlotService {
         logger.warning("Error fetching last generated plot column.");
         return -1;
     }
-
 
     public Plot getLastGeneratedPlot() {
         if (lastGeneratedPlot == null) {
