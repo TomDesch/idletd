@@ -29,7 +29,8 @@ public class IdlePlayerRepository {
     private void prepareIdlePlayerStatement(IdlePlayer idlePlayer, PreparedStatement statement) throws SQLException {
         statement.setString(1, idlePlayer.getPlayerUUID().toString());
         statement.setDouble(2, idlePlayer.getBalance());
-        statement.setLong(3, idlePlayer.getFkPlot());
+        Long fkPlot = idlePlayer.getFkPlot(); // Long = null pointer safe; long isn't
+        statement.setLong(3, fkPlot);
     }
 
     public IdlePlayer getIdlePlayer(UUID uuid) {
