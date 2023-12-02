@@ -43,7 +43,7 @@ public class Idletd extends JavaPlugin {
     private final SchematicHandler schematicHandler = new SchematicHandler();
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
     private final PlotCommand plotCommand = new PlotCommand(plotService);
-    private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository);
+    private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
 

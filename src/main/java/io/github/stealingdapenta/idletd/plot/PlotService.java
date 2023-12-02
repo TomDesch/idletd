@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -88,7 +89,11 @@ public class PlotService {
     }
 
     public Plot findPlot(Player player) {
-        CompletableFuture<Plot> asyncPlot = this.plotRepository.asyncGetPlotByUUID(player.getUniqueId().toString());
+        return findPlot(player.getUniqueId());
+    }
+
+    public Plot findPlot(UUID uuid) {
+        CompletableFuture<Plot> asyncPlot = this.plotRepository.asyncGetPlotByUUID(uuid.toString());
         try {
             return asyncPlot.get();
         } catch (InterruptedException | ExecutionException e) {
