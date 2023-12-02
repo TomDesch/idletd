@@ -1,6 +1,5 @@
 package io.github.stealingdapenta.idletd.idleplayer;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.database.DatabaseManager;
 
 import java.sql.Connection;
@@ -8,11 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.logging.Logger;
+
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 public class IdlePlayerRepository {
-
-    private static final Logger logger = Idletd.getInstance().getLogger();
 
     public static void insertIdlePlayer(IdlePlayer idlePlayer) {
         try (Connection connection = DatabaseManager.getDataSource().getConnection();

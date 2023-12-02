@@ -1,6 +1,5 @@
 package io.github.stealingdapenta.idletd.service.command;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -15,12 +14,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
-import java.util.logging.Logger;
+
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 
 @RequiredArgsConstructor
 public class TowerDefenseCommand implements CommandExecutor {
-    private static final Logger logger = Idletd.getInstance().getLogger();
     private static final String NO_PLOT = "Please create a plot before launching a TD game!";
     private static final String NO_IDLE_PLAYER = "Internal error. Please contact a system admin.";
     private final PlotService plotService;

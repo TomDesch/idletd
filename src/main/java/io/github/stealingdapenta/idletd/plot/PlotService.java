@@ -8,7 +8,6 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -18,15 +17,14 @@ import org.bukkit.entity.Player;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE_WORLD;
 
 @RequiredArgsConstructor
 public class PlotService {
     private static final int PLOT_SIZE = 500;
-    private static final Logger logger = Idletd.getInstance().getLogger();
     private final SchematicHandler schematicHandler;
     private final PlotRepository plotRepository;
     private Plot lastGeneratedPlot = null;

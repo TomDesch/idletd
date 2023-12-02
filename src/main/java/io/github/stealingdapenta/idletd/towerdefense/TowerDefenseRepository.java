@@ -1,6 +1,5 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.Connection;
@@ -9,14 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
-import java.util.logging.Logger;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 @RequiredArgsConstructor
 public class TowerDefenseRepository {
-
-    private static final Logger logger = Idletd.getInstance().getLogger();
 
     public Long insertTowerDefense(TowerDefense towerDefense) {
         try (Connection connection = getDataSource().getConnection();
