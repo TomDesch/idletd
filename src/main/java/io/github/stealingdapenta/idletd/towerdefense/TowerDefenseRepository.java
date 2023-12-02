@@ -18,7 +18,7 @@ public class TowerDefenseRepository {
     public Long insertTowerDefense(TowerDefense towerDefense) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO tower_defense (FK_IDLE_PLAYER, FK_PLOT, STAGE_LEVEL, WAVE_START_TIME, WAVE_ACTIVE) VALUES (?, ?, ?, ?, ?)",
+                     "INSERT INTO TOWER_DEFENSE (FK_IDLE_PLAYER, FK_PLOT, STAGE_LEVEL, WAVE_START_TIME, WAVE_ACTIVE) VALUES (?, ?, ?, ?, ?)",
                      Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, towerDefense.getPlayerUUID().toString());
@@ -43,7 +43,7 @@ public class TowerDefenseRepository {
     public TowerDefense getTowerDefense(UUID uuid) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "SELECT * FROM tower_defense WHERE FK_IDLE_PLAYER = ?")) {
+                     "SELECT * FROM TOWER_DEFENSE WHERE FK_IDLE_PLAYER = ?")) {
 
             statement.setString(1, uuid.toString());
 
@@ -61,7 +61,7 @@ public class TowerDefenseRepository {
     public void updateTowerDefense(TowerDefense towerDefense) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE tower_defense SET FK_PLOT=?, STAGE_LEVEL=?, WAVE_START_TIME=?, WAVE_ACTIVE=? WHERE FK_IDLE_PLAYER=?")) {
+                     "UPDATE TOWER_DEFENSE SET FK_PLOT=?, STAGE_LEVEL=?, WAVE_START_TIME=?, WAVE_ACTIVE=? WHERE FK_IDLE_PLAYER=?")) {
 
             prepareTowerDefenseStatement(towerDefense, statement);
             statement.setString(5, towerDefense.getPlayerUUID().toString());
@@ -76,7 +76,7 @@ public class TowerDefenseRepository {
     public void deleteTowerDefense(long fkIdlePlayer) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "DELETE FROM tower_defense WHERE FK_IDLE_PLAYER = ?")) {
+                     "DELETE FROM TOWER_DEFENSE WHERE FK_IDLE_PLAYER = ?")) {
 
             statement.setLong(1, fkIdlePlayer);
             statement.executeUpdate();
