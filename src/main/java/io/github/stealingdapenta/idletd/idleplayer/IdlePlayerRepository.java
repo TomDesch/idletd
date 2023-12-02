@@ -16,21 +16,16 @@ public class IdlePlayerRepository {
         try (Connection connection = DatabaseManager.getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement("INSERT INTO IDLE_PLAYER (PLAYERUUID, BALANCE, FK_PLOT) VALUES (?, ?, ?)")) {
 
-            prepareIdlePlayerStatement(idlePlayer, statement);
+            statement.setString(1, idlePlayer.getPlayerUUID().toString());
+            statement.setDouble(2, idlePlayer.getBalance());
+            Long fkPlot = idlePlayer.getFkPlot(); // Long = null pointer safe; long isn't
+            statement.setLong(3, fkPlot);
 
             statement.execute();
         } catch (SQLException e) {
             logger.severe("Error inserting IdlePlayer. " + idlePlayer.getPlayerUUID());
             e.printStackTrace();
         }
-    }
-
-
-    private void prepareIdlePlayerStatement(IdlePlayer idlePlayer, PreparedStatement statement) throws SQLException {
-        statement.setString(1, idlePlayer.getPlayerUUID().toString());
-        statement.setDouble(2, idlePlayer.getBalance());
-        Long fkPlot = idlePlayer.getFkPlot(); // Long = null pointer safe; long isn't
-        statement.setLong(3, fkPlot);
     }
 
     public IdlePlayer getIdlePlayer(UUID uuid) {
@@ -53,9 +48,12 @@ public class IdlePlayerRepository {
 
     public void updateIdlePlayer(IdlePlayer idlePlayer) {
         try (Connection connection = DatabaseManager.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("UPDATE IDLE_PLAYER SET PLAYERUUID=?, BALANCE=?, FK_PLOT=? WHERE ID=?")) {
+             PreparedStatement statement = connection.prepareStatement("UPDATE IDLE_PLAYER SET BALANCE=?, FK_PLOT=? WHERE PLAYERUUID=?")) {
 
-            prepareIdlePlayerStatement(idlePlayer, statement);
+            statement.setDouble(1, idlePlayer.getBalance());
+            Long fkPlot = idlePlayer.getFkPlot(); // Long = null pointer safe; long isn't
+            statement.setLong(2, fkPlot);
+            statement.setString(3, idlePlayer.getPlayerUUID().toString());
 
             statement.executeUpdate();
 
