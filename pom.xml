@@ -5,7 +5,7 @@
 
     <groupId>io.github.stealingdapenta</groupId>
     <artifactId>idletd</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>idletd</name>
     <description>Minecraft idle tower defense game.</description>
 
