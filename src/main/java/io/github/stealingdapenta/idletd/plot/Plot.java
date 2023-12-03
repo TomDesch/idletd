@@ -16,6 +16,7 @@ import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Plot {
+    // todo create a table for these static values & cache them
     private static final Vector RELATIVE_TOWER_COORDINATES = new Vector(200, 80, 50);
     private static final Vector RELATIVE_PLAYER_SPAWN_COORDINATES = new Vector(200, 90, 43);
     private static final Vector RELATIVE_MOB_SPAWN_COORDINATES = new Vector(200, 81, -13);
