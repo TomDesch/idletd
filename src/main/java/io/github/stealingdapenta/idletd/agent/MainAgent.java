@@ -67,13 +67,6 @@ public class MainAgent {
         return Objects.nonNull(citizens) && citizens.isEnabled();
     }
 
-//    private Location calculatePosition() {
-//        Location spawnLocation = plotService.getPlayerSpawnPoint(plot);
-//        spawnLocation.add(0d, -10d, -8d);
-//        spawnLocation.setYaw(180); // Facing north
-//        spawnLocation.setPitch(0);
-//        return spawnLocation;
-//    }
 
     public void setCurrentSkin(int currentSkin) {
         this.currentSkin = currentSkin;
