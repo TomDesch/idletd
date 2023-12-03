@@ -46,6 +46,7 @@ public class AgentService {
                                .location(fetchLocationIfNull(agent))
                                .currentSkin(skinService.getSkin(agent.getActiveSkinId()))
                                .target(owner)
+                               .name(agent.getAgentType().getName())
                                .levelHealth(100)
                                .build();
             agent.setAgentNPC(agentNPC);

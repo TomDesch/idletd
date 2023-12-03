@@ -80,7 +80,7 @@ public class AgentNPC {
         }
 
         if (Objects.isNull(npc)) {
-            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
+            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, Objects.nonNull(name) ? name : "DEFAULT NAME");
             updateSkin();
         }
 
