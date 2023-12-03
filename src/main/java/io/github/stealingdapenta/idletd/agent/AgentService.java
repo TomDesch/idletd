@@ -27,7 +27,7 @@ public class AgentService {
         return findAllForPlayer(idlePlayer.getPlayerUUID());
     }
 
-    public List<Agent> findAllForPlayer(UUID uuid) {
+    private List<Agent> findAllForPlayer(UUID uuid) {
         List<Agent> agents = agentRepository.getAgentsByPlayerUUID(uuid);
         agents.forEach(this::fetchFields);
         return agents;
@@ -50,14 +50,14 @@ public class AgentService {
         fetchLocationIfNull(agent);
     }
 
-    public IdlePlayer fetchIdlePlayerIfNull(Agent agent) {
+    private IdlePlayer fetchIdlePlayerIfNull(Agent agent) {
         if (Objects.isNull(agent.getFetchedPlayer())) {
             agent.setFetchedPlayer(idlePlayerService.getIdlePlayer(agent.getPlayerUUID()));
         }
         return agent.getFetchedPlayer();
     }
 
-    public Location fetchLocationIfNull(Agent agent) {
+    private Location fetchLocationIfNull(Agent agent) {
         if (Objects.isNull(agent.getFetchedLocation())) {
             agent.setFetchedLocation(idleLocationService.getLocation(agent.getFkLocation()));
         }

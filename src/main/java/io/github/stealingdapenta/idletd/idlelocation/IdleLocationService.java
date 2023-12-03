@@ -18,12 +18,12 @@ public class IdleLocationService {
         return null;
     }
 
-    public void save(Location location) {
-        save(convert(location));
+    public int save(Location location) {
+        return save(convert(location));
     }
 
-    public void save(IdleLocation idleLocation) {
-        idleLocationRepository.saveIdleLocation(idleLocation);
+    public int save(IdleLocation idleLocation) {
+        return idleLocationRepository.saveIdleLocation(idleLocation);
     }
 
     public void update(Location location) {
