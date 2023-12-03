@@ -36,9 +36,7 @@ public class TowerDefenseManager {
     private final TowerDefenseService towerDefenseService;
 
     // todo further: summon NPC for target
-    // todo further: fix "endless mode" on waves without crashing
-    // then turn POC wave mobs into real deal with levels on mobs etc
-    // todo Make waves generate infinite new ones; e.g. by taking re-looping over the fixed enum & multiplying the mob levels (using modulo) <= CRUCIAL
+    // todo turn POC wave mobs into real deal with levels on mobs etc
 
     public void initializeActiveGameManager() {
         if (Objects.isNull(activeGameManager)) {
