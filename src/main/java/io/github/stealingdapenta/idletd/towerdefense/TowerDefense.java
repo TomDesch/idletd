@@ -1,8 +1,8 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
+import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.plot.Plot;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,13 +1,13 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
+import io.github.stealingdapenta.idletd.custommob.mobtypes.SkeletonMob;
+import io.github.stealingdapenta.idletd.custommob.mobtypes.ZombieMob;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.plot.PlotService;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.SkeletonMob;
-import io.github.stealingdapenta.idletd.service.custommob.mobtypes.ZombieMob;
 import io.github.stealingdapenta.idletd.service.utils.Countdown;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
