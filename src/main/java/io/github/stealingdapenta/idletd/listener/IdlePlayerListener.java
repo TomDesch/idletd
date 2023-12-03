@@ -3,6 +3,9 @@ package io.github.stealingdapenta.idletd.listener;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefense;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,6 +34,8 @@ public class IdlePlayerListener implements Listener {
     private static final String WAIT_BEFORE_LOGGING = "&cPlease wait before logging in!";
     private final IdlePlayerManager idlePlayerManager;
     private final IdlePlayerService idlePlayerService;
+    private final TowerDefenseManager towerDefenseManager;
+    private final TowerDefenseService towerDefenseService;
     private long lastNewPlayer = -1;
 
     @EventHandler
@@ -87,9 +92,18 @@ public class IdlePlayerListener implements Listener {
             IdlePlayer idlePlayer = idlePlayerService.getIdlePlayer(player);
             if (!isShuttingDown()) {
                 idlePlayerManager.savePlayerData(idlePlayer);
+                deactivateAndSaveTDGame(idlePlayer);
             }
         } catch (Exception e) {
             logger.warning("Error in log out operations for " + player.getName());
+        }
+    }
+
+    private void deactivateAndSaveTDGame(IdlePlayer idlePlayer) {
+        TowerDefense towerDefense = towerDefenseManager.getActiveTDGame(idlePlayer);
+        if (Objects.nonNull(towerDefense)) {
+            towerDefenseManager.deactivateTDGame(towerDefense);
+            towerDefenseService.updateTowerDefense(towerDefense);
         }
     }
 

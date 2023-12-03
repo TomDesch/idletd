@@ -2,11 +2,17 @@ package io.github.stealingdapenta.idletd.towerdefense;
 
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.plot.Plot;
+import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Mob;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Builder
@@ -25,6 +31,8 @@ public class TowerDefense {
     private boolean waveActive;
     private Plot fetchedPlot;
     private IdlePlayer fetchedPlayer;
+    private BukkitTask activeWave;
+    private List<CustomMob> livingMobs = new ArrayList<>();
 
     public String getWaveDuration() {
         // Calculate elapsed time in milliseconds
@@ -39,5 +47,26 @@ public class TowerDefense {
 
     public void increaseStageLevelWithOne() {
         setStageLevel(getStageLevel() + 1);
+    }
+
+    public boolean allMobsDead() {
+        return livingMobs.isEmpty();
+    }
+
+    public void updateLivingMobs() {
+        getLivingMobs().removeIf(customMob -> {
+            Mob livingMob = customMob.getMob();
+            if (Objects.nonNull(livingMob)) {
+                return !livingMob.isValid();
+            }
+            // theoretically, livingMobs can't contain customMobs without a Mob object, because they get summoned first, and
+            // added to the list after. However, if the summoning failed for some reason, then it might be possible.
+            // Removing them from the list then regardless.
+            return true;
+        });
+    }
+
+    public void addMob(CustomMob mob) {
+        livingMobs.add(mob);
     }
 }

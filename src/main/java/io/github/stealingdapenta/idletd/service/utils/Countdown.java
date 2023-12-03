@@ -10,6 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.function.Consumer;
 
+import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
+
 public class Countdown extends BukkitRunnable {
     private final Player player;
     private final BossBar bossBar;
@@ -28,7 +30,7 @@ public class Countdown extends BukkitRunnable {
 
     public static void startCountdown(Player player, int time, long delay, Consumer<Player> onCountdownEnd) {
         Countdown countdownTask = new Countdown(player, time, onCountdownEnd);
-        countdownTask.runTaskTimer(Idletd.getInstance(), delay, 20L);
+        countdownTask.runTaskTimer(Idletd.getInstance(), delay, ONE_SECOND_IN_TICKS);
     }
 
     @Override

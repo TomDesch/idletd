@@ -12,6 +12,7 @@ import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseRepository;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
 import org.bukkit.Bukkit;
@@ -28,11 +29,9 @@ import java.util.logging.Logger;
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 
 public class Idletd extends JavaPlugin {
+    public static Logger logger;
     private static volatile boolean shuttingDown = false;
     private static Idletd instance = null;
-    public static Logger logger;
-
-
     // Repositories
     private final PlotRepository plotRepository = new PlotRepository();
     private final IdlePlayerRepository idlePlayerRepository = new IdlePlayerRepository();
@@ -46,10 +45,11 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
+    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, towerDefenseService);
 
     // Commands
-    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
-    private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService);
+    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, towerDefenseManager, towerDefenseService);
+    private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
     // Listeners
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
@@ -77,6 +77,8 @@ public class Idletd extends JavaPlugin {
         this.registerEvents();
 
         this.pluginEnabledLog();
+
+        this.towerDefenseManager.initializeActiveGameManager();
     }
 
     private void registerCommands() {
