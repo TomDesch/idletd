@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
 
 @RequiredArgsConstructor
@@ -24,20 +25,14 @@ public class TowerDefenseManager {
     private final IdlePlayerService idlePlayerService;
     private final TowerDefenseService towerDefenseService;
 
-    // todo
-    // store active games upon activating (future: setting auto activate upon login? )
-    //
-    // upon log out: deactivate game & kill all the mobs AFTER (so no lvl increase or gold income)
-    // Save the game state
-
     // todo further: summon NPC for target
     // todo further: fix "endless mode" on waves without crashing
     // then turn POC wave mobs into real deal with levels on mobs etc
-    // todo update in the future to have one task that loops over all active tower defense games
     // todo Make waves generate infinite new ones; e.g. by taking re-looping over the fixed enum & multiplying the mob levels (using modulo) <= CRUCIAL
 
     public void initializeActiveGameManager() {
         if (Objects.isNull(activeGameManager)) {
+            logger.info("Initializing Active TD Game manager.");
             activeGameManager = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -73,10 +68,6 @@ public class TowerDefenseManager {
 
     private void killAllMobs(TowerDefense towerDefense) {
         towerDefense.getLivingMobs().forEach(mob -> mob.getMob().remove());
-    }
-
-    public boolean hasActiveTDGame(IdlePlayer idlePlayer) {
-        return activeTDGames.stream().anyMatch(towerDefense -> towerDefense.getPlayerUUID().equals(idlePlayer.getPlayerUUID()));
     }
 
     public TowerDefense getActiveTDGame(IdlePlayer idlePlayer) {

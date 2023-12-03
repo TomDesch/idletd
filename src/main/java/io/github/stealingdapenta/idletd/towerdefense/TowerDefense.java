@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Mob;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ public class TowerDefense {
     private boolean waveActive;
     private Plot fetchedPlot;
     private IdlePlayer fetchedPlayer;
-    private BukkitTask activeWave;
     private List<CustomMob> livingMobs = new ArrayList<>();
 
     public String getWaveDuration() {
@@ -50,10 +48,12 @@ public class TowerDefense {
     }
 
     public boolean allMobsDead() {
+        initializeLivingMobs();
         return livingMobs.isEmpty();
     }
 
     public void updateLivingMobs() {
+        initializeLivingMobs();
         getLivingMobs().removeIf(customMob -> {
             Mob livingMob = customMob.getMob();
             if (Objects.nonNull(livingMob)) {
@@ -67,6 +67,13 @@ public class TowerDefense {
     }
 
     public void addMob(CustomMob mob) {
+        initializeLivingMobs();
         livingMobs.add(mob);
+    }
+
+    private void initializeLivingMobs() {
+        if (Objects.isNull(livingMobs)) {
+            livingMobs = new ArrayList<>();
+        }
     }
 }
