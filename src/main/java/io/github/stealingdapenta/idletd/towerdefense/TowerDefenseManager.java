@@ -56,14 +56,14 @@ public class TowerDefenseManager {
         towerDefense.updateLivingMobs();
     }
 
-    public boolean addActiveTDGame(TowerDefense towerDefense) {
-        return activeTDGames.add(towerDefense);
+    public void addActiveTDGame(TowerDefense towerDefense) {
+        activeTDGames.add(towerDefense);
     }
 
-    public boolean deactivateTDGame(TowerDefense towerDefense) {
+    public void deactivateTDGame(TowerDefense towerDefense) {
+        activeTDGames.remove(towerDefense);
         towerDefense.setWaveActive(false);
         killAllMobs(towerDefense);
-        return activeTDGames.remove(towerDefense);
     }
 
     private void killAllMobs(TowerDefense towerDefense) {
