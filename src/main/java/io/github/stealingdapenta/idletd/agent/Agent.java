@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.agent;
 
+import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,13 +22,14 @@ public class Agent {
     private AgentType agentType;
     private int fkLocation;
 
-    // todo update:
-    // Add active skin ID
+    // todo save in db
+    private int activeSkinId = 5;
 
 
     // calculated fields
     private IdlePlayer fetchedPlayer;
     private Location fetchedLocation;
+    private AgentNPC agentNPC;
 
     @Override
     public boolean equals(Object o) {

@@ -1,19 +1,29 @@
-package io.github.stealingdapenta.idletd.agent;
+package io.github.stealingdapenta.idletd.agent.npc;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.skin.Skin;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @RequiredArgsConstructor
-public class MainAgent {
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+public class AgentNPC {
 
     // knockback resistant
     // Regeneration /s
@@ -39,46 +49,47 @@ public class MainAgent {
     // Slow ability?
     // Loot system on mobs <= more than just gold?
 
-    //    private final Location position;
-    private final List<Integer> skins = new ArrayList<>();
+
     private NPC npc;
+    private Location location;
+    private String name;
     // Stats
     private int levelHealth; // stuff like this should be stored as a level; and when initialized, calculated with a formula; e.g. lv * 2 for hp; and then possibly add multipliers
-    private int currentSkin;
-
-//    private final PlotService plotService; todo add agent service
-
+    private Skin currentSkin;
+    private Entity target;
 
     private boolean isCitizensEnabled() {
         Plugin citizens = Idletd.getInstance().getServer().getPluginManager().getPlugin("Citizens");
         return Objects.nonNull(citizens) && citizens.isEnabled();
     }
 
+    private void updateSkin() {
+        SkinnableEntity skinnableEntity = (SkinnableEntity) npc.getEntity();
 
-    public void setCurrentSkin(int currentSkin) {
-        this.currentSkin = currentSkin;
+        SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
 
-//        Skin skinProfile = skinManager.getSkins().get(currentSkin);
-//        SkinnableEntity skinnableEntity = (SkinnableEntity) npc.getEntity();
-//
-//        SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
-//
-//        skinTrait.setSkinPersistent("idc", skinProfile.getData(), skinProfile.getSignature());
-//        npc.addTrait(skinTrait);
-//        skinnableEntity.getSkinTracker().notifySkinChange(true);
+        skinTrait.setSkinPersistent(currentSkin.getName(), currentSkin.getDataToken(), currentSkin.getSignatureToken());
+        npc.addTrait(skinTrait);
+        skinnableEntity.getSkinTracker().notifySkinChange(true);
     }
 
-    public void spawn(Location location) {
+    public void spawn() {
         if (!isCitizensEnabled()) {
             Idletd.getInstance().getLogger().severe("Citizens not found or not enabled");
             return;
         }
 
         if (Objects.isNull(npc)) {
-            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, "Wizard of Oz");
-            this.setCurrentSkin(this.currentSkin);
+            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
+            updateSkin();
         }
 
         this.npc.spawn(location);
+    }
+
+    public void updateTarget() {
+        if (Objects.nonNull(getTarget()) && getTarget().isValid()) {
+            this.npc.getNavigator().setTarget(getTarget(), true);
+        }
     }
 }
