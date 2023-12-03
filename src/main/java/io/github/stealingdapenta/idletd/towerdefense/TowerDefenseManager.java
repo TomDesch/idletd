@@ -3,10 +3,19 @@ package io.github.stealingdapenta.idletd.towerdefense;
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
+import io.github.stealingdapenta.idletd.plot.Plot;
+import io.github.stealingdapenta.idletd.plot.PlotService;
+import io.github.stealingdapenta.idletd.service.custommob.mobtypes.CustomMob;
+import io.github.stealingdapenta.idletd.service.custommob.mobtypes.SkeletonMob;
+import io.github.stealingdapenta.idletd.service.custommob.mobtypes.ZombieMob;
+import io.github.stealingdapenta.idletd.service.utils.Countdown;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
@@ -23,6 +32,7 @@ public class TowerDefenseManager {
     private static final Set<TowerDefense> activeTDGames = new HashSet<>();
     private static BukkitTask activeGameManager;
     private final IdlePlayerService idlePlayerService;
+    private final PlotService plotService;
     private final TowerDefenseService towerDefenseService;
 
     // todo further: summon NPC for target
@@ -44,15 +54,18 @@ public class TowerDefenseManager {
 
     public void activateTDGame(TowerDefense towerDefense) {
         addActiveTDGame(towerDefense);
-        towerDefenseService.startWave(towerDefense);
+        startWave(towerDefense);
     }
 
     private void handleActiveGames() {
-        activeTDGames.forEach(this::doWaveCycle);
+        Set<TowerDefense> copyOfActiveGames = new HashSet<>(activeTDGames); // Defensive copy
+        copyOfActiveGames.forEach(this::handlePlayerOffline);
+        copyOfActiveGames.forEach(this::doWaveCycle);
     }
 
+
     private void doWaveCycle(TowerDefense towerDefense) {
-        towerDefenseService.handleWaveEnd(towerDefense);
+        handleWaveEnd(towerDefense);
         towerDefense.updateLivingMobs();
     }
 
@@ -61,7 +74,9 @@ public class TowerDefenseManager {
     }
 
     public void deactivateTDGame(TowerDefense towerDefense) {
-        activeTDGames.remove(towerDefense);
+        logger.info("Deactivating TD Game for " + towerDefense.getPlayerUUID());
+        boolean removed = activeTDGames.remove(towerDefense);
+        logger.info("Removal of TD Games was " + (removed ? "successful." : "unsuccessful!"));
         towerDefense.setWaveActive(false);
         killAllMobs(towerDefense);
     }
@@ -75,5 +90,75 @@ public class TowerDefenseManager {
                             .filter(towerDefense -> idlePlayer.getPlayerUUID().equals(towerDefense.getPlayerUUID()))
                             .findFirst()
                             .orElse(null);
+    }
+
+    public void startWave(TowerDefense towerDefense) {
+        towerDefense.setWaveActive(true);
+
+        Plot plot = plotService.getPlot(towerDefense.getPlot());
+
+        // Countdown between waves can be made into a customizable setting todo
+        Countdown.startCountdown(idlePlayerService.getPlayer(towerDefense.getPlayerUUID()), 5, ONE_SECOND_IN_TICKS, end -> {
+            towerDefense.setWaveStartTime(System.currentTimeMillis());
+            towerDefense.setWave(WaveConfiguration.getByLevel(towerDefense.getStageLevel()));
+
+            idlePlayerService.getPlayer(towerDefense.getPlayerUUID()).sendMessage(">> Starting wave " + towerDefense.getStageLevel() + "!");
+
+            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+
+            for (int i = 0; i < towerDefense.getWave().getNumMobs(); i++) {
+                int finalI = i;
+                long delayBetweenMobSummon = ONE_SECOND_IN_TICKS * i;
+
+                scheduler.runTaskLater(Idletd.getInstance(), task -> {
+                    // Event where player logs out during the countdown
+                    if (handlePlayerOffline(towerDefense)) {
+                        task.cancel();
+                    }
+                    CustomMob mob = generateRandomMob(towerDefense);
+                    mob.summon(plot.getMobSpawnLocation());
+                    towerDefense.addMob(mob);
+
+                    if (isFinalIteration(finalI, towerDefense)) {
+                        towerDefense.setWaveActive(false);
+                    }
+                }, delayBetweenMobSummon);
+            }
+        });
+    }
+
+    public void handleWaveEnd(TowerDefense towerDefense) {
+        if (towerDefense.allMobsDead() && !towerDefense.isWaveActive()) {
+            String duration = towerDefense.getWaveDuration();
+            idlePlayerService.getPlayer(towerDefense.getPlayerUUID()).sendMessage("You took " + duration + " to complete wave " + towerDefense.getStageLevel() + "!");
+            towerDefense.increaseStageLevelWithOne();
+            startWave(towerDefense);
+        }
+    }
+
+    private CustomMob generateRandomMob(TowerDefense towerDefense) {
+//        int mobLevel = 2 * towerDefense.getStageLevel() + random.nextInt((1 + towerDefense.getStageLevel())); // todo Adjust as needed
+
+        Plot plot = towerDefenseService.fetchPlotIfNull(towerDefense);
+
+        return switch (towerDefense.getWave().chooseMobType()) {
+            case ZOMBIE -> new ZombieMob(plot);
+            case SKELETON -> new SkeletonMob(plot);
+            default -> new ZombieMob(plot);
+        };
+    }
+
+    private boolean isFinalIteration(int iteration, TowerDefense towerDefense) {
+        return iteration == (towerDefense.getWave().getNumMobs() - 1);
+    }
+
+    private boolean handlePlayerOffline(TowerDefense towerDefense) {
+        Player player = Idletd.getInstance().getServer().getPlayer(towerDefense.getPlayerUUID());
+        if (Objects.isNull(player)) {
+            logger.warning("Player has an active TD Game but is not online: " + towerDefense.getPlayerUUID());
+            deactivateTDGame(towerDefense);
+            return true;
+        }
+        return false;
     }
 }

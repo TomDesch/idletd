@@ -76,4 +76,17 @@ public class TowerDefense {
             livingMobs = new ArrayList<>();
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TowerDefense that = (TowerDefense) o;
+        return Objects.equals(playerUUID, that.playerUUID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(playerUUID);
+    }
 }

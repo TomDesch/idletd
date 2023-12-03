@@ -45,7 +45,7 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
-    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, towerDefenseService);
+    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
 
     // Commands
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, towerDefenseManager, towerDefenseService);
