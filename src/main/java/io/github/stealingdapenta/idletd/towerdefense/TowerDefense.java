@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TowerDefense {
     // table fields
-    private UUID playerUUID;
+    private final UUID playerUUID;
     private long plot;
     private int stageLevel;
 
