@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.listener;
 
-import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;

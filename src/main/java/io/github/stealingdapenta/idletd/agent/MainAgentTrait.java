@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.service.agent;
+package io.github.stealingdapenta.idletd.agent;
 
 import net.citizensnpcs.api.event.NPCClickEvent;
 import net.citizensnpcs.api.trait.Trait;

@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd;
 
+import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
@@ -10,7 +11,6 @@ import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
-import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.service.utils.Coloring;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
 import io.github.stealingdapenta.idletd.skin.SkinManager;
