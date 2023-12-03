@@ -44,16 +44,18 @@ public class TowerDefenseService {
         return towerDefense;
     }
 
-    private void fetchPlotIfNull(TowerDefense towerDefense) {
+    private Plot fetchPlotIfNull(TowerDefense towerDefense) {
         if (Objects.isNull(towerDefense.getFetchedPlot())) {
             towerDefense.setFetchedPlot(plotService.getPlot(towerDefense.getPlot()));
         }
+        return towerDefense.getFetchedPlot();
     }
 
-    private void fetchIdlePlayerIfNull(TowerDefense towerDefense) {
+    private IdlePlayer fetchIdlePlayerIfNull(TowerDefense towerDefense) {
         if (Objects.isNull(towerDefense.getFetchedPlayer())) {
             towerDefense.setFetchedPlayer(idlePlayerService.getIdlePlayer(towerDefense.getPlayerUUID()));
         }
+        return towerDefense.getFetchedPlayer();
     }
 
     public void startWave(TowerDefense towerDefense) {
@@ -74,19 +76,21 @@ public class TowerDefenseService {
                 int finalI = i;
                 long delayBetweenMobSummon = ONE_SECOND_IN_TICKS * i;
 
-
                 scheduler.runTaskLater(Idletd.getInstance(), () -> {
                     CustomMob mob = generateRandomMob(towerDefense);
                     mob.summon(plot.getMobSpawnLocation());
                     towerDefense.addMob(mob);
 
-                    // If this is the final iteration
-                    if (finalI == towerDefense.getWave().getNumMobs() - 1) {
+                    if (isFinalIteration(finalI, towerDefense)) {
                         towerDefense.setWaveActive(false);
                     }
                 }, delayBetweenMobSummon);
             }
         });
+    }
+
+    private boolean isFinalIteration(int iteration, TowerDefense towerDefense) {
+        return iteration == (towerDefense.getWave().getNumMobs() - 1);
     }
 
     public void handleWaveEnd(TowerDefense towerDefense) {
@@ -101,7 +105,7 @@ public class TowerDefenseService {
     private CustomMob generateRandomMob(TowerDefense towerDefense) {
 //        int mobLevel = 2 * towerDefense.getStageLevel() + random.nextInt((1 + towerDefense.getStageLevel())); // todo Adjust as needed
 
-        Plot plot = plotService.getPlot(towerDefense.getPlot());
+        Plot plot = fetchPlotIfNull(towerDefense);
 
         return switch (towerDefense.getWave().chooseMobType()) {
             case ZOMBIE -> new ZombieMob(plot);
@@ -109,7 +113,6 @@ public class TowerDefenseService {
             default -> new ZombieMob(plot);
         };
     }
-
 
     public void saveTowerDefense(TowerDefense towerDefense) {
         towerDefenseRepository.insertTowerDefense(towerDefense);

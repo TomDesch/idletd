@@ -57,7 +57,6 @@ public class TowerDefenseCommand implements CommandExecutor {
                 return true;
             }
 
-
             towerDefense = TowerDefense.builder()
                                        .plot(plot.getId())
                                        .playerUUID(idlePlayer.getPlayerUUID())
