@@ -11,7 +11,11 @@ import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.service.utils.Coloring;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
+import io.github.stealingdapenta.idletd.skin.SkinManager;
+import io.github.stealingdapenta.idletd.skin.SkinRepository;
+import io.github.stealingdapenta.idletd.skin.SkinService;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseRepository;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
@@ -32,25 +36,32 @@ public class Idletd extends JavaPlugin {
     public static Logger logger;
     private static volatile boolean shuttingDown = false;
     private static Idletd instance = null;
+
     // Repositories
     private final PlotRepository plotRepository = new PlotRepository();
     private final IdlePlayerRepository idlePlayerRepository = new IdlePlayerRepository();
     private final TowerDefenseRepository towerDefenseRepository = new TowerDefenseRepository();
+    private final SkinRepository skinRepository = new SkinRepository();
 
     // Handlers and services
+    private final Coloring coloring = new Coloring();
     private final CustomMobHandler customMobHandler = new CustomMobHandler();
     private final SchematicHandler schematicHandler = new SchematicHandler();
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
-    private final PlotCommand plotCommand = new PlotCommand(plotService);
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
-    private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
+    private final SkinService skinService = new SkinService(skinRepository, coloring);
+    private final SkinManager skinManager = new SkinManager(coloring, skinService);
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
+    // Managers
+    private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
 
     // Commands
-    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, towerDefenseManager, towerDefenseService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
+    private final PlotCommand plotCommand = new PlotCommand(plotService);
+
     // Listeners
+    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, towerDefenseManager, towerDefenseService);
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
 
