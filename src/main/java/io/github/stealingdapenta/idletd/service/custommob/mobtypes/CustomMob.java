@@ -17,6 +17,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
+import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
+import static io.github.stealingdapenta.idletd.service.utils.Time.ZERO_TICKS;
+
 @RequiredArgsConstructor
 @Setter
 @Getter
@@ -25,6 +28,7 @@ public abstract class CustomMob {
     protected EntityType entityType;
     protected Mob mob;
     protected Plot plot;
+    protected int level;
 
     protected double ARMOR = 1.0;
     protected double ATTACK_DAMAGE = 1.0;
@@ -33,13 +37,14 @@ public abstract class CustomMob {
     protected double KNOCKBACK_RESISTANCE = 1.0;
     protected double MAX_HEALTH = 10.0;
     protected double MOVEMENT_SPEED = 0.2;
-    protected TextComponent name = Component.text("Custom mob", TextColor.color(146, 9, 9)).toBuilder().build();
+
+    protected TextColor nameColor = TextColor.color(146, 9, 9);
 
     public Mob summon(Location location) {
         MobWrapperBuilder customMob = new MobWrapperBuilder()
                 .playerUUID(plot.getPlayerUUID())
                 .location(location)
-                .name(name)
+                .name(generateMobName())
                 .entityType(entityType)
                 .armor(ARMOR)
                 .attackDamage(ATTACK_DAMAGE)
@@ -50,17 +55,26 @@ public abstract class CustomMob {
                 .speed(MOVEMENT_SPEED);
 
         mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob).getSummonedEntity();
+
         // todo set Target to the main agent of the plot (we have this.plot)
         preventMobFromFallingTask();
+
+        generateMobName();
 
         return mob;
     }
 
+    private TextComponent generateMobName() {
+        String name = getEntityType().name() + " [Lv." + getLevel() + "]";
+        return Component.text(name, getNameColor()).toBuilder().build();
+    }
+
+    // todo in the future have one task for all mobs.
     private void preventMobFromFallingTask() {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (Objects.isNull(plot) || mob.isDead()) {
+                if (Objects.isNull(plot) || !mob.isValid()) {
                     cancel();
                 }
 
@@ -69,6 +83,6 @@ public abstract class CustomMob {
                     mob.teleport(plot.getMobSpawnLocation());
                 }
             }
-        }.runTaskTimer(Idletd.getInstance(), 0L, 30L);
+        }.runTaskTimer(Idletd.getInstance(), ZERO_TICKS, 2 * ONE_SECOND_IN_TICKS);
     }
 }
