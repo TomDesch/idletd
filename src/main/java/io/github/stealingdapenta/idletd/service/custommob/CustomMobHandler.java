@@ -4,43 +4,76 @@ import io.github.stealingdapenta.idletd.Idletd;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @RequiredArgsConstructor
 public class CustomMobHandler {
-    private final ArrayList<LivingEntity> livingCustomMobs = new ArrayList<>();
-    private final String CUSTOM_MOB_TAG = "custom_mob";
+    private static CustomMobHandler instance;
+    private final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
+    private final String CUSTOM_MOB_TAG = "idletd_mob";
+    private final String PLAYER_TAG = "related_p";
 
-    public String getCUSTOM_MOB_TAG() {
-        return this.CUSTOM_MOB_TAG;
+    public static CustomMobHandler getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new CustomMobHandler();
+        }
+        return instance;
     }
 
-    public void removeDeadMobs() {
-        this.livingCustomMobs.removeIf(Entity::isDead);
+    public String getPlayerTag() {
+        return PLAYER_TAG;
     }
 
-    public void addCustomMob(LivingEntity mob) {
-        this.livingCustomMobs.add(mob);
+    public String getCustomMobTag() {
+        return CUSTOM_MOB_TAG;
     }
 
-    public List<LivingEntity> getLivingCustomMobs() {
+    public NamespacedKey getCustomNameSpacedKey() {
+        return new NamespacedKey(Idletd.getInstance(), this.getCustomMobTag());
+    }
+
+    public NamespacedKey getPlayerNameSpacedKey() {
+        return new NamespacedKey(Idletd.getInstance(), this.getPlayerTag());
+    }
+
+    public void addCustomMob(MobWrapper mobWrapper) {
+        livingCustomMobs.add(mobWrapper);
+    }
+
+    public List<MobWrapper> getUpdatedLivingCustomMobs() {
+        removeDeadMobsFromList();
         return livingCustomMobs;
     }
 
-
-    public boolean isCustomMob(LivingEntity mob) {
-        NamespacedKey namespacedKey = new NamespacedKey(Idletd.getInstance(), this.getCUSTOM_MOB_TAG());
-        return Boolean.TRUE.equals(mob.getPersistentDataContainer().get(namespacedKey, PersistentDataType.BOOLEAN));
+    public void removeDeadMobsFromList() {
+        livingCustomMobs.removeIf(mobWrapper -> {
+            LivingEntity livingMob = mobWrapper.getSummonedEntity();
+            if (Objects.nonNull(livingMob)) {
+                return livingMob.isDead();
+            }
+            return true;
+        });
     }
 
-    public void setNewTarget(LivingEntity mob, LivingEntity target) {
-        if (! (mob instanceof Creature entityCreature)) return; // todo error handling
+    public boolean isCustomMob(LivingEntity livingEntity) {
+        return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer().get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+    }
+
+    public void setNewTarget(MobWrapper mobWrapper, LivingEntity target) {
+        if (!(mobWrapper.getSummonedEntity() instanceof Creature entityCreature)) return;
         entityCreature.setTarget(target);
     }
+
+    public MobWrapper spawnCustomMob(MobWrapperBuilder builder) {
+        MobWrapper mobWrapper = builder.build();
+        addCustomMob(mobWrapper);
+        return mobWrapper;
+    }
 }
+

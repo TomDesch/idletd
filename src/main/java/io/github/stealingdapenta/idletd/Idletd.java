@@ -4,20 +4,17 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
-import io.github.stealingdapenta.idletd.listener.DamageIndicatorListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
-import io.github.stealingdapenta.idletd.listener.TrackerListener;
 import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
-import io.github.stealingdapenta.idletd.service.command.SpawnZombieCommand;
-import io.github.stealingdapenta.idletd.service.command.TrackerCommand;
+import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
-import io.github.stealingdapenta.idletd.service.customitem.InventoryHandler;
-import io.github.stealingdapenta.idletd.service.customitem.TrackerItem;
 import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
-import io.github.stealingdapenta.idletd.service.custommob.CustomMobSpawner;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseRepository;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,38 +24,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 
 public class Idletd extends JavaPlugin {
+    public static Logger logger;
     private static volatile boolean shuttingDown = false;
     private static Idletd instance = null;
-
     // Repositories
     private final PlotRepository plotRepository = new PlotRepository();
     private final IdlePlayerRepository idlePlayerRepository = new IdlePlayerRepository();
+    private final TowerDefenseRepository towerDefenseRepository = new TowerDefenseRepository();
 
     // Handlers and services
-    private final InventoryHandler inventoryHandler = new InventoryHandler();
-    private final TrackerItem trackerItem = new TrackerItem();
     private final CustomMobHandler customMobHandler = new CustomMobHandler();
     private final SchematicHandler schematicHandler = new SchematicHandler();
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
-    private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository);
+    private final PlotCommand plotCommand = new PlotCommand(plotService);
+    private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
+    private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
+    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
 
     // Commands
-    private final TrackerCommand trackerCommand = new TrackerCommand(inventoryHandler, trackerItem);
-    private final CustomMobSpawner customMobSpawner = new CustomMobSpawner(customMobHandler);
-    private final SpawnZombieCommand spawnZombieCommand = new SpawnZombieCommand(customMobSpawner);
-    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
-
+    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, towerDefenseManager, towerDefenseService);
+    private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
     // Listeners
-    private final TrackerListener trackerListener = new TrackerListener(trackerItem, customMobHandler);
     private final SpawnListener spawnListener = new SpawnListener();
-    private final CustomMobListener customMobListener = new CustomMobListener();
-    private final DamageIndicatorListener damageIndicatorListener = new DamageIndicatorListener();
-    private final PlotCommand plotCommand = new PlotCommand(plotService);
+    private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
 
     public static void shutDown() {
         shuttingDown = true;
@@ -68,9 +62,14 @@ public class Idletd extends JavaPlugin {
         return instance;
     }
 
+    public static boolean isShuttingDown() {
+        return shuttingDown;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
+        logger = this.getLogger();
 
         this.copyResourcesToDataFolder();
 
@@ -78,24 +77,23 @@ public class Idletd extends JavaPlugin {
         this.registerEvents();
 
         this.pluginEnabledLog();
+
+        this.towerDefenseManager.initializeActiveGameManager();
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(this.getCommand("zombie")).setExecutor(spawnZombieCommand);
-        Objects.requireNonNull(this.getCommand("tracker")).setExecutor(trackerCommand);
         Objects.requireNonNull(this.getCommand("plot")).setExecutor(plotCommand);
         Objects.requireNonNull(this.getCommand("p")).setExecutor(plotCommand);
-    }
 
-    public static boolean isShuttingDown() {
-        return shuttingDown;
+        Objects.requireNonNull(this.getCommand("td")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("idletd")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("tower")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("towerdefense")).setExecutor(towerDefenseCommand);
     }
 
     private void registerEvents() {
-        Bukkit.getPluginManager().registerEvents(trackerListener, getInstance());
         Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
         Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
-        Bukkit.getPluginManager().registerEvents(damageIndicatorListener, getInstance());
         Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
     }
 

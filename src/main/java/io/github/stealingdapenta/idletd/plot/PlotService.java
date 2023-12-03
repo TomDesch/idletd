@@ -8,39 +8,38 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE_WORLD;
 
 @RequiredArgsConstructor
 public class PlotService {
     private static final int PLOT_SIZE = 500;
-    private static final Logger logger = Idletd.getInstance().getLogger();
-    private static final Vector RELATIVE_TOWER_COORDINATES = new Vector(200, 80, 50);
-    private static final Vector RELATIVE_PLAYER_SPAWN_COORDINATES = new Vector(200, 90, 43);
     private final SchematicHandler schematicHandler;
     private final PlotRepository plotRepository;
     private Plot lastGeneratedPlot = null;
 
     public Plot generatePlotWithTower(Player player) {
-        logger.info("Commencing plot generation.");
         Plot plot = this.generatePlotForPlayer(player);
 
         logger.info("Started pasting structure in plot.");
         this.pasteTowerInPlot(plot);
         return plot;
+    }
+
+    public Plot getPlot(long id) {
+        return this.plotRepository.getPlotById(id);
     }
 
     public Plot generatePlotForPlayer(Player player) {
@@ -70,15 +69,13 @@ public class PlotService {
         int startX = currentColumn * PLOT_SIZE;
         int startZ = currentRow * PLOT_SIZE;
 
-        logger.info("Plot generation new x and Z: " + startX + " " + startZ);
-
         Plot plot = Plot.builder()
                         .startX(startX)
                         .startZ(startZ)
                         .playerUUID(player.getUniqueId())
                         .build();
         generatePlot(plot);
-        PlotRepository.insertPlot(plot);
+        PlotRepository.savePlot(plot);
         this.lastGeneratedPlot = plot;
 
         logger.info("Finishing plot generation.");
@@ -86,33 +83,22 @@ public class PlotService {
     }
 
     public void pasteTowerInPlot(Plot plot) {
-        Location pasteLocation = calculateTowerLocation(plot);
-        logger.info("Commencing pasting new structure for plot ID: " + plot.getId());
+        Location pasteLocation = plot.calculateTowerLocation();
+        logger.info("Commencing pasting new structure for plot.");
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
     }
 
-    private Location calculateLocation(Plot plot, Vector offset) {
-        double x = plot.getStartX() + offset.getX();
-        double y = offset.getY();  // Y offset is absolute
-        double z = plot.getStartZ() + offset.getZ();
-        return new Location(TOWER_DEFENSE_WORLD.getBukkitWorld(), x, y, z);
+    public Plot findPlot(Player player) {
+        return findPlot(player.getUniqueId());
     }
 
-    private Location calculateTowerLocation(Plot plot) {
-        return calculateLocation(plot, RELATIVE_TOWER_COORDINATES);
-    }
-
-    public Location getPlayerSpawnPoint(Plot plot) {
-        return calculateLocation(plot, RELATIVE_PLAYER_SPAWN_COORDINATES);
-    }
-
-    public Plot findOwnedPlot(Player player) {
-        CompletableFuture<Plot> asyncPlot = this.plotRepository.asyncGetPlotByUUID(player.getUniqueId().toString());
+    public Plot findPlot(UUID uuid) {
+        CompletableFuture<Plot> asyncPlot = this.plotRepository.asyncGetPlotByUUID(uuid.toString());
         try {
             return asyncPlot.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            logger.warning("SOMETHINGS WRONG I CAN FEEL IT 35");
+            logger.warning("Error finding plot for player.");
         }
         return null;
     }
@@ -135,7 +121,6 @@ public class PlotService {
         return -1;
     }
 
-
     public Plot getLastGeneratedPlot() {
         if (lastGeneratedPlot == null) {
             CompletableFuture<Plot> asyncPlot = plotRepository.asyncGetLatestPlot();
@@ -143,7 +128,7 @@ public class PlotService {
                 lastGeneratedPlot = asyncPlot.get(); // This blocks until the async operation completes
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace(); // Handle exceptions appropriately
-                logger.warning("SOMETHINGS WRONG I CAN FEEL IT 3");
+                logger.warning("Error getting last generated plot.");
             }
         }
         return lastGeneratedPlot;

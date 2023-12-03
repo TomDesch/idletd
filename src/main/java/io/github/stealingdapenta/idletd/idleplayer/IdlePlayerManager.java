@@ -2,28 +2,24 @@ package io.github.stealingdapenta.idletd.idleplayer;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import io.github.stealingdapenta.idletd.Idletd;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 @RequiredArgsConstructor
 @Getter
 @Setter
 public class IdlePlayerManager {
-    private static final Logger logger = Idletd.getInstance().getLogger();
-    private static final List<IdlePlayer> onlinePlayers = new ArrayList<>();
+    private static final Set<IdlePlayer> onlinePlayers = new HashSet<>();
     private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
     private static volatile Set<UUID> noLoginAllowed = new HashSet<>();
     private final IdlePlayerService idlePlayerService;
@@ -37,12 +33,10 @@ public class IdlePlayerManager {
     }
 
     public boolean registerOnlinePlayer(IdlePlayer idlePlayer) {
-        if (onlinePlayers.contains(idlePlayer)) return false;
         return onlinePlayers.add(idlePlayer);
     }
 
     public boolean deregisterOnlinePlayer(IdlePlayer idlePlayer) {
-        if (!onlinePlayers.contains(idlePlayer)) return false;
         return onlinePlayers.remove(idlePlayer);
     }
 
@@ -50,28 +44,27 @@ public class IdlePlayerManager {
         // Generate player scoreboard
         // Generate stuff based on settings e.g. username
         // Handle lastLogin time etc
-        idlePlayerService.getPlayer(idlePlayer.getPlayerUUIDAsUUID()).setGlowing(false);
+        idlePlayerService.getPlayer(idlePlayer.getPlayerUUID()).setGlowing(false);
     }
 
 
     public void savePlayerData(IdlePlayer idlePlayer) {
-        if (Objects.isNull(idlePlayer) || noLoginAllowed.contains(idlePlayer.getPlayerUUIDAsUUID())) {
+        if (Objects.isNull(idlePlayer) || noLoginAllowed.contains(idlePlayer.getPlayerUUID())) {
             return;
         }
 
         // Protect data integrity by not allowing the player to log back in during this process.
-        noLoginAllowed.add(idlePlayer.getPlayerUUIDAsUUID());
+        noLoginAllowed.add(idlePlayer.getPlayerUUID());
 
         try {
-            // todo saving data
-
+            idlePlayerService.updateIdlePlayer(idlePlayer);
         } catch (Exception e) {
             logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer).getName());
             e.printStackTrace();
         } finally {
             if (!isShuttingDown()) {
                 deregisterOnlinePlayer(idlePlayer);
-                noLoginAllowed.remove(idlePlayer.getPlayerUUIDAsUUID());
+                noLoginAllowed.remove(idlePlayer.getPlayerUUID());
             }
         }
     }
