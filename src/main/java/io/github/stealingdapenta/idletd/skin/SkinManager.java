@@ -21,6 +21,7 @@ import java.util.List;
 public class SkinManager implements Listener {
     private final Coloring coloring;
     private final SkinService skinService;
+    // todo unlocking, redeeming, changing ...
 
 //    public Inventory createInventory() {
 //        // todo untested

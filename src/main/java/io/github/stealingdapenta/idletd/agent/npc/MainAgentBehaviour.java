@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.agent;
+package io.github.stealingdapenta.idletd.agent.npc;
 
 import net.citizensnpcs.api.ai.tree.Behavior;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;

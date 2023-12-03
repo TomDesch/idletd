@@ -18,7 +18,7 @@ public class AgentManager {
     private final AgentService agentService;
 
     public boolean activateAgent(Agent agent) {
-        // Summon npc todo
+        agentService.summonNPC(agent);
         return activeAgents.add(agent);
     }
 

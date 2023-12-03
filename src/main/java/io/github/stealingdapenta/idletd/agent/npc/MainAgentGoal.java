@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.agent;
+package io.github.stealingdapenta.idletd.agent.npc;
 
 import io.github.stealingdapenta.idletd.plot.Plot;
 import lombok.Getter;
