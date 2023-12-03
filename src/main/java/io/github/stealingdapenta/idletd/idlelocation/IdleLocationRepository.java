@@ -13,8 +13,7 @@ import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataS
 
 @RequiredArgsConstructor
 public class IdleLocationRepository {
-
-    public void saveIdleLocation(IdleLocation idleLocation) {
+    public int saveIdleLocation(IdleLocation idleLocation) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO LOCATION (WORLD_NAME, LOCATION_X, LOCATION_Y, LOCATION_Z, LOCATION_YAW, LOCATION_PITCH) VALUES (?, ?, ?, ?, ?, ?)",
@@ -22,10 +21,20 @@ public class IdleLocationRepository {
 
             prepareIdleLocationStatement(idleLocation, statement);
             statement.execute();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Failed to get ID for the saved IdleLocation.");
+                }
+            }
         } catch (SQLException e) {
             logger.severe("Error saving IdleLocation: " + e.getMessage());
+            return -1; // or throw a specific exception based on your error handling strategy
         }
     }
+
 
     public IdleLocation getIdleLocation(int id) {
         try (Connection connection = getDataSource().getConnection();
