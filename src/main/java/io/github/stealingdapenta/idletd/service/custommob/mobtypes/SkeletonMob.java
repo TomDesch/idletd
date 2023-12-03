@@ -1,24 +1,28 @@
 package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.plot.Plot;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.EntityType;
 
 public class SkeletonMob extends CustomMob {
 
-    public SkeletonMob(Plot plot) {
+    public SkeletonMob(Plot plot, int level) {
         super();
         this.plot = plot;
-
+        this.level = level;
         this.entityType = EntityType.SKELETON;
+        this.nameColor = generateNameColor();
 
         this.ARMOR = 2.0;
         this.ATTACK_DAMAGE = 3.0;
-
         this.MAX_HEALTH = 14;
 
-        this.name = Component.text("Skeleton [Lv. 100]", TextColor.color(0, 0, 120)).toBuilder().build();
     }
 
+    // Goes from light red to dark red based on Level (peaking at Lv. 1000)
+    private TextColor generateNameColor() {
+        int colorValue = 156 - level / 5;
+        colorValue = Math.max(colorValue, 0);
+        return TextColor.color(colorValue, colorValue, colorValue);
+    }
 }

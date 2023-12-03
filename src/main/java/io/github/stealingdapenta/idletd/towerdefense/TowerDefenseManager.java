@@ -63,7 +63,6 @@ public class TowerDefenseManager {
         copyOfActiveGames.forEach(this::doWaveCycle);
     }
 
-
     private void doWaveCycle(TowerDefense towerDefense) {
         handleWaveEnd(towerDefense);
         towerDefense.updateLivingMobs();
@@ -100,13 +99,17 @@ public class TowerDefenseManager {
         // Countdown between waves can be made into a customizable setting todo
         Countdown.startCountdown(idlePlayerService.getPlayer(towerDefense.getPlayerUUID()), 5, ONE_SECOND_IN_TICKS, end -> {
             towerDefense.setWaveStartTime(System.currentTimeMillis());
-            towerDefense.setWave(WaveConfiguration.getByLevel(towerDefense.getStageLevel()));
+            towerDefense.setWave(new WaveConfiguration(towerDefense.getStageLevel()));
+
+            // Event where player logs out during the countdown
+            if (handlePlayerOffline(towerDefense)) return;
 
             idlePlayerService.getPlayer(towerDefense.getPlayerUUID()).sendMessage(">> Starting wave " + towerDefense.getStageLevel() + "!");
 
             BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+            int amountOfMobsToSpawn = towerDefense.getWave().getAmountOfMobs();
 
-            for (int i = 0; i < towerDefense.getWave().getNumMobs(); i++) {
+            for (int i = 0; i < amountOfMobsToSpawn; i++) {
                 int finalI = i;
                 long delayBetweenMobSummon = ONE_SECOND_IN_TICKS * i;
 
@@ -119,7 +122,7 @@ public class TowerDefenseManager {
                     mob.summon(plot.getMobSpawnLocation());
                     towerDefense.addMob(mob);
 
-                    if (isFinalIteration(finalI, towerDefense)) {
+                    if (isFinalIteration(finalI, amountOfMobsToSpawn)) {
                         towerDefense.setWaveActive(false);
                     }
                 }, delayBetweenMobSummon);
@@ -137,19 +140,19 @@ public class TowerDefenseManager {
     }
 
     private CustomMob generateRandomMob(TowerDefense towerDefense) {
-//        int mobLevel = 2 * towerDefense.getStageLevel() + random.nextInt((1 + towerDefense.getStageLevel())); // todo Adjust as needed
+        int mobLevel = towerDefense.getWave().getRandomMobLevelBasedOnStageLevel();
 
         Plot plot = towerDefenseService.fetchPlotIfNull(towerDefense);
 
         return switch (towerDefense.getWave().chooseMobType()) {
-            case ZOMBIE -> new ZombieMob(plot);
-            case SKELETON -> new SkeletonMob(plot);
-            default -> new ZombieMob(plot);
+            case ZOMBIE -> new ZombieMob(plot, mobLevel);
+            case SKELETON -> new SkeletonMob(plot, mobLevel);
+            default -> new ZombieMob(plot, mobLevel);
         };
     }
 
-    private boolean isFinalIteration(int iteration, TowerDefense towerDefense) {
-        return iteration == (towerDefense.getWave().getNumMobs() - 1);
+    private boolean isFinalIteration(int iteration, int amountOfMobsToSpawn) {
+        return iteration == (amountOfMobsToSpawn - 1);
     }
 
     private boolean handlePlayerOffline(TowerDefense towerDefense) {
