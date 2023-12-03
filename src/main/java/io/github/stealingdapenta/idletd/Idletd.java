@@ -1,6 +1,10 @@
 package io.github.stealingdapenta.idletd;
 
+import io.github.stealingdapenta.idletd.agent.AgentRepository;
+import io.github.stealingdapenta.idletd.agent.AgentService;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.idlelocation.IdleLocationRepository;
+import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
@@ -42,6 +46,8 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerRepository idlePlayerRepository = new IdlePlayerRepository();
     private final TowerDefenseRepository towerDefenseRepository = new TowerDefenseRepository();
     private final SkinRepository skinRepository = new SkinRepository();
+    private final IdleLocationRepository idleLocationRepository = new IdleLocationRepository();
+    private final AgentRepository agentRepository = new AgentRepository();
 
     // Handlers and services
     private final Coloring coloring = new Coloring();
@@ -51,10 +57,13 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
     private final SkinService skinService = new SkinService(skinRepository, coloring);
-    private final SkinManager skinManager = new SkinManager(coloring, skinService);
-    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
+    private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
+    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService);
+
     // Managers
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
+    private final SkinManager skinManager = new SkinManager(coloring, skinService);
+    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
 
     // Commands
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);

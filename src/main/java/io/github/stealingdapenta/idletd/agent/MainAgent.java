@@ -1,13 +1,11 @@
 package io.github.stealingdapenta.idletd.agent;
 
 import io.github.stealingdapenta.idletd.Idletd;
-import io.github.stealingdapenta.idletd.plot.Plot;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -42,8 +40,6 @@ public class MainAgent {
     // Slow ability?
     // Loot system on mobs <= more than just gold?
 
-    private final Player player;
-    private final Plot plot;
     //    private final Location position;
     private final List<Integer> skins = new ArrayList<>();
     private NPC npc;
@@ -53,14 +49,6 @@ public class MainAgent {
 
 //    private final PlotService plotService; todo add agent service
 
-
-    public MainAgent(Player player, Plot plot, Location position) {
-        this.player = player;
-        this.plot = plot;
-//        this.position = calculatePosition();
-        // todo link the object to the plot; and only spawn one <= CRUCIAL
-        // if there already is one, dont spawn a new one
-    }
 
     private boolean isCitizensEnabled() {
         Plugin citizens = Idletd.getInstance().getServer().getPluginManager().getPlugin("Citizens");
