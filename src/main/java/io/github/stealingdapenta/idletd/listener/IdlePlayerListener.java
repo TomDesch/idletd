@@ -1,9 +1,11 @@
 package io.github.stealingdapenta.idletd.listener;
 
-import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefense;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
+import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,9 +19,10 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Objects;
-import java.util.logging.Logger;
+import java.util.UUID;
 
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getNoLoginAllowed;
 import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getOfflinePlayerCache;
 
@@ -29,9 +32,10 @@ import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getO
 public class IdlePlayerListener implements Listener {
     private static final String IDLETD_UNAVAILABLE = "&cIdle TD is currently unavailable";
     private static final String WAIT_BEFORE_LOGGING = "&cPlease wait before logging in!";
-    private static final Logger logger = Idletd.getInstance().getLogger();
     private final IdlePlayerManager idlePlayerManager;
     private final IdlePlayerService idlePlayerService;
+    private final TowerDefenseManager towerDefenseManager;
+    private final TowerDefenseService towerDefenseService;
     private long lastNewPlayer = -1;
 
     @EventHandler
@@ -48,6 +52,7 @@ public class IdlePlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
 
         if (isShuttingDown()) {
             player.kick(Component.text(IDLETD_UNAVAILABLE));
@@ -56,20 +61,18 @@ public class IdlePlayerListener implements Listener {
 
         IdlePlayer idlePlayer;
 
-        IdlePlayer cachedIdlePlayer = getOfflinePlayerCache().getIfPresent(player.getUniqueId());
+        IdlePlayer cachedIdlePlayer = getOfflinePlayerCache().getIfPresent(uuid);
         if (Objects.nonNull(cachedIdlePlayer)) {
             idlePlayer = cachedIdlePlayer;
             idlePlayerManager.registerOnlinePlayer(idlePlayer);
-            getOfflinePlayerCache().invalidate(player.getUniqueId());
+            getOfflinePlayerCache().invalidate(uuid);
         } else {
-            // todo get player from DB (async)
-            // what if player not in DB?
-            // generate new IdlePlayer in db
+            idlePlayer = idlePlayerService.getIdlePlayer(uuid);
+
+            if (Objects.isNull(idlePlayer)) {
+                idlePlayer = idlePlayerService.createNewIdlePlayer(uuid);
+            }
             // broadcast welcome msg
-            idlePlayer = IdlePlayer.builder()
-                                   .playerUUID(player.getUniqueId().toString())
-                                   .balance(0)
-                                   .build();
         }
 
         idlePlayerManager.postLogin(idlePlayer);
@@ -89,9 +92,18 @@ public class IdlePlayerListener implements Listener {
             IdlePlayer idlePlayer = idlePlayerService.getIdlePlayer(player);
             if (!isShuttingDown()) {
                 idlePlayerManager.savePlayerData(idlePlayer);
+                deactivateAndSaveTDGame(idlePlayer);
             }
         } catch (Exception e) {
             logger.warning("Error in log out operations for " + player.getName());
+        }
+    }
+
+    private void deactivateAndSaveTDGame(IdlePlayer idlePlayer) {
+        TowerDefense towerDefense = towerDefenseManager.getActiveTDGame(idlePlayer);
+        if (Objects.nonNull(towerDefense)) {
+            towerDefenseManager.deactivateTDGame(towerDefense);
+            towerDefenseService.updateTowerDefense(towerDefense);
         }
     }
 

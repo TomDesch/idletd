@@ -21,14 +21,14 @@ public class GoToPlotCommand implements CommandExecutor {
             return false;
         }
 
-        Plot existingPlot = plotService.findOwnedPlot(player);
+        Plot existingPlot = plotService.findPlot(player);
 
         if (Objects.isNull(existingPlot)) {
             player.sendMessage("Can not find an existing plot for " + player.getName() + ". Creating new plot.");
             existingPlot = this.plotService.generatePlotWithTower(player);
         }
 
-        player.teleport(plotService.getPlayerSpawnPoint(existingPlot));
+        player.teleport(existingPlot.getPlayerSpawnPoint());
         return true;
     }
 }
