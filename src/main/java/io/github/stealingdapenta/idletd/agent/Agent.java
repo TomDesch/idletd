@@ -16,10 +16,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Agent {
     // table fields
-    private final int id;
-    private final UUID playerUUID;
-    private final AgentType agentType;
-    private final int fkLocation;
+    private int id;
+    private UUID playerUUID;
+    private AgentType agentType;
+    private int fkLocation;
+
+    // todo update:
+    // Add active skin ID
 
 
     // calculated fields

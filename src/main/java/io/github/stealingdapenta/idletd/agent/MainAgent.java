@@ -14,8 +14,7 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 public class MainAgent {
-    // skin
-    // position -> 100% static
+
     // knockback resistant
     // Regeneration /s
     // "Overheal" (when full health, generate a shield at a lower rate)

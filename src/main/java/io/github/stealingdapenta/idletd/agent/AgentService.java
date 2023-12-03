@@ -6,7 +6,9 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class AgentService {
@@ -21,6 +23,16 @@ public class AgentService {
         return agent;
     }
 
+    public List<Agent> findAllForPlayer(IdlePlayer idlePlayer) {
+        return findAllForPlayer(idlePlayer.getPlayerUUID());
+    }
+
+    public List<Agent> findAllForPlayer(UUID uuid) {
+        List<Agent> agents = agentRepository.getAgentsByPlayerUUID(uuid);
+        agents.forEach(this::fetchFields);
+        return agents;
+    }
+
     public void saveAgent(Agent agent) {
         agentRepository.saveAgent(agent);
     }
@@ -31,6 +43,11 @@ public class AgentService {
 
     public void deleteAgent(Agent agent) {
         agentRepository.deleteAgent(agent.getId());
+    }
+
+    private void fetchFields(Agent agent) {
+        fetchIdlePlayerIfNull(agent);
+        fetchLocationIfNull(agent);
     }
 
     public IdlePlayer fetchIdlePlayerIfNull(Agent agent) {
