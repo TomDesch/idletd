@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static io.github.stealingdapenta.idletd.Idletd.logger;
@@ -48,6 +50,28 @@ public class AgentRepository {
         }
         return null;
     }
+
+    public List<Agent> getAgentsByPlayerUUID(UUID playerUUID) {
+        List<Agent> agentList = new ArrayList<>();
+
+        try (Connection connection = getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM AGENT WHERE PLAYERUUID = ?")) {
+
+            statement.setString(1, playerUUID.toString());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    agentList.add(convertResultSet(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            logger.severe("Error getting Agents by PLAYERUUID: " + e.getMessage());
+        }
+
+        return agentList;
+    }
+
 
     public void updateAgent(Agent agent) {
         try (Connection connection = getDataSource().getConnection();

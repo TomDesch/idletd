@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd;
 
+import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentRepository;
 import io.github.stealingdapenta.idletd.agent.AgentService;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
@@ -56,21 +57,19 @@ public class Idletd extends JavaPlugin {
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
-    private final SkinService skinService = new SkinService(skinRepository, coloring);
-    private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
-    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService);
-
-    // Managers
-    private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService);
-    private final SkinManager skinManager = new SkinManager(coloring, skinService);
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
-
     // Commands
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
     private final PlotCommand plotCommand = new PlotCommand(plotService);
-
+    private final SkinService skinService = new SkinService(skinRepository, coloring);
+    private final SkinManager skinManager = new SkinManager(coloring, skinService);
+    private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
+    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService);
+    // Managers
+    private final AgentManager agentManager = new AgentManager(agentService);
+    private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, agentManager, towerDefenseManager, towerDefenseService);
     // Listeners
-    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, towerDefenseManager, towerDefenseService);
+    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
 
