@@ -1,6 +1,5 @@
 package io.github.stealingdapenta.idletd.skin;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +8,6 @@ import java.util.Objects;
 
 @Builder
 @Data
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class Skin {
     private final long id;
