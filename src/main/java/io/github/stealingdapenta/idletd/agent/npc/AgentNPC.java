@@ -84,7 +84,7 @@ public class AgentNPC {
             public void run() {
                 updateSkin();
             }
-        }.runTaskLater(Idletd.getInstance(), 3 * ONE_TICK);
+        }.runTaskLater(Idletd.getInstance(), 5 * ONE_TICK);
     }
 
     public void updateSkin() {
