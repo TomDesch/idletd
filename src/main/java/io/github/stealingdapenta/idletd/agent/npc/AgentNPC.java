@@ -18,6 +18,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.Objects;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -66,6 +68,11 @@ public class AgentNPC {
     private void updateSkin() {
         SkinnableEntity skinnableEntity = (SkinnableEntity) npc.getEntity();
 
+        if (Objects.isNull(skinnableEntity)) {
+            logger.warning("Error updating skin for NPC " + npc.getFullName() + ". Reason: entity = null.");
+            return;
+        }
+
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
 
         skinTrait.setSkinPersistent(currentSkin.getName(), currentSkin.getSignatureToken(), currentSkin.getDataToken());
@@ -81,10 +88,10 @@ public class AgentNPC {
 
         if (Objects.isNull(npc)) {
             this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, Objects.nonNull(name) ? name : "DEFAULT NAME");
-            updateSkin();
         }
 
         this.npc.spawn(location);
+        updateSkin();
     }
 
     public void updateTarget() {

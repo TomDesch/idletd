@@ -23,7 +23,7 @@ public class AgentManager {
     }
 
     public boolean deactivateAgent(Agent agent) {
-        // Desummon npc todo
+        agentService.despawnAndDestroyNPC(agent);
         return activeAgents.remove(agent);
     }
 

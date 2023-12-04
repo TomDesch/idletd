@@ -33,13 +33,4 @@ public class MainAgentGoal implements Goal {
     public boolean shouldExecute(GoalSelector goalSelector) {
         return true;
     }
-
-
-    private Location calculatePosition() {
-        Location spawnLocation = plot.getPlayerSpawnPoint();
-        spawnLocation.add(0d, -10d, -8d);
-        spawnLocation.setYaw(180); // Facing north
-        spawnLocation.setPitch(0);
-        return spawnLocation;
-    }
 }
