@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Objects;
 import java.util.UUID;
 
 import static io.github.stealingdapenta.idletd.Idletd.logger;
@@ -18,8 +20,11 @@ public class IdlePlayerRepository {
 
             statement.setString(1, idlePlayer.getPlayerUUID().toString());
             statement.setDouble(2, idlePlayer.getBalance());
-            Long fkPlot = idlePlayer.getFkPlot(); // Long = null pointer safe; long isn't
-            statement.setLong(3, fkPlot);
+            if (Objects.isNull(idlePlayer.getFkPlot())) {
+                statement.setNull(3, Types.BIGINT);
+            } else {
+                statement.setLong(3, idlePlayer.getFkPlot());
+            }
 
             statement.execute();
         } catch (SQLException e) {
