@@ -68,7 +68,7 @@ public class AgentNPC {
 
         SkinTrait skinTrait = npc.getOrAddTrait(SkinTrait.class);
 
-        skinTrait.setSkinPersistent(currentSkin.getName(), currentSkin.getDataToken(), currentSkin.getSignatureToken());
+        skinTrait.setSkinPersistent(currentSkin.getName(), currentSkin.getSignatureToken(), currentSkin.getDataToken());
         npc.addTrait(skinTrait);
         skinnableEntity.getSkinTracker().notifySkinChange(true);
     }
