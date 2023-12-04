@@ -15,10 +15,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
 import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_TICK;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -65,7 +67,27 @@ public class AgentNPC {
         return Objects.nonNull(citizens) && citizens.isEnabled();
     }
 
-    private void updateSkin() {
+    public void spawn() {
+        if (!isCitizensEnabled()) {
+            Idletd.getInstance().getLogger().severe("Citizens not found or not enabled");
+            return;
+        }
+
+        if (Objects.isNull(npc)) {
+            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, Objects.nonNull(name) ? name : "DEFAULT NAME");
+        }
+
+        this.npc.spawn(location);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                updateSkin();
+            }
+        }.runTaskLater(Idletd.getInstance(), 3 * ONE_TICK);
+    }
+
+    public void updateSkin() {
         SkinnableEntity skinnableEntity = (SkinnableEntity) npc.getEntity();
 
         if (Objects.isNull(skinnableEntity)) {
@@ -78,20 +100,6 @@ public class AgentNPC {
         skinTrait.setSkinPersistent(currentSkin.getName(), currentSkin.getSignatureToken(), currentSkin.getDataToken());
         npc.addTrait(skinTrait);
         skinnableEntity.getSkinTracker().notifySkinChange(true);
-    }
-
-    public void spawn() {
-        if (!isCitizensEnabled()) {
-            Idletd.getInstance().getLogger().severe("Citizens not found or not enabled");
-            return;
-        }
-
-        if (Objects.isNull(npc)) {
-            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, Objects.nonNull(name) ? name : "DEFAULT NAME");
-        }
-
-        this.npc.spawn(location);
-        updateSkin();
     }
 
     public void updateTarget() {
