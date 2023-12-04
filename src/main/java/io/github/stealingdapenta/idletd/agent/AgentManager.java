@@ -30,10 +30,8 @@ public class AgentManager {
     public void activateAllAgents(IdlePlayer idlePlayer) {
         List<Agent> agents = agentService.findAllForPlayer(idlePlayer);
         if (Objects.isNull(agents) || agents.isEmpty()) {
-            logger.info("No agents found in DB for " + idlePlayer.getPlayerUUID().toString());
             return;
         }
-
         agents.forEach(this::activateAgent);
     }
 

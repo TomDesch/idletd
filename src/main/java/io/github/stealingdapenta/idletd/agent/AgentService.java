@@ -27,8 +27,7 @@ public class AgentService {
 
     public Agent getAgent(int id) {
         Agent agent = agentRepository.getAgent(id);
-        fetchIdlePlayerIfNull(agent);
-        fetchLocationIfNull(agent);
+        fetchFields(agent);
         return agent;
     }
 
@@ -59,6 +58,7 @@ public class AgentService {
         }
 
         agentNPC.setCurrentSkin(agent.getFetchedSkin());
+        agentNPC.setLocation(agent.getFetchedLocation());
         agentNPC.spawn();
         agentNPC.updateTarget();
         return agentNPC;
@@ -69,7 +69,15 @@ public class AgentService {
     }
 
     public List<Agent> findAllForPlayer(IdlePlayer idlePlayer) {
-        return findAllForPlayer(idlePlayer.getPlayerUUID());
+        List<Agent> agents = findAllForPlayer(idlePlayer.getPlayerUUID());
+        if (Objects.isNull(agents) || agents.isEmpty()) {
+            logger.info("No agents found in DB for " + idlePlayer.getPlayerUUID().toString());
+            return agents;
+        }
+
+        logger.info("Amount of agents found: " + agents.size());
+        agents.forEach(this::fetchFields);
+        return agents;
     }
 
     private List<Agent> findAllForPlayer(UUID uuid) {
