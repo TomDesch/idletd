@@ -32,6 +32,12 @@ public class AgentService {
         return agent;
     }
 
+    public void despawnAndDestroyNPC(Agent agent) {
+        agent.getAgentNPC().getNpc().despawn();
+        agent.getAgentNPC().getNpc().destroy();
+        agent.getAgentNPC().setNpc(null);
+    }
+
     public AgentNPC summonNPC(Agent agent) {
         AgentNPC agentNPC = agent.getAgentNPC();
         Player owner = idlePlayerService.getPlayer(agent.getPlayerUUID());
