@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.agent;
 
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
+import io.github.stealingdapenta.idletd.skin.Skin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,14 +22,13 @@ public class Agent {
     private UUID playerUUID;
     private AgentType agentType;
     private int fkLocation;
-
-    // todo save in db
-    private int activeSkinId = 5;
+    private int activeSkinId;
 
 
     // calculated fields
     private IdlePlayer fetchedPlayer;
     private Location fetchedLocation;
+    private Skin fetchedSkin;
     private AgentNPC agentNPC;
 
     @Override
