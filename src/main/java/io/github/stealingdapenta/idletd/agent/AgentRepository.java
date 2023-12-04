@@ -24,7 +24,7 @@ public class AgentRepository {
                                                                        Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, agent.getPlayerUUID().toString());
-            statement.setInt(2, agent.getAgentType().getId());
+            statement.setInt(2, agent.getAgentType().getTypeId());
             statement.setLong(3, agent.getFkLocation());
             statement.setInt(4, agent.getActiveSkinId());
 
@@ -80,7 +80,7 @@ public class AgentRepository {
                      "UPDATE AGENT SET PLAYERUUID=?, AGENT_TYPE=?, FK_LOCATION=?, ACTIVE_SKIN_ID=? WHERE ID=?")) {
 
             statement.setString(1, agent.getPlayerUUID().toString());
-            statement.setInt(2, agent.getAgentType().ordinal());
+            statement.setInt(2, agent.getAgentType().getTypeId());
             statement.setLong(3, agent.getFkLocation());
             statement.setInt(4, agent.getActiveSkinId());
             statement.setInt(5, agent.getId());
