@@ -60,6 +60,7 @@ public class AgentCommand implements CommandExecutor {
                                .fkLocation(locationId)
                                .fetchedLocation(summonLocation)
                                .fetchedPlayer(idlePlayer)
+                               .activeSkinId(5)
                                .build();
 
             agentService.saveAgent(agent);

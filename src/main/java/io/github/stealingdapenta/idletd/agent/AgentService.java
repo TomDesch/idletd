@@ -5,6 +5,7 @@ import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.service.utils.EntityTracker;
+import io.github.stealingdapenta.idletd.skin.Skin;
 import io.github.stealingdapenta.idletd.skin.SkinService;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -40,11 +41,10 @@ public class AgentService {
                 logger.info("Attempted to summon an NPC for an agent that already has one.");
                 return agent.getAgentNPC();
             }
-
         } else {
             agentNPC = AgentNPC.builder()
                                .location(fetchLocationIfNull(agent))
-                               .currentSkin(skinService.getSkin(agent.getActiveSkinId()))
+                               .currentSkin(agent.getFetchedSkin())
                                .target(owner)
                                .name(agent.getAgentType().getName())
                                .levelHealth(100)
@@ -52,6 +52,7 @@ public class AgentService {
             agent.setAgentNPC(agentNPC);
         }
 
+        agentNPC.setCurrentSkin(agent.getFetchedSkin());
         agentNPC.spawn();
         agentNPC.updateTarget();
         return agentNPC;
@@ -86,6 +87,14 @@ public class AgentService {
     private void fetchFields(Agent agent) {
         fetchIdlePlayerIfNull(agent);
         fetchLocationIfNull(agent);
+        fetchSkinIfNull(agent);
+    }
+
+    private Skin fetchSkinIfNull(Agent agent) {
+        if (Objects.isNull(agent.getFetchedSkin())) {
+            agent.setFetchedSkin(skinService.getSkin(agent.getActiveSkinId()));
+        }
+        return agent.getFetchedSkin();
     }
 
     private IdlePlayer fetchIdlePlayerIfNull(Agent agent) {

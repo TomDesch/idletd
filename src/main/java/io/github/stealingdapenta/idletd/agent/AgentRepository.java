@@ -20,12 +20,13 @@ public class AgentRepository {
 
     public void saveAgent(Agent agent) {
         try (Connection connection = getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO AGENT (PLAYERUUID, AGENT_TYPE, FK_LOCATION) VALUES (?, ?, ?)",
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO AGENT (PLAYERUUID, AGENT_TYPE, FK_LOCATION, ACTIVE_SKIN_ID) VALUES (?, ?, ?, ?)",
                                                                        Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, agent.getPlayerUUID().toString());
             statement.setInt(2, agent.getAgentType().getId());
             statement.setLong(3, agent.getFkLocation());
+            statement.setInt(4, agent.getActiveSkinId());
 
             statement.execute();
         } catch (SQLException e) {
@@ -76,12 +77,13 @@ public class AgentRepository {
     public void updateAgent(Agent agent) {
         try (Connection connection = getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement(
-                     "UPDATE AGENT SET PLAYERUUID=?, AGENT_TYPE=?, FK_LOCATION=? WHERE ID=?")) {
+                     "UPDATE AGENT SET PLAYERUUID=?, AGENT_TYPE=?, FK_LOCATION=?, ACTIVE_SKIN_ID=? WHERE ID=?")) {
 
             statement.setString(1, agent.getPlayerUUID().toString());
             statement.setInt(2, agent.getAgentType().ordinal());
             statement.setLong(3, agent.getFkLocation());
-            statement.setInt(4, agent.getId());
+            statement.setInt(4, agent.getActiveSkinId());
+            statement.setInt(5, agent.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -109,6 +111,7 @@ public class AgentRepository {
                     .playerUUID(UUID.fromString(resultSet.getString("PLAYERUUID")))
                     .agentType(getAgentTypeById(resultSet.getInt("AGENT_TYPE")))
                     .fkLocation(resultSet.getInt("FK_LOCATION"))
+                    .activeSkinId(resultSet.getInt("ACTIVE_SKIN_ID"))
                     .build();
     }
 }
