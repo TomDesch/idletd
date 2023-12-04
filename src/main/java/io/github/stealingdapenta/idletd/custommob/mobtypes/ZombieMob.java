@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
+package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
