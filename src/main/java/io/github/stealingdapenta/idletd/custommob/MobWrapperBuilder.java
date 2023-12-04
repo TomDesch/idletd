@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.service.custommob;
+package io.github.stealingdapenta.idletd.custommob;
 
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;

@@ -1,9 +1,9 @@
-package io.github.stealingdapenta.idletd.service.custommob.mobtypes;
+package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.custommob.MobWrapperBuilder;
 import io.github.stealingdapenta.idletd.plot.Plot;
-import io.github.stealingdapenta.idletd.service.custommob.CustomMobHandler;
-import io.github.stealingdapenta.idletd.service.custommob.MobWrapperBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
