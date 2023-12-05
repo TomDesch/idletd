@@ -59,9 +59,6 @@ public class Idletd extends JavaPlugin {
     private final SchematicHandler schematicHandler = new SchematicHandler();
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
-    private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
-    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
-    private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
     private final BalanceHandler balanceHandler = new BalanceHandler(idlePlayerService);
     private final PlotCommand plotCommand = new PlotCommand(plotService);
     private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
@@ -70,6 +67,9 @@ public class Idletd extends JavaPlugin {
     private final EntityTracker entityTracker = new EntityTracker(customMobHandler);
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker);
     private final AgentManager agentManager = new AgentManager(agentService);
+    private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler, agentManager);
+    private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
+    private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager, agentManager);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, agentManager, towerDefenseManager, towerDefenseService);
     private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
