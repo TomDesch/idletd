@@ -17,6 +17,23 @@ public class AgentManager {
     private static final Set<Agent> activeAgents = new HashSet<>();
     private final AgentService agentService;
 
+    private boolean isActive(Agent agent) {
+        return activeAgents.contains(agent);
+    }
+
+    private boolean isInactive(Agent agent) {
+        return !isActive(agent);
+    }
+
+    public void activateAllInactiveAgents(IdlePlayer idlePlayer) {
+        List<Agent> agents = agentService.findAllForPlayer(idlePlayer);
+        if (Objects.isNull(agents) || agents.isEmpty()) {
+            return;
+        }
+        agents = agents.stream().filter(this::isInactive).toList();
+        agents.forEach(this::activateAgent);
+    }
+
     public boolean activateAgent(Agent agent) {
         agentService.summonNPC(agent);
         return activeAgents.add(agent);
@@ -25,14 +42,6 @@ public class AgentManager {
     public boolean deactivateAgent(Agent agent) {
         agentService.despawnAndDestroyNPC(agent);
         return activeAgents.remove(agent);
-    }
-
-    public void activateAllAgents(IdlePlayer idlePlayer) {
-        List<Agent> agents = agentService.findAllForPlayer(idlePlayer);
-        if (Objects.isNull(agents) || agents.isEmpty()) {
-            return;
-        }
-        agents.forEach(this::activateAgent);
     }
 
     private List<Agent> getAllActiveAgents(IdlePlayer idlePlayer) {

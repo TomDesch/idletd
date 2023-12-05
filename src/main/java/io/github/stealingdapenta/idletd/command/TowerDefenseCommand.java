@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.command;
 
+import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -27,6 +28,7 @@ public class TowerDefenseCommand implements CommandExecutor {
     private final TowerDefenseService towerDefenseService;
     private final IdlePlayerService idlePlayerService;
     private final TowerDefenseManager towerDefenseManager;
+    private final AgentManager agentManager;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -64,6 +66,10 @@ public class TowerDefenseCommand implements CommandExecutor {
                                        .build();
             towerDefenseService.saveTowerDefense(towerDefense);
         }
+
+
+        agentManager.activateAllInactiveAgents(idlePlayer);
+
 
         towerDefenseManager.activateTDGame(towerDefense);
 

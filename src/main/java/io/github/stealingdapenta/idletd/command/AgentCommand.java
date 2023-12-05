@@ -66,7 +66,7 @@ public class AgentCommand implements CommandExecutor {
             agentService.saveAgent(agent);
         }
 
-        agentManager.activateAllAgents(idlePlayer);
+        agentManager.activateAllInactiveAgents(idlePlayer);
         return true;
     }
 }

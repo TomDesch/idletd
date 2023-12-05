@@ -65,7 +65,7 @@ public class IdlePlayerManager {
         // Generate stuff based on settings e.g. username
         // Handle lastLogin time etc
         idlePlayerService.getPlayer(idlePlayer.getPlayerUUID()).setGlowing(false);
-        agentManager.activateAllAgents(idlePlayer);
+        agentManager.activateAllInactiveAgents(idlePlayer);
     }
 
     public void postLogOut(Player player) {
