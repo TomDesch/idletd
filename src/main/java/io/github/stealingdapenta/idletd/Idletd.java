@@ -63,7 +63,6 @@ public class Idletd extends JavaPlugin {
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
     private final BalanceHandler balanceHandler = new BalanceHandler(idlePlayerService);
-    private final PayCommand payCommand = new PayCommand(idlePlayerService, balanceHandler);
     private final PlotCommand plotCommand = new PlotCommand(plotService);
     private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
     private final SkinService skinService = new SkinService(skinRepository, coloring);
@@ -72,6 +71,7 @@ public class Idletd extends JavaPlugin {
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker);
     private final AgentManager agentManager = new AgentManager(agentService);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, agentManager, towerDefenseManager, towerDefenseService);
+    private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
