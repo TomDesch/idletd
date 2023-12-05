@@ -9,7 +9,7 @@ depend: [WorldGuard, FastAsyncWorldEdit, Citizens]
 
 commands:
   plot:
-    description:
+    description: Go to your plot.
     usage:
         /plot
         /plot new
@@ -23,3 +23,13 @@ commands:
   agent:
     description: Temporary debug command to summon main agent.
     usage: /<command>
+
+  bal:
+    description: Check your riches!
+    usage: /<command>
+    aliases: [money, balance]
+
+  pay:
+    description: Pay someone in ₰.
+    usage: /<command> <target> <amount>
+

@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getNoLoginAllowed;
 import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getOfflinePlayerCache;
 
@@ -58,7 +59,6 @@ public class IdlePlayerListener implements Listener {
         IdlePlayer cachedIdlePlayer = getOfflinePlayerCache().getIfPresent(uuid);
         if (Objects.nonNull(cachedIdlePlayer)) {
             idlePlayer = cachedIdlePlayer;
-            idlePlayerManager.registerOnlinePlayer(idlePlayer);
             getOfflinePlayerCache().invalidate(uuid);
         } else {
             idlePlayer = idlePlayerService.getIdlePlayer(uuid);
@@ -66,6 +66,9 @@ public class IdlePlayerListener implements Listener {
             if (Objects.isNull(idlePlayer)) {
                 idlePlayer = idlePlayerService.createNewIdlePlayer(uuid);
             }
+
+            boolean registered = idlePlayerManager.registerOnlinePlayer(idlePlayer);
+            logger.info("Registering online player was " + (registered ? "successful." : "unsuccessful!"));
             // broadcast welcome msg
         }
 
