@@ -32,12 +32,11 @@ public class DamageListener implements Listener {
 
     private final CustomMobHandler customMobHandler;
 
-    private Vector addRandomnessToVector(Vector vector, double accuracy) {
+    private Vector addRandomnessToArrowVector(Vector vector, double accuracy) {
         double x = vector.getX() + (Math.random() * 2 - 1) * accuracy;
-        double y = vector.getY() + (Math.random() * 2 - 1) * accuracy;
         double z = vector.getZ() + (Math.random() * 2 - 1) * accuracy;
 
-        return new Vector(x, y, z).normalize();
+        return new Vector(x, vector.getY(), z).normalize();
     }
 
 
@@ -93,7 +92,7 @@ public class DamageListener implements Listener {
         Vector targetDirection = targetLocation.toVector().subtract(arrowLocation.toVector()).normalize();
 
         double accuracy = 0.2; // Adjust this value for accuracy, 0 being 100% accurate
-        Vector randomizedDirection = addRandomnessToVector(targetDirection, accuracy);
+        Vector randomizedDirection = addRandomnessToArrowVector(targetDirection, accuracy);
         newArrow.setVelocity(randomizedDirection.multiply(newArrow.getVelocity().length()));
 
         // Add a persistent tag to the arrow to identify it as a custom arrow
