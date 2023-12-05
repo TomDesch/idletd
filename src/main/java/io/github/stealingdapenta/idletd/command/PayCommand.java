@@ -21,6 +21,7 @@ public class PayCommand implements CommandExecutor {
     private static final String NO_IDLE_TARGET = "Error finding target player. Please put a valid player name!";
     private static final String BALANCE = "Successful payment! Your balance of Guard now stands at %s ₰";
     private static final String FORMAT_ERROR = "Error formatting the amount! Please put a valid number.";
+    private static final String PAY_TO_SELF = "Paying yourself is like giving yourself a high five... Are you okay?";
     private static final String INSUFFICIENT_FUNDS = "Insufficient funds!";
     private final IdlePlayerService idlePlayerService;
     private final BalanceHandler balanceHandler;
@@ -39,7 +40,7 @@ public class PayCommand implements CommandExecutor {
         if (args.length < 2) return false;
 
         double amount;
-        String target = args[0].toLowerCase();
+        String target = args[0];
         Player targetPlayer = Idletd.getInstance().getServer().getPlayer(target);
         if (Objects.isNull(targetPlayer)) {
             targetPlayer = Idletd.getInstance().getServer().getOfflinePlayer(target).getPlayer();
@@ -62,6 +63,11 @@ public class PayCommand implements CommandExecutor {
         } catch (NumberFormatException e) {
             player.sendMessage(FORMAT_ERROR);
             return false;
+        }
+
+        if (idlePlayer.equals(idleTarget)) {
+            player.sendMessage(PAY_TO_SELF);
+            return true;
         }
 
         boolean successfulTransfer = balanceHandler.pay(idlePlayer, idleTarget, amount);
