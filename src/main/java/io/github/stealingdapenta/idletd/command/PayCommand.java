@@ -31,18 +31,17 @@ public class PayCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-        Player player = (Player) commandSender;
-        IdlePlayer idlePlayer = idlePlayerManager.getOnlineIdlePlayer(player);
+        Player sourcePlayer = (Player) commandSender;
+        IdlePlayer sourceIdlePlayer = idlePlayerManager.getOnlineIdlePlayer(sourcePlayer);
 
-        if (Objects.isNull(idlePlayer)) {
-            logger.severe(player.getName() + " doesn't have a linked IdlePlayer online.");
-            player.sendMessage(Component.text(NO_IDLE_PLAYER));
+        if (Objects.isNull(sourceIdlePlayer)) {
+            logger.severe(sourcePlayer.getName() + " doesn't have a linked IdlePlayer online.");
+            sourcePlayer.sendMessage(Component.text(NO_IDLE_PLAYER));
             return true;
         }
 
         if (args.length < 2) return false;
 
-        double amount;
         String target = args[0];
         Player targetPlayer = Idletd.getInstance().getServer().getPlayer(target);
 
@@ -55,7 +54,7 @@ public class PayCommand implements CommandExecutor {
         }
 
         if (Objects.isNull(idleTarget)) {
-            player.sendMessage(NO_IDLE_TARGET);
+            sourcePlayer.sendMessage(NO_IDLE_TARGET);
             return false;
         }
 
@@ -64,27 +63,28 @@ public class PayCommand implements CommandExecutor {
             idleTarget = idlePlayerManager.getOnlineIdlePlayer(idleTarget.getPlayerUUID());
         }
 
+        double amount;
         try {
             amount = Double.parseDouble(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(FORMAT_ERROR);
+            sourcePlayer.sendMessage(FORMAT_ERROR);
             return false;
         }
 
-        if (idlePlayer.equals(idleTarget)) {
-            player.sendMessage(PAY_TO_SELF);
+        if (sourceIdlePlayer.equals(idleTarget)) {
+            sourcePlayer.sendMessage(PAY_TO_SELF);
             return true;
         }
 
-        boolean successfulTransfer = balanceHandler.pay(idlePlayer, idleTarget, amount);
+        boolean successfulTransfer = balanceHandler.pay(sourceIdlePlayer, idleTarget, amount);
         if (successfulTransfer) {
-            player.sendMessage(BALANCE.formatted(idlePlayer.getBalance()));
+            sourcePlayer.sendMessage(BALANCE.formatted(sourceIdlePlayer.getBalance()));
 
             if (!targetIsOnline) {
                 idlePlayerService.saveIdlePlayer(idleTarget);
             }
         } else {
-            player.sendMessage(INSUFFICIENT_FUNDS);
+            sourcePlayer.sendMessage(INSUFFICIENT_FUNDS);
         }
         return true;
     }
