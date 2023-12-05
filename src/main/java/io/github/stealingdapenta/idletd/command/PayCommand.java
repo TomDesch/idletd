@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.command;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static io.github.stealingdapenta.idletd.Idletd.logger;
 
@@ -24,6 +26,7 @@ public class PayCommand implements CommandExecutor {
     private static final String PAY_TO_SELF = "Paying yourself is like giving yourself a high five... Are you okay?";
     private static final String INSUFFICIENT_FUNDS = "Insufficient funds!";
     private final IdlePlayerService idlePlayerService;
+    private final IdlePlayerManager idlePlayerManager;
     private final BalanceHandler balanceHandler;
 
     @Override
@@ -42,20 +45,22 @@ public class PayCommand implements CommandExecutor {
         double amount;
         String target = args[0];
         Player targetPlayer = Idletd.getInstance().getServer().getPlayer(target);
-        if (Objects.isNull(targetPlayer)) {
-            targetPlayer = Idletd.getInstance().getServer().getOfflinePlayer(target).getPlayer();
-        }
 
+        IdlePlayer idleTarget;
         if (Objects.isNull(targetPlayer)) {
-            player.sendMessage(NO_IDLE_TARGET);
-            return false;
+            UUID uuid = Idletd.getInstance().getServer().getOfflinePlayer(target).getUniqueId();
+            idleTarget = idlePlayerService.getIdlePlayer(uuid);
+        } else {
+            idleTarget = idlePlayerService.getIdlePlayer(targetPlayer);
         }
-
-        IdlePlayer idleTarget = idlePlayerService.getIdlePlayer(targetPlayer);
 
         if (Objects.isNull(idleTarget)) {
             player.sendMessage(NO_IDLE_TARGET);
             return false;
+        }
+
+        if (idlePlayerManager.isOnline(idleTarget)) {
+            idleTarget = idlePlayerManager.getOnlineIdlePlayer(idleTarget.getPlayerUUID());
         }
 
         try {
