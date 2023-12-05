@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.service.command.plot;
+package io.github.stealingdapenta.idletd.command.plot;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.Command;

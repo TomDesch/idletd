@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.service.command.plot;
+package io.github.stealingdapenta.idletd.command.plot;
 
 import io.github.stealingdapenta.idletd.plot.PlotService;
 import lombok.RequiredArgsConstructor;
