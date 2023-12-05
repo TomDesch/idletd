@@ -17,9 +17,17 @@ public class AgentManager {
     private static final Set<Agent> activeAgents = new HashSet<>();
     private final AgentService agentService;
 
+    public Agent getActiveMainAgent(IdlePlayer idlePlayer) {
+        return getAllActiveAgents(idlePlayer)
+                .stream()
+                .filter(agent -> agent.getAgentType().equals(AgentType.MAIN_AGENT))
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean hasActiveAgents(IdlePlayer idlePlayer) {
         List<Agent> agents = getAllActiveAgents(idlePlayer);
-        return Objects.nonNull(agents) && agents.size() > 0;
+        return Objects.nonNull(agents) && !agents.isEmpty();
     }
 
     private boolean isActive(Agent agent) {

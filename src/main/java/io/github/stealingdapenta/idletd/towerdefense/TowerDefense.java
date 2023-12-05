@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
+import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class TowerDefense {
     private boolean waveActive;
     private Plot fetchedPlot;
     private IdlePlayer fetchedPlayer;
+    private Agent targetAgent;
     private List<CustomMob> livingMobs = new ArrayList<>();
 
     public String getWaveDuration() {
@@ -64,6 +67,7 @@ public class TowerDefense {
             // Removing them from the list then regardless.
             return true;
         });
+        getLivingMobs().forEach(customMob -> customMob.getMob().setTarget((LivingEntity) getTargetAgent().getAgentNPC().getNpc().getEntity()));
     }
 
     public void addMob(CustomMob mob) {

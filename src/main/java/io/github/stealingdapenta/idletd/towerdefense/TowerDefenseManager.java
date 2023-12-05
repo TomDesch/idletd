@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -35,7 +36,6 @@ public class TowerDefenseManager {
     private final PlotService plotService;
     private final TowerDefenseService towerDefenseService;
 
-    // todo further: summon NPC for target
     // todo turn POC wave mobs into real deal with levels on mobs etc
 
     public void initializeActiveGameManager() {
@@ -109,7 +109,7 @@ public class TowerDefenseManager {
 
             for (int i = 0; i < amountOfMobsToSpawn; i++) {
                 int finalI = i;
-                long delayBetweenMobSummon = ONE_SECOND_IN_TICKS * i;
+                long delayBetweenMobSummon = 2 * ONE_SECOND_IN_TICKS * i;
 
                 scheduler.runTaskLater(Idletd.getInstance(), task -> {
                     // Event where player logs out during the countdown
@@ -118,6 +118,7 @@ public class TowerDefenseManager {
                     }
                     CustomMob mob = generateRandomMob(towerDefense);
                     mob.summon(plot.getMobSpawnLocation());
+                    mob.getMob().setTarget((LivingEntity) towerDefenseService.fetchTargetAgentIfNull(towerDefense).getAgentNPC().getNpc().getEntity());
                     towerDefense.addMob(mob);
 
                     if (isFinalIteration(finalI, amountOfMobsToSpawn)) {

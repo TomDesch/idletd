@@ -1,5 +1,7 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
+import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -22,17 +24,31 @@ public class TowerDefenseService {
     private final PlotService plotService;
     private final IdlePlayerService idlePlayerService;
     private final SchematicHandler schematicHandler;
+    private final AgentManager agentManager;
     private final Random random = new Random();
     private BukkitTask activeWave;
 
     public TowerDefense findTowerDefense(IdlePlayer idlePlayer) {
         TowerDefense towerDefense = getTowerDefense(idlePlayer.getPlayerUUID());
         if (Objects.nonNull(towerDefense)) {
-            fetchPlotIfNull(towerDefense);
-            fetchIdlePlayerIfNull(towerDefense);
+            fetchFields(towerDefense);
         }
 
         return towerDefense;
+    }
+
+    private void fetchFields(TowerDefense towerDefense) {
+        fetchPlotIfNull(towerDefense);
+        fetchIdlePlayerIfNull(towerDefense);
+        fetchTargetAgentIfNull(towerDefense);
+    }
+
+    public Agent fetchTargetAgentIfNull(TowerDefense towerDefense) {
+        if (Objects.isNull(towerDefense.getTargetAgent())) {
+            Agent targetAgent = agentManager.getActiveMainAgent(towerDefense.getFetchedPlayer());
+            towerDefense.setTargetAgent(targetAgent);
+        }
+        return towerDefense.getTargetAgent();
     }
 
     public Plot fetchPlotIfNull(TowerDefense towerDefense) {
