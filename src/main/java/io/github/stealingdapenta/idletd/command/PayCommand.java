@@ -39,10 +39,20 @@ public class PayCommand implements CommandExecutor {
         if (args.length < 2) return false;
 
         double amount;
-        Player targetPlayer = Idletd.getInstance().getServer().getPlayer(args[0].toLowerCase());
-        IdlePlayer target = idlePlayerService.getIdlePlayer(targetPlayer);
+        String target = args[0].toLowerCase();
+        Player targetPlayer = Idletd.getInstance().getServer().getPlayer(target);
+        if (Objects.isNull(targetPlayer)) {
+            targetPlayer = Idletd.getInstance().getServer().getOfflinePlayer(target).getPlayer();
+        }
 
-        if (Objects.isNull(target)) {
+        if (Objects.isNull(targetPlayer)) {
+            player.sendMessage(NO_IDLE_TARGET);
+            return false;
+        }
+
+        IdlePlayer idleTarget = idlePlayerService.getIdlePlayer(targetPlayer);
+
+        if (Objects.isNull(idleTarget)) {
             player.sendMessage(NO_IDLE_TARGET);
             return false;
         }
@@ -54,7 +64,7 @@ public class PayCommand implements CommandExecutor {
             return false;
         }
 
-        boolean successfulTransfer = balanceHandler.pay(idlePlayer, target, amount);
+        boolean successfulTransfer = balanceHandler.pay(idlePlayer, idleTarget, amount);
         if (successfulTransfer) {
             player.sendMessage(BALANCE.formatted(idlePlayer.getBalance()));
         } else {
