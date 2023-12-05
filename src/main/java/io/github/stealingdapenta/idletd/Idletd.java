@@ -16,6 +16,7 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
+import io.github.stealingdapenta.idletd.listener.DamageListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
 import io.github.stealingdapenta.idletd.listener.IncomeListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
@@ -77,6 +78,7 @@ public class Idletd extends JavaPlugin {
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler, idlePlayerService, towerDefenseManager);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService);
+    private final DamageListener damageListener = new DamageListener(customMobHandler);
     private final SpawnListener spawnListener = new SpawnListener();
 
     public static void shutDown() {
@@ -119,6 +121,7 @@ public class Idletd extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
         Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
         Bukkit.getPluginManager().registerEvents(incomeListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(damageListener, getInstance());
     }
 
     private void pluginEnabledLog() {
