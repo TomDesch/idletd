@@ -32,10 +32,10 @@ public class PayCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         Player player = (Player) commandSender;
-        IdlePlayer idlePlayer = idlePlayerService.getIdlePlayer(player);
+        IdlePlayer idlePlayer = idlePlayerManager.getOnlineIdlePlayer(player);
 
         if (Objects.isNull(idlePlayer)) {
-            logger.severe(player.getName() + " doesn't have a linked IdlePlayer.");
+            logger.severe(player.getName() + " doesn't have a linked IdlePlayer online.");
             player.sendMessage(Component.text(NO_IDLE_PLAYER));
             return true;
         }
@@ -59,7 +59,8 @@ public class PayCommand implements CommandExecutor {
             return false;
         }
 
-        if (idlePlayerManager.isOnline(idleTarget)) {
+        boolean targetIsOnline = idlePlayerManager.isOnline(idleTarget);
+        if (targetIsOnline) {
             idleTarget = idlePlayerManager.getOnlineIdlePlayer(idleTarget.getPlayerUUID());
         }
 
@@ -78,6 +79,10 @@ public class PayCommand implements CommandExecutor {
         boolean successfulTransfer = balanceHandler.pay(idlePlayer, idleTarget, amount);
         if (successfulTransfer) {
             player.sendMessage(BALANCE.formatted(idlePlayer.getBalance()));
+
+            if (!targetIsOnline) {
+                idlePlayerService.saveIdlePlayer(idleTarget);
+            }
         } else {
             player.sendMessage(INSUFFICIENT_FUNDS);
         }
