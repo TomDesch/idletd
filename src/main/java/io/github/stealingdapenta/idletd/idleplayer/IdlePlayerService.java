@@ -32,6 +32,16 @@ public class IdlePlayerService {
         return getIdlePlayer(player.getUniqueId());
     }
 
+    public IdlePlayer getIdlePlayer(String uuidString) {
+        try {
+            UUID uuid = UUID.fromString(uuidString);
+            return getIdlePlayer(uuid);
+        } catch (IllegalArgumentException e) {
+            logger.warning("Failed to convert string to UUID in IdlePlayerService.");
+            return null;
+        }
+    }
+
     public IdlePlayer getIdlePlayer(UUID uuid) {
         return idlePlayerRepository.getIdlePlayer(uuid);
     }

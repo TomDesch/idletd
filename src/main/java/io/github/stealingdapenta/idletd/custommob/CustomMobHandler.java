@@ -1,44 +1,59 @@
 package io.github.stealingdapenta.idletd.custommob;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
+
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 
 @RequiredArgsConstructor
+@Getter
 public class CustomMobHandler {
-    private static CustomMobHandler instance;
-    private final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
+    private static final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
+    private static final String ERROR_SETTING_TARGET = "Error setting agent as target for custom mob.";
     private final String CUSTOM_MOB_TAG = "idletd_mob";
     private final String PLAYER_TAG = "related_p";
 
-    public static CustomMobHandler getInstance() {
-        if (Objects.isNull(instance)) {
-            instance = new CustomMobHandler();
+    public void setTarget(Mob customMob, Agent target) {
+        String uuid = getLinkedPlayerUUID(customMob);
+
+        if (Objects.isNull(customMob) || Objects.isNull(uuid) || Objects.isNull(target)) {
+            logger.warning(ERROR_SETTING_TARGET);
+            return;
         }
-        return instance;
+
+        AgentNPC agentNPC = target.getAgentNPC();
+        NPC npc = Optional.ofNullable(agentNPC).map(AgentNPC::getNpc).orElse(null);
+        LivingEntity targetEntity = (LivingEntity) Optional.ofNullable(npc).map(NPC::getEntity).orElse(null);
+
+        if (Objects.isNull(targetEntity)) {
+            logger.warning(ERROR_SETTING_TARGET);
+            return;
+        }
+
+        customMob.setTarget(targetEntity);
     }
 
-    public String getPlayerTag() {
-        return PLAYER_TAG;
-    }
-
-    public String getCustomMobTag() {
-        return CUSTOM_MOB_TAG;
-    }
 
     public NamespacedKey getCustomNameSpacedKey() {
-        return new NamespacedKey(Idletd.getInstance(), this.getCustomMobTag());
+        return new NamespacedKey(Idletd.getInstance(), getCUSTOM_MOB_TAG());
     }
 
     public NamespacedKey getPlayerNameSpacedKey() {
-        return new NamespacedKey(Idletd.getInstance(), this.getPlayerTag());
+        return new NamespacedKey(Idletd.getInstance(), getPLAYER_TAG());
     }
 
     public void addCustomMob(MobWrapper mobWrapper) {
@@ -57,6 +72,14 @@ public class CustomMobHandler {
 
     public boolean isCustomMob(LivingEntity livingEntity) {
         return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer().get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+    }
+
+    public String getLinkedPlayerUUID(LivingEntity customMob) {
+        if (!isCustomMob(customMob)) {
+            logger.warning("Tried to get Linked player uuid of an entity that is not a cutom mob!");
+            return null;
+        }
+        return customMob.getPersistentDataContainer().get(getPlayerNameSpacedKey(), PersistentDataType.STRING);
     }
 
     public void setNewTarget(MobWrapper mobWrapper, LivingEntity target) {

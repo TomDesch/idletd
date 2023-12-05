@@ -75,9 +75,9 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
+    private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler, idlePlayerService, towerDefenseManager);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService);
     private final SpawnListener spawnListener = new SpawnListener();
-    private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
 
     public static void shutDown() {
         shuttingDown = true;
