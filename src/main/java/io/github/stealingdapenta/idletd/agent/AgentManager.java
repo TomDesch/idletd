@@ -17,6 +17,11 @@ public class AgentManager {
     private static final Set<Agent> activeAgents = new HashSet<>();
     private final AgentService agentService;
 
+    public boolean hasActiveAgents(IdlePlayer idlePlayer) {
+        List<Agent> agents = getAllActiveAgents(idlePlayer);
+        return Objects.nonNull(agents) && agents.size() > 0;
+    }
+
     private boolean isActive(Agent agent) {
         return activeAgents.contains(agent);
     }

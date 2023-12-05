@@ -24,6 +24,7 @@ import static io.github.stealingdapenta.idletd.Idletd.logger;
 public class TowerDefenseCommand implements CommandExecutor {
     private static final String NO_PLOT = "Please create a plot before launching a TD game!";
     private static final String NO_IDLE_PLAYER = "Internal error. Please contact a system admin.";
+    private static final String NO_ACTIVE_AGENTS = "You don't have any active agents. Please contact a system admin.";
     private final PlotService plotService;
     private final TowerDefenseService towerDefenseService;
     private final IdlePlayerService idlePlayerService;
@@ -70,9 +71,12 @@ public class TowerDefenseCommand implements CommandExecutor {
 
         agentManager.activateAllInactiveAgents(idlePlayer);
 
+        if (!agentManager.hasActiveAgents(idlePlayer)) {
+            player.sendMessage(NO_ACTIVE_AGENTS);
+            return true;
+        }
 
         towerDefenseManager.activateTDGame(towerDefense);
-
 
         // todo calculate AFK income (idle)
         // todo add economy, reward per kill, bank value
