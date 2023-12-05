@@ -21,10 +21,10 @@ import static org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED;
 @Getter
 public class MobWrapper {
     private final LivingEntity summonedEntity;
+    private final CustomMobHandler customMobHandler = new CustomMobHandler();
+
 
     MobWrapper(MobWrapperBuilder builder) {
-        CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
-
         summonedEntity = (LivingEntity) builder.location.getWorld().spawnEntity(builder.location, builder.entityType, CreatureSpawnEvent.SpawnReason.CUSTOM, entity -> {
 
             LivingEntity livingEntity = (LivingEntity) entity;
