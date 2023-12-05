@@ -44,8 +44,20 @@ public class IdlePlayerManager {
         return onlinePlayers.add(idlePlayer);
     }
 
-    public boolean deregisterOnlinePlayer(IdlePlayer idlePlayer) {
+    public boolean unregisterOnlinePlayer(IdlePlayer idlePlayer) {
         return onlinePlayers.remove(idlePlayer);
+    }
+
+    public boolean isOnline(IdlePlayer idlePlayer) {
+        return onlinePlayers.contains(idlePlayer);
+    }
+
+    public IdlePlayer getOnlineIdlePlayer(UUID uuid) {
+        return onlinePlayers.stream().filter(onlinePlayer -> onlinePlayer.getPlayerUUID().equals(uuid)).findFirst().orElse(null);
+    }
+
+    public IdlePlayer getOnlineIdlePlayer(Player player) {
+        return getOnlineIdlePlayer(player.getUniqueId());
     }
 
     public void postLogin(IdlePlayer idlePlayer) {
@@ -58,7 +70,7 @@ public class IdlePlayerManager {
 
     public void postLogOut(Player player) {
         try {
-            IdlePlayer idlePlayer = idlePlayerService.getIdlePlayer(player);
+            IdlePlayer idlePlayer = getOnlineIdlePlayer(player);
             if (!isShuttingDown()) {
                 savePlayerData(idlePlayer);
                 deactivateAndSaveTDGame(idlePlayer);
@@ -93,7 +105,8 @@ public class IdlePlayerManager {
             e.printStackTrace();
         } finally {
             if (!isShuttingDown()) {
-                deregisterOnlinePlayer(idlePlayer);
+                boolean unregistered = unregisterOnlinePlayer(idlePlayer);
+                logger.info("Unregistering of player was " + (unregistered ? "successful." : "unsuccessful!"));
                 noLoginAllowed.remove(idlePlayer.getPlayerUUID());
             }
         }

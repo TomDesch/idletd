@@ -3,20 +3,24 @@ package io.github.stealingdapenta.idletd;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentRepository;
 import io.github.stealingdapenta.idletd.agent.AgentService;
+import io.github.stealingdapenta.idletd.command.AgentCommand;
+import io.github.stealingdapenta.idletd.command.BalanceCommand;
+import io.github.stealingdapenta.idletd.command.PayCommand;
+import io.github.stealingdapenta.idletd.command.TowerDefenseCommand;
+import io.github.stealingdapenta.idletd.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationRepository;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
+import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
+import io.github.stealingdapenta.idletd.listener.IncomeListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
 import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
-import io.github.stealingdapenta.idletd.service.command.AgentCommand;
-import io.github.stealingdapenta.idletd.service.command.TowerDefenseCommand;
-import io.github.stealingdapenta.idletd.service.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.service.utils.Coloring;
 import io.github.stealingdapenta.idletd.service.utils.EntityTracker;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
@@ -58,16 +62,20 @@ public class Idletd extends JavaPlugin {
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler);
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager);
+    private final BalanceHandler balanceHandler = new BalanceHandler(idlePlayerService);
     private final PlotCommand plotCommand = new PlotCommand(plotService);
     private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
     private final SkinService skinService = new SkinService(skinRepository, coloring);
+    private final SkinManager skinManager = new SkinManager(coloring, skinService);
     private final EntityTracker entityTracker = new EntityTracker(customMobHandler);
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker);
     private final AgentManager agentManager = new AgentManager(agentService);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, agentManager, towerDefenseManager, towerDefenseService);
+    private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
+    private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
+    private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService);
-    private final SkinManager skinManager = new SkinManager(coloring, skinService);
     private final SpawnListener spawnListener = new SpawnListener();
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler);
 
@@ -100,21 +108,17 @@ public class Idletd extends JavaPlugin {
 
     private void registerCommands() {
         Objects.requireNonNull(this.getCommand("plot")).setExecutor(plotCommand);
-        Objects.requireNonNull(this.getCommand("p")).setExecutor(plotCommand);
-
-        Objects.requireNonNull(this.getCommand("td")).setExecutor(towerDefenseCommand);
-        Objects.requireNonNull(this.getCommand("idletd")).setExecutor(towerDefenseCommand);
-        Objects.requireNonNull(this.getCommand("tower")).setExecutor(towerDefenseCommand);
         Objects.requireNonNull(this.getCommand("towerdefense")).setExecutor(towerDefenseCommand);
-
-
         Objects.requireNonNull(this.getCommand("agent")).setExecutor(agentCommand);
+        Objects.requireNonNull(this.getCommand("bal")).setExecutor(balanceCommand);
+        Objects.requireNonNull(this.getCommand("pay")).setExecutor(payCommand);
     }
 
     private void registerEvents() {
         Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
         Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
         Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(incomeListener, getInstance());
     }
 
     private void pluginEnabledLog() {

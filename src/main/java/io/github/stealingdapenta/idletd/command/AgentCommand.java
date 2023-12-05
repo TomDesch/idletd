@@ -1,4 +1,4 @@
-package io.github.stealingdapenta.idletd.service.command;
+package io.github.stealingdapenta.idletd.command;
 
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;

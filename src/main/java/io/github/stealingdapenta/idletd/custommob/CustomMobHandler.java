@@ -8,7 +8,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -44,11 +43,6 @@ public class CustomMobHandler {
 
     public void addCustomMob(MobWrapper mobWrapper) {
         livingCustomMobs.add(mobWrapper);
-    }
-
-    public List<MobWrapper> getUpdatedLivingCustomMobs() {
-        removeDeadMobsFromList();
-        return livingCustomMobs;
     }
 
     public void removeDeadMobsFromList() {
