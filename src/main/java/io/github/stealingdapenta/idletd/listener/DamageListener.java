@@ -104,11 +104,12 @@ public class DamageListener implements Listener {
     private void spawnParticleTrail(Location location, Vector direction, double offset) {
         boolean collisionOccurred = false;
         int i = 0;
-        double gravity = -0.05; // Adjust this value for gravity effect
+        double gravity = -0.01; // Negative gravity for descending movement
+        double initialUpwardSpeed = 0.1; // Adjust this value for initial upward movement
 
         while (!collisionOccurred) {
             double x = offset * i * direction.getX();
-            double y = offset * i * direction.getY() + 0.5 * gravity * i * i; // Add arc effect
+            double y = initialUpwardSpeed * i + 0.5 * gravity * i * i; // Quadratic function for parabolic shape
             double z = offset * i * direction.getZ();
 
             Location particleLocation = location.clone().add(x, y, z);
@@ -130,7 +131,7 @@ public class DamageListener implements Listener {
 
             i++;
 
-            if (i > 500) { // failsafe break
+            if (i > 500) { // Failsafe break
                 collisionOccurred = true;
             }
         }
