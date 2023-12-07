@@ -87,11 +87,7 @@ public class DamageListener implements Listener {
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
         Location arrowLocation = originalArrow.getLocation();
 
-        Vector targetDirection = targetLocation.toVector().subtract(arrowLocation.toVector()).normalize();
-
-        double accuracy = 0.2; // Adjust this value for accuracy, 0 being 100% accurate
-        Vector randomizedDirection = addRandomnessToArrowVector(targetDirection, accuracy);
-        spawnParticleTrail(arrowLocation, randomizedDirection, 0.1);
+        spawnParticleTrail(arrowLocation, targetLocation, 0.1);
     }
 
     private Vector addRandomnessToArrowVector(Vector vector, double accuracy) {
@@ -101,39 +97,38 @@ public class DamageListener implements Listener {
         return new Vector(x, vector.getY(), z).normalize();
     }
 
-    private void spawnParticleTrail(Location location, Vector direction, double offset) {
+    private void spawnParticleTrail(Location source, Location target, double offset) {
         boolean collisionOccurred = false;
+        int failSafe = 300;
         int i = 0;
-        double gravity = -0.01; // Negative gravity for descending movement
-        double initialUpwardSpeed = 0.1; // Adjust this value for initial upward movement
+        double gravity = -0.005; // Slightly reduced gravity for a less "high" parabolic shape
+        double initialUpwardSpeed = 0.05; // Adjust this value for initial upward movement
+
+        Vector direction = target.toVector().subtract(source.toVector()).normalize();
 
         while (!collisionOccurred) {
             double x = offset * i * direction.getX();
-            double y = initialUpwardSpeed * i + 0.5 * gravity * i * i; // Quadratic function for parabolic shape
+            double y = initialUpwardSpeed * i + 0.5 * gravity * i * i;
             double z = offset * i * direction.getZ();
 
-            Location particleLocation = location.clone().add(x, y, z);
+            Location particleLocation = source.clone().add(x, y, z);
 
             if (particleCollidesWithEntity(particleLocation)) {
                 List<LivingEntity> collidedEntities = getCollidedEntities(particleLocation);
                 if (collidedEntities.stream().allMatch(customMobHandler::isCustomMob)) {
-                    location.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
+                    source.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
                 } else {
                     animateEntityImpactParticles(particleLocation);
                     collisionOccurred = true;
                 }
-            } else if (particleCollidesWithSolidBlock(particleLocation)) {
+            } else if (particleCollidesWithSolidBlock(particleLocation) || i > failSafe) {
                 animateGroundImpactParticles(particleLocation);
                 collisionOccurred = true;
             } else {
-                location.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
+                source.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
             }
 
             i++;
-
-            if (i > 500) { // Failsafe break
-                collisionOccurred = true;
-            }
         }
     }
 

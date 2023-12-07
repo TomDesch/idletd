@@ -13,6 +13,7 @@ import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 @RequiredArgsConstructor
 public class IdlePlayerService {
+    private static final String ERROR_CONVERTING_UUID = "Failed to convert string to UUID ' %s ' in IdlePlayerService.";
     private final IdlePlayerRepository idlePlayerRepository;
     private final PlotService plotService;
 
@@ -21,7 +22,12 @@ public class IdlePlayerService {
     }
 
     public Player getPlayer(String uuid) {
-        return getPlayer(UUID.fromString(uuid));
+        try {
+            return getPlayer(UUID.fromString(uuid));
+        } catch (IllegalArgumentException | NullPointerException e) {
+            logger.warning(ERROR_CONVERTING_UUID.formatted(uuid));
+            return null;
+        }
     }
 
     public Player getPlayer(UUID uuid) {
@@ -37,7 +43,7 @@ public class IdlePlayerService {
             UUID uuid = UUID.fromString(uuidString);
             return getIdlePlayer(uuid);
         } catch (IllegalArgumentException e) {
-            logger.warning("Failed to convert string to UUID in IdlePlayerService.");
+            logger.warning(ERROR_CONVERTING_UUID.formatted(uuidString));
             return null;
         }
     }

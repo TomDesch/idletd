@@ -33,8 +33,14 @@ public class IncomeListener implements Listener {
         // also todo fix the bug where relog relog dring timer doesnt stop the mobs from spawning
         // todo bug lmao idlePlayer is always null
         LivingEntity livingEntity = event.getEntity();
+        if (!customMobHandler.isCustomMob(livingEntity)) return;
 
         String linkedPlayerUUID = livingEntity.getPersistentDataContainer().get(customMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING);
+        if (Objects.isNull(linkedPlayerUUID)) {
+            logger.warning("Found a custom mob, but without a linked player UUID!");
+            return;
+        }
+
         Player linkedPlayer = idlePlayerService.getPlayer(linkedPlayerUUID);
         IdlePlayer savedIdlePlayer = idlePlayerService.getIdlePlayer(linkedPlayer);
 
