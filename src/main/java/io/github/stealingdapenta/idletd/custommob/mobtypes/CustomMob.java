@@ -11,8 +11,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
@@ -40,6 +42,10 @@ public abstract class CustomMob {
 
     protected TextColor nameColor = TextColor.color(146, 9, 9);
 
+    public static NamespacedKey getLevelNSK() {
+        return new NamespacedKey(Idletd.getInstance(), "level");
+    }
+
     public Mob summon(Location location) {
         MobWrapperBuilder customMob = new MobWrapperBuilder()
                 .playerUUID(plot.getPlayerUUID())
@@ -60,6 +66,8 @@ public abstract class CustomMob {
         preventMobFromFallingTask();
 
         generateMobName();
+
+        mob.getPersistentDataContainer().set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
 
         return mob;
     }

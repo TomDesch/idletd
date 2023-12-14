@@ -87,6 +87,9 @@ public class AgentService {
 
     private List<Agent> findAllForPlayer(UUID uuid) {
         List<Agent> agents = agentRepository.getAgentsByPlayerUUID(uuid);
+        if (Objects.isNull(agents)) {
+            return null;
+        }
         agents.forEach(this::fetchFields);
         return agents;
     }

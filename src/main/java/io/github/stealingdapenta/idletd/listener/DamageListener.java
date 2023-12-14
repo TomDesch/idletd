@@ -1,7 +1,10 @@
 package io.github.stealingdapenta.idletd.listener;
 
+import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.*;
@@ -80,11 +83,14 @@ public class DamageListener implements Listener {
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
         Location arrowLocation = originalArrow.getLocation();
 
-        createParabolicParticleTrail(arrowLocation, 0.1, targetLocation);
+        int skeletonLevel = customMobHandler.getMobLevel(shooter);
+        double flySpeed = 1 + ((double) skeletonLevel / 100);
+
+        createParabolicParticleTrail(arrowLocation, 1.5, targetLocation, flySpeed);
     }
 
 
-    public void createParabolicParticleTrail(Location startLocation, double offset, Location targetLocation) {
+    public void createParabolicParticleTrail(Location startLocation, double offset, Location targetLocation, double flySpeed) {
         double startX = startLocation.getX();
         double startY = startLocation.getY();
         double startZ = startLocation.getZ();
@@ -94,13 +100,14 @@ public class DamageListener implements Listener {
         double targetZ = targetLocation.getZ() + getRandomOffset(offset);
 
         double distance = startLocation.distance(targetLocation);
-        double arcHeight = distance * 0.2; // Adjust as needed for the desired parabolic effect
+        double arcHeight = distance * 0.06; // Adjust as needed for the desired parabolic effect
 
         int numberOfParticles = (int) (distance / 0.25);
         double step = 1.0 / numberOfParticles;
 
-        for (int i = 0; i <= numberOfParticles; i++) {
-            double index = i * step;
+        double index = 0.0;
+
+        while (index <= 2.0) {
             double x = startX + index * (targetX - startX);
             double y = startY + index * (targetY - startY) + arcHeight * Math.sin(Math.PI * index);
             double z = startZ + index * (targetZ - startZ);
@@ -117,7 +124,11 @@ public class DamageListener implements Listener {
                 return;
             }
 
-            startLocation.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
+            Color color = Color.fromRGB(123, 13, 123);
+
+            spawnColoredParticleDelayed(particleLocation, color, (int) (index * numberOfParticles * flySpeed)); // Introduce a delay
+
+            index += step;
         }
     }
 
@@ -125,9 +136,12 @@ public class DamageListener implements Listener {
         return (Math.random() * 2 - 1) * maxOffset;
     }
 
-    private double calculateInitialUpwardSpeed(Location source, Location target, double gravity) {
-        double distance = target.distance(source);
-        return Math.sqrt(2 * gravity * distance);
+    private void spawnColoredParticleDelayed(Location location, Color color, int delayTicks) {
+        Bukkit.getScheduler().runTaskLater(Idletd.getInstance(), () -> spawnColoredParticle(location, color), delayTicks);
+    }
+
+    private void spawnColoredParticle(Location location, Color color) {
+        location.getWorld().spawnParticle(Particle.REDSTONE, location, 0, 0, 0, 0, new Particle.DustOptions(color, 1));
     }
 
     private boolean particleCollidesWithEntity(Location location) {

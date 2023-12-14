@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob.getLevelNSK;
 
 
 @RequiredArgsConstructor
@@ -107,6 +108,14 @@ public class CustomMobHandler {
         MobWrapper mobWrapper = builder.build();
         addCustomMob(mobWrapper);
         return mobWrapper;
+    }
+
+    public int getMobLevel(LivingEntity livingEntity) {
+        if (isCustomMob(livingEntity)) {
+            return livingEntity.getPersistentDataContainer().get(getLevelNSK(), PersistentDataType.INTEGER);
+        } else {
+            return -1;
+        }
     }
 }
 

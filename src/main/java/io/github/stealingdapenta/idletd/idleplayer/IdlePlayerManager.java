@@ -81,7 +81,6 @@ public class IdlePlayerManager {
         }
     }
 
-
     private void deactivateAndSaveTDGame(IdlePlayer idlePlayer) {
         TowerDefense towerDefense = towerDefenseManager.getActiveTDGame(idlePlayer);
         if (Objects.nonNull(towerDefense)) {
