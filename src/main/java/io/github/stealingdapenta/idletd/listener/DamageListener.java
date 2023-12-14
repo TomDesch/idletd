@@ -4,19 +4,13 @@ import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +24,6 @@ public class DamageListener implements Listener {
     // todo cancel dmg done by agent to player or agent
 
     private final CustomMobHandler customMobHandler;
-
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void cancelUnwantedDamageEvents(EntityDamageByEntityEvent event) {
@@ -87,54 +80,58 @@ public class DamageListener implements Listener {
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
         Location arrowLocation = originalArrow.getLocation();
 
-        spawnParticleTrail(arrowLocation, targetLocation, 0.1);
+        createParabolicParticleTrail(arrowLocation, 0.1, targetLocation);
     }
 
-    private Vector addRandomnessToArrowVector(Vector vector, double accuracy) {
-        double x = vector.getX() + (Math.random() * 2 - 1) * accuracy;
-        double z = vector.getZ() + (Math.random() * 2 - 1) * accuracy;
 
-        return new Vector(x, vector.getY(), z).normalize();
-    }
+    public void createParabolicParticleTrail(Location startLocation, double offset, Location targetLocation) {
+        double startX = startLocation.getX();
+        double startY = startLocation.getY();
+        double startZ = startLocation.getZ();
 
-    private void spawnParticleTrail(Location source, Location target, double offset) {
-        boolean collisionOccurred = false;
-        int failSafe = 300;
-        int i = 0;
-        double gravity = -0.005; // Slightly reduced gravity for a less "high" parabolic shape
-        double initialUpwardSpeed = 0.05; // Adjust this value for initial upward movement
+        double targetX = targetLocation.getX() + getRandomOffset(offset);
+        double targetY = targetLocation.getY() + getRandomOffset(offset);
+        double targetZ = targetLocation.getZ() + getRandomOffset(offset);
 
-        Vector direction = target.toVector().subtract(source.toVector()).normalize();
+        double distance = startLocation.distance(targetLocation);
+        double arcHeight = distance * 0.2; // Adjust as needed for the desired parabolic effect
 
-        while (!collisionOccurred) {
-            double x = offset * i * direction.getX();
-            double y = initialUpwardSpeed * i + 0.5 * gravity * i * i;
-            double z = offset * i * direction.getZ();
+        int numberOfParticles = (int) (distance / 0.25);
+        double step = 1.0 / numberOfParticles;
 
-            Location particleLocation = source.clone().add(x, y, z);
+        for (int i = 0; i <= numberOfParticles; i++) {
+            double index = i * step;
+            double x = startX + index * (targetX - startX);
+            double y = startY + index * (targetY - startY) + arcHeight * Math.sin(Math.PI * index);
+            double z = startZ + index * (targetZ - startZ);
+            Location particleLocation = new Location(startLocation.getWorld(), x, y, z);
 
             if (particleCollidesWithEntity(particleLocation)) {
                 List<LivingEntity> collidedEntities = getCollidedEntities(particleLocation);
-                if (collidedEntities.stream().allMatch(customMobHandler::isCustomMob)) {
-                    source.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
-                } else {
+                if (!collidedEntities.stream().allMatch(customMobHandler::isCustomMobOrCustomArmorStand)) {
                     animateEntityImpactParticles(particleLocation);
-                    collisionOccurred = true;
+                    return;
                 }
-            } else if (particleCollidesWithSolidBlock(particleLocation) || i > failSafe) {
+            } else if (particleCollidesWithSolidBlock(particleLocation)) {
                 animateGroundImpactParticles(particleLocation);
-                collisionOccurred = true;
-            } else {
-                source.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
+                return;
             }
 
-            i++;
+            startLocation.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, particleLocation, 1);
         }
     }
 
+    private double getRandomOffset(double maxOffset) {
+        return (Math.random() * 2 - 1) * maxOffset;
+    }
+
+    private double calculateInitialUpwardSpeed(Location source, Location target, double gravity) {
+        double distance = target.distance(source);
+        return Math.sqrt(2 * gravity * distance);
+    }
 
     private boolean particleCollidesWithEntity(Location location) {
-        return location.getWorld().getNearbyEntities(location, 0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance);
+        return location.getWorld().getNearbyEntities(location, 0.15, 0.15, 0.15).stream().anyMatch(LivingEntity.class::isInstance);
     }
 
     private boolean particleCollidesWithSolidBlock(Location location) {
@@ -142,7 +139,7 @@ public class DamageListener implements Listener {
     }
 
     private List<LivingEntity> getCollidedEntities(Location location) {
-        return location.getWorld().getNearbyEntities(location, 0.5, 0.5, 0.5)
+        return location.getWorld().getNearbyEntities(location, 0.15, 0.15, 0.15)
                        .stream()
                        .filter(LivingEntity.class::isInstance)
                        .map(LivingEntity.class::cast)
@@ -150,7 +147,7 @@ public class DamageListener implements Listener {
     }
 
     private void animateEntityImpactParticles(Location location) {
-        location.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, location, 3, 0, 0, 0, 0);
+        location.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, location, 3, 0, 0, 0, 0);
     }
 
     private void animateGroundImpactParticles(Location location) {

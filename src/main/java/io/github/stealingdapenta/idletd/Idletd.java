@@ -15,11 +15,7 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
-import io.github.stealingdapenta.idletd.listener.CustomMobListener;
-import io.github.stealingdapenta.idletd.listener.DamageListener;
-import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
-import io.github.stealingdapenta.idletd.listener.IncomeListener;
-import io.github.stealingdapenta.idletd.listener.SpawnListener;
+import io.github.stealingdapenta.idletd.listener.*;
 import io.github.stealingdapenta.idletd.plot.PlotRepository;
 import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.utils.Coloring;
@@ -34,11 +30,7 @@ import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -148,14 +140,13 @@ public class Idletd extends JavaPlugin {
             getLogger().info("Schematics folder created.");
         }
 
-        this.copyResource("schematics" + File.separator + TOWER_DEFENSE_SCHEMATIC.getFileName(),
+        this.copyResource("/schematics/" + TOWER_DEFENSE_SCHEMATIC.getFileName(),
                           new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
     }
 
     private void copyResource(String resourcePath, File targetFile) {
-        try (InputStream inputStream = getClass().getResourceAsStream("/" + resourcePath);
+        try (InputStream inputStream = getClass().getResourceAsStream(resourcePath);
              OutputStream outputStream = new FileOutputStream(targetFile)) {
-
             byte[] buffer = new byte[4096];
             int length;
             while (true) {

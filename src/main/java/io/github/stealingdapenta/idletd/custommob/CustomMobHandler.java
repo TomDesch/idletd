@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -26,6 +27,8 @@ public class CustomMobHandler {
     private static final String ERROR_SETTING_TARGET = "Error setting agent as target for custom mob.";
     private final String CUSTOM_MOB_TAG = "idletd_mob";
     private final String PLAYER_TAG = "related_p";
+    private static final String CUSTOM_NSK_TAG = "customnsktag";
+
 
     public void setTarget(Mob customMob, Agent target) {
         String uuid = getLinkedPlayerUUID(customMob);
@@ -72,6 +75,19 @@ public class CustomMobHandler {
 
     public boolean isCustomMob(LivingEntity livingEntity) {
         return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer().get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+    }
+
+    public boolean isCustomArmorStand(LivingEntity livingEntity) {
+        if (!(livingEntity instanceof ArmorStand armorStand)) return false;
+        return Boolean.TRUE.equals(armorStand.getPersistentDataContainer().get(getCustomNamespacedKey(), PersistentDataType.BOOLEAN));
+    }
+
+    public boolean isCustomMobOrCustomArmorStand(LivingEntity livingEntity) {
+        return isCustomMob(livingEntity) || isCustomArmorStand(livingEntity);
+    }
+
+    private NamespacedKey getCustomNamespacedKey() {
+        return new NamespacedKey(Idletd.getInstance(), CUSTOM_NSK_TAG);
     }
 
     public String getLinkedPlayerUUID(LivingEntity customMob) {

@@ -8,6 +8,8 @@ import io.github.stealingdapenta.idletd.service.utils.EntityTracker;
 import io.github.stealingdapenta.idletd.skin.Skin;
 import io.github.stealingdapenta.idletd.skin.SkinService;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -32,8 +34,11 @@ public class AgentService {
     }
 
     public void despawnAndDestroyNPC(Agent agent) {
-        agent.getAgentNPC().getNpc().despawn();
-        agent.getAgentNPC().getNpc().destroy();
+        NPC npc = agent.getAgentNPC().getNpc();
+        if (Objects.nonNull(npc)) {
+            agent.getAgentNPC().getNpc().despawn();
+            CitizensAPI.getNPCRegistry().deregister(npc);
+        }
         agent.getAgentNPC().setNpc(null);
     }
 
