@@ -2,7 +2,7 @@ package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
-import io.github.stealingdapenta.idletd.custommob.MobWrapperBuilder;
+import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,13 +32,33 @@ public abstract class CustomMob {
     protected Plot plot;
     protected int level;
 
-    protected double ARMOR = 1.0;
-    protected double ATTACK_DAMAGE = 1.0;
-    protected double ATTACK_KNOCKBACK = 1.0;
-    protected double ARMOR_TOUGHNESS = 1.0;
-    protected double KNOCKBACK_RESISTANCE = 1.0;
-    protected double MAX_HEALTH = 10.0;
-    protected double MOVEMENT_SPEED = 0.2;
+    protected double movement_speed = 0.2; // 0.2 = default zombie speed
+
+    protected double max_health = 10.0;
+    protected double regeneration_per_second = 1.0;
+    protected double overheal_shield_limit = 1.0;
+    protected double overheal_shield_regeneration_per_second = 1.0;
+    protected double knockback_resistance = 1.0;
+
+    protected double sword_resistance = 1.0;
+    protected double axe_resistance = 1.0;
+    protected double magic_resistance = 1.0;
+    protected double arrow_resistance = 1.0;
+    protected double trident_resistance = 1.0;
+    protected double explosion_resistance = 1.0;
+    protected double fire_resistance = 1.0;
+    protected double poison_resistance = 1.0;
+    protected double critical_hit_resistance = 1.0;
+    protected double block_chance = 1.0;
+
+    protected double attack_power = 1.0;
+    protected double attack_range = 1.0;
+    protected double attack_knockback = 1.0;
+    protected double attack_speed = 1.0;
+    protected double projectile_speed = 1.0;
+    protected double critical_hit_chance = 1.0;
+    protected double critical_hit_damage_multiplier = 1.0;
+
 
     protected TextColor nameColor = TextColor.color(146, 9, 9);
 
@@ -47,25 +67,42 @@ public abstract class CustomMob {
     }
 
     public Mob summon(Location location) {
-        MobWrapperBuilder customMob = new MobWrapperBuilder()
+        MobWrapper customMob = MobWrapper.builder()
                 .playerUUID(plot.getPlayerUUID())
                 .location(location)
                 .name(generateMobName())
                 .entityType(entityType)
-                .armor(ARMOR)
-                .attackDamage(ATTACK_DAMAGE)
-                .attackKnockback(ATTACK_KNOCKBACK)
-                .armorToughness(ARMOR_TOUGHNESS)
-                .knockbackResistance(KNOCKBACK_RESISTANCE)
-                .maxHealth(MAX_HEALTH)
-                .speed(MOVEMENT_SPEED);
+                .movement_speed(movement_speed)
+                .max_health(max_health)
+                .regeneration_per_second(regeneration_per_second)
+                .overheal_shield_limit(overheal_shield_limit)
+                .overheal_shield_regeneration_per_second(overheal_shield_regeneration_per_second)
+                .knockback_resistance(knockback_resistance)
+                .sword_resistance(sword_resistance)
+                .axe_resistance(axe_resistance)
+                .magic_resistance(magic_resistance)
+                .arrow_resistance(arrow_resistance)
+                .trident_resistance(trident_resistance)
+                .explosion_resistance(explosion_resistance)
+                .fire_resistance(fire_resistance)
+                .poison_resistance(poison_resistance)
+                .critical_hit_resistance(critical_hit_resistance)
+                .block_chance(block_chance)
+                .attack_power(attack_power)
+                .attack_range(attack_range)
+                .attack_knockback(attack_knockback)
+                .attack_speed(attack_speed)
+                .projectile_speed(projectile_speed)
+                .critical_hit_chance(critical_hit_chance)
+                .critical_hit_damage_multiplier(critical_hit_damage_multiplier)
+                .build();
+
 
         mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob).getSummonedEntity();
 
         // todo set Target to the main agent of the plot (we have this.plot)
-        preventMobFromFallingTask();
 
-        generateMobName();
+        preventMobFromFallingTask();
 
         mob.getPersistentDataContainer().set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
 

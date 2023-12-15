@@ -12,11 +12,6 @@ public class SkeletonMob extends CustomMob {
         this.level = level;
         this.entityType = EntityType.SKELETON;
         this.nameColor = generateNameColor();
-
-        this.ARMOR = 2.0;
-        this.ATTACK_DAMAGE = 3.0;
-        this.MAX_HEALTH = 14;
-
     }
 
     // Goes from light red to dark red based on Level (peaking at Lv. 1000)

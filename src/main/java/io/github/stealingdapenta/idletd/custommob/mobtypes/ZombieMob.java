@@ -13,11 +13,6 @@ public class ZombieMob extends CustomMob {
         this.level = level;
         this.entityType = EntityType.ZOMBIE;
         this.nameColor = generateNameColor();
-
-        // Stats
-        this.ARMOR = 2.0 * 1;
-        this.ATTACK_DAMAGE = 3.0;
-        this.MAX_HEALTH = 12;
     }
 
     // Goes from light green to dark green based on Level (peaking at Lv. 1000)

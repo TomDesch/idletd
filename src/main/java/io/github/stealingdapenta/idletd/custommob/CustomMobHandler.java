@@ -104,8 +104,7 @@ public class CustomMobHandler {
         entityCreature.setTarget(target);
     }
 
-    public MobWrapper spawnCustomMob(MobWrapperBuilder builder) {
-        MobWrapper mobWrapper = builder.build();
+    public MobWrapper spawnCustomMob(MobWrapper mobWrapper) {
         addCustomMob(mobWrapper);
         return mobWrapper;
     }
