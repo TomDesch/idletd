@@ -1,6 +1,35 @@
 package io.github.stealingdapenta.idletd.custommob;
 
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ARROW_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_KNOCKBACK;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_POWER;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_RANGE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_SPEED;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.AXE_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.BLOCK_CHANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.CRITICAL_HIT_CHANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.CRITICAL_HIT_DAMAGE_MULTIPLIER;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.CRITICAL_HIT_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.EXPLOSION_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.FIRE_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.KNOCKBACK_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.MAGIC_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.MAX_HEALTH;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.MOVEMENT_SPEED;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.OVERHEAL_SHIELD_LIMIT;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.OVERHEAL_SHIELD_REGEN_PER_SECOND;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.POISON_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.PROJECTILE_SPEED;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.REGENERATION_PER_SECOND;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.SWORD_RESISTANCE;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.TRIDENT_RESISTANCE;
+import static org.bukkit.attribute.Attribute.GENERIC_ATTACK_KNOCKBACK;
+import static org.bukkit.attribute.Attribute.GENERIC_KNOCKBACK_RESISTANCE;
+import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
+import static org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED;
+
 import io.github.stealingdapenta.idletd.Idletd;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
@@ -14,21 +43,16 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Objects;
-
-import static io.github.stealingdapenta.idletd.custommob.MobAttributes.*;
-import static org.bukkit.attribute.Attribute.*;
-
 @Getter
 @Builder
 public class MobWrapper {
     private final LivingEntity summonedEntity;
     private final CustomMobHandler customMobHandler = new CustomMobHandler();
-
-    protected double movement_speed;
+    String playerUUID;
     EntityType entityType;
     Location location;
     TextComponent name;
+    double movement_speed;
     double max_health;
     double regeneration_per_second;
     double overheal_shield_limit;
@@ -53,7 +77,6 @@ public class MobWrapper {
     double projectile_speed;
     double critical_hit_chance;
     double critical_hit_damage_multiplier;
-    String playerUUID;
 
 
     MobWrapper(MobWrapperBuilder builder) {
