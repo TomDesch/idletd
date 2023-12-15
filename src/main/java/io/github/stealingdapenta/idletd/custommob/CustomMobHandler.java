@@ -23,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 @RequiredArgsConstructor
 @Getter
 public class CustomMobHandler {
+
     private static final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
     private static final String ERROR_SETTING_TARGET = "Error setting agent as target for custom mob.";
     private static final String CUSTOM_MOB_TAG = "idletd_mob";
@@ -39,8 +40,12 @@ public class CustomMobHandler {
         }
 
         AgentNPC agentNPC = target.getAgentNPC();
-        NPC npc = Optional.ofNullable(agentNPC).map(AgentNPC::getNpc).orElse(null);
-        LivingEntity targetEntity = (LivingEntity) Optional.ofNullable(npc).map(NPC::getEntity).orElse(null);
+        NPC npc = Optional.ofNullable(agentNPC)
+                          .map(AgentNPC::getNpc)
+                          .orElse(null);
+        LivingEntity targetEntity = (LivingEntity) Optional.ofNullable(npc)
+                                                           .map(NPC::getEntity)
+                                                           .orElse(null);
 
         if (Objects.isNull(targetEntity)) {
             logger.warning(ERROR_SETTING_TARGET);
@@ -74,12 +79,16 @@ public class CustomMobHandler {
     }
 
     public boolean isCustomMob(LivingEntity livingEntity) {
-        return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer().get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+        return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer()
+                                               .get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
     }
 
     public boolean isCustomArmorStand(LivingEntity livingEntity) {
-        if (!(livingEntity instanceof ArmorStand armorStand)) return false;
-        return Boolean.TRUE.equals(armorStand.getPersistentDataContainer().get(getCustomNamespacedKey(), PersistentDataType.BOOLEAN));
+        if (!(livingEntity instanceof ArmorStand armorStand)) {
+            return false;
+        }
+        return Boolean.TRUE.equals(armorStand.getPersistentDataContainer()
+                                             .get(getCustomNamespacedKey(), PersistentDataType.BOOLEAN));
     }
 
     public boolean isCustomMobOrCustomArmorStand(LivingEntity livingEntity) {
@@ -95,11 +104,14 @@ public class CustomMobHandler {
             logger.warning("Tried to get Linked player uuid of an entity that is not a cutom mob!");
             return null;
         }
-        return customMob.getPersistentDataContainer().get(getPlayerNameSpacedKey(), PersistentDataType.STRING);
+        return customMob.getPersistentDataContainer()
+                        .get(getPlayerNameSpacedKey(), PersistentDataType.STRING);
     }
 
     public void setNewTarget(MobWrapper mobWrapper, LivingEntity target) {
-        if (!(mobWrapper.getSummonedEntity() instanceof Creature entityCreature)) return;
+        if (!(mobWrapper.getSummonedEntity() instanceof Creature entityCreature)) {
+            return;
+        }
         entityCreature.setTarget(target);
     }
 
@@ -110,7 +122,8 @@ public class CustomMobHandler {
 
     public int getMobLevel(LivingEntity livingEntity) {
         if (isCustomMob(livingEntity)) {
-            return livingEntity.getPersistentDataContainer().get(getLevelNSK(), PersistentDataType.INTEGER);
+            return livingEntity.getPersistentDataContainer()
+                               .get(getLevelNSK(), PersistentDataType.INTEGER);
         } else {
             return -1;
         }

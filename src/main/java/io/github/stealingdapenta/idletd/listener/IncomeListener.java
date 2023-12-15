@@ -1,10 +1,13 @@
 package io.github.stealingdapenta.idletd.listener;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,12 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Objects;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-
 @RequiredArgsConstructor
 public class IncomeListener implements Listener {
+
     private final CustomMobHandler customMobHandler;
     private final IdlePlayerService idlePlayerService;
     private final IdlePlayerManager idlePlayerManager;
@@ -33,9 +33,12 @@ public class IncomeListener implements Listener {
         // also todo fix the bug where relog relog dring timer doesnt stop the mobs from spawning
         // todo bug lmao idlePlayer is always null
         LivingEntity livingEntity = event.getEntity();
-        if (!customMobHandler.isCustomMob(livingEntity)) return;
+        if (!customMobHandler.isCustomMob(livingEntity)) {
+            return;
+        }
 
-        String linkedPlayerUUID = livingEntity.getPersistentDataContainer().get(customMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING);
+        String linkedPlayerUUID = livingEntity.getPersistentDataContainer()
+                                              .get(customMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING);
         if (Objects.isNull(linkedPlayerUUID)) {
             logger.warning("Found a custom mob, but without a linked player UUID!");
             return;

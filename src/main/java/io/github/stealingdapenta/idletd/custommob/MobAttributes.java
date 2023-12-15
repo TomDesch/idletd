@@ -1,13 +1,12 @@
 package io.github.stealingdapenta.idletd.custommob;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Objects;
 
 @Getter
 public enum MobAttributes {
