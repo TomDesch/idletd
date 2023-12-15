@@ -88,6 +88,7 @@ public abstract class CustomMob {
     initializeAttackSpeed();
     initializeProjectileSpeed();
     initializeCriticalHitChance();
+    initializeCriticalHitDamageMultiplier();
 
     MobWrapper customMob = MobWrapper.builder().playerUUID(plot.getPlayerUUID()).location(location)
         .name(generateMobName()).entityType(entityType).movement_speed(movement_speed)
@@ -164,8 +165,9 @@ public abstract class CustomMob {
 
   protected abstract void initializeCriticalHitChance();
 
-  // todo in the future have one task for all mobs.
-  private void preventMobFromFallingTask() {
+  protected abstract void initializeCriticalHitDamageMultiplier();
+
+  private void preventMobFromFallingTask() {// todo in the future have one task for all mobs.
     new BukkitRunnable() {
       @Override
       public void run() {
@@ -180,6 +182,4 @@ public abstract class CustomMob {
       }
     }.runTaskTimer(Idletd.getInstance(), ZERO_TICKS, 2 * ONE_SECOND_IN_TICKS);
   }
-
-  protected abstract void initializeCriticalHitDamageMultiplier();
 }
