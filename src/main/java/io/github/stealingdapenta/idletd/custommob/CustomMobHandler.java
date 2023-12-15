@@ -1,8 +1,14 @@
 package io.github.stealingdapenta.idletd.custommob;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob.getLevelNSK;
+
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.npc.NPC;
@@ -13,21 +19,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob.getLevelNSK;
-
 
 @RequiredArgsConstructor
 @Getter
 public class CustomMobHandler {
     private static final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
     private static final String ERROR_SETTING_TARGET = "Error setting agent as target for custom mob.";
-    private final String CUSTOM_MOB_TAG = "idletd_mob";
-    private final String PLAYER_TAG = "related_p";
+    private static final String CUSTOM_MOB_TAG = "idletd_mob";
+    private static final String PLAYER_TAG = "related_p";
     private static final String CUSTOM_NSK_TAG = "customnsktag";
 
 
@@ -52,12 +51,12 @@ public class CustomMobHandler {
     }
 
 
-    public NamespacedKey getCustomNameSpacedKey() {
-        return new NamespacedKey(Idletd.getInstance(), getCUSTOM_MOB_TAG());
+    public static NamespacedKey getCustomNameSpacedKey() {
+        return new NamespacedKey(Idletd.getInstance(), CUSTOM_MOB_TAG);
     }
 
-    public NamespacedKey getPlayerNameSpacedKey() {
-        return new NamespacedKey(Idletd.getInstance(), getPLAYER_TAG());
+    public static NamespacedKey getPlayerNameSpacedKey() {
+        return new NamespacedKey(Idletd.getInstance(), PLAYER_TAG);
     }
 
     public void addCustomMob(MobWrapper mobWrapper) {
