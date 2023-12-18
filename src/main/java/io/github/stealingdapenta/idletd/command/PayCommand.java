@@ -1,10 +1,14 @@
 package io.github.stealingdapenta.idletd.command;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
@@ -12,13 +16,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-
 @RequiredArgsConstructor
 public class PayCommand implements CommandExecutor {
+
     private static final String NO_IDLE_PLAYER = "Internal error. Please contact a system admin.";
     private static final String NO_IDLE_TARGET = "Error finding target player. Please put a valid player name!";
     private static final String BALANCE = "Successful payment! Your balance of Guard now stands at %s ₰";
@@ -40,14 +40,21 @@ public class PayCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length < 2) return false;
+        if (args.length < 2) {
+            return false;
+        }
 
         String target = args[0];
-        Player targetPlayer = Idletd.getInstance().getServer().getPlayer(target);
+        Player targetPlayer = Idletd.getInstance()
+                                    .getServer()
+                                    .getPlayer(target);
 
         IdlePlayer idleTarget;
         if (Objects.isNull(targetPlayer)) {
-            UUID uuid = Idletd.getInstance().getServer().getOfflinePlayer(target).getUniqueId();
+            UUID uuid = Idletd.getInstance()
+                              .getServer()
+                              .getOfflinePlayer(target)
+                              .getUniqueId();
             idleTarget = idlePlayerService.getIdlePlayer(uuid);
         } else {
             idleTarget = idlePlayerService.getIdlePlayer(targetPlayer);

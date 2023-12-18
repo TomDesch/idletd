@@ -121,9 +121,10 @@ public class CustomMobHandler {
     }
 
     public int getMobLevel(LivingEntity livingEntity) {
-        if (isCustomMob(livingEntity)) {
-            return livingEntity.getPersistentDataContainer()
-                               .get(getLevelNSK(), PersistentDataType.INTEGER);
+        Integer level = livingEntity.getPersistentDataContainer()
+                                    .get(getLevelNSK(), PersistentDataType.INTEGER);
+        if (Objects.nonNull(level)) {
+            return level;
         } else {
             return -1;
         }

@@ -33,3 +33,7 @@ commands:
     description: Pay someone in ₰.
     usage: /<command> <target> <amount>
 
+  custommob:
+    description: Debug command to summon a mob.
+    usage: /<command> <type> <level> <quantity>
+
