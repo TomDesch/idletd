@@ -178,7 +178,8 @@ public abstract class CustomMob {
                                          .critical_hit_damage_multiplier(critical_hit_damage_multiplier)
                                          .build();
 
-        mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob).getSummonedEntity();
+        new CustomMobHandler().spawnCustomMob(customMob);
+        mob = (Mob) customMob.getSummonedEntity();
 
         // todo set Target to the main agent of the plot (we have this.plot)
 
@@ -246,7 +247,7 @@ public abstract class CustomMob {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (Objects.isNull(plot) || !mob.isValid()) {
+                if (Objects.isNull(plot) || Objects.isNull(mob) || !mob.isValid()) {
                     cancel();
                 }
 
