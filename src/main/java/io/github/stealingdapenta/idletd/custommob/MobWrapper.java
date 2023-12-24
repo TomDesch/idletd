@@ -80,7 +80,7 @@ public class MobWrapper {
     double critical_hit_damage_multiplier;
 
 
-    MobWrapper(MobWrapperBuilder builder) { // todo fix NPE because the mob is null
+    public MobWrapper(MobWrapperBuilder builder) {
         summonedEntity = (LivingEntity) builder.location.getWorld().spawnEntity(builder.location, builder.entityType, CreatureSpawnEvent.SpawnReason.CUSTOM, entity -> {
 
             LivingEntity livingEntity = (LivingEntity) entity;
