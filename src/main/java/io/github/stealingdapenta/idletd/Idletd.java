@@ -41,16 +41,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 import java.util.logging.Logger;
-import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Idletd extends JavaPlugin {
 
     public static Logger logger;
-    @Getter
+
     private static volatile boolean shuttingDown = false;
-    @Getter
     private static Idletd instance = null;
 
     private final PlotRepository plotRepository = new PlotRepository();
@@ -160,13 +160,11 @@ public class Idletd extends JavaPlugin {
             getLogger().info("Schematics folder created.");
         }
 
-        this.copyResource("/schematics/" + TOWER_DEFENSE_SCHEMATIC.getFileName(),
-                new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
+        this.copyResource("/schematics/" + TOWER_DEFENSE_SCHEMATIC.getFileName(), new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
     }
 
     private void copyResource(String resourcePath, File targetFile) {
-        try (InputStream inputStream = getClass().getResourceAsStream(resourcePath);
-                OutputStream outputStream = new FileOutputStream(targetFile)) {
+        try (InputStream inputStream = getClass().getResourceAsStream(resourcePath); OutputStream outputStream = new FileOutputStream(targetFile)) {
             byte[] buffer = new byte[4096];
             int length;
             while (true) {
@@ -187,8 +185,23 @@ public class Idletd extends JavaPlugin {
     @Override
     public void onDisable() {
         shutDown();
+        kickAllPlayers(); // Used to make sure all log-outs are handled correctly
         instance = null;
 
         this.pluginDisabledLog();
+    }
+
+    private void kickAllPlayers() {
+        Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Idle TD is reloading.")));
+    }
+
+    public static boolean isShuttingDown() {
+        // Project fails if a lombok getter is used instead
+        return shuttingDown;
+    }
+
+    public static Idletd getInstance() {
+        // Project fails if a lombok getter is used instead
+        return instance;
     }
 }

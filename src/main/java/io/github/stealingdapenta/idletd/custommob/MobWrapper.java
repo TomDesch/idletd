@@ -30,6 +30,7 @@ import static org.bukkit.attribute.Attribute.GENERIC_MOVEMENT_SPEED;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
@@ -45,9 +46,9 @@ import org.bukkit.persistence.PersistentDataType;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class MobWrapper {
     private final LivingEntity summonedEntity;
-    private final CustomMobHandler customMobHandler = new CustomMobHandler();
     String playerUUID;
     EntityType entityType;
     Location location;
@@ -79,7 +80,7 @@ public class MobWrapper {
     double critical_hit_damage_multiplier;
 
 
-    MobWrapper(MobWrapperBuilder builder) {
+    MobWrapper(MobWrapperBuilder builder) { // todo fix NPE because the mob is null
         summonedEntity = (LivingEntity) builder.location.getWorld().spawnEntity(builder.location, builder.entityType, CreatureSpawnEvent.SpawnReason.CUSTOM, entity -> {
 
             LivingEntity livingEntity = (LivingEntity) entity;
@@ -94,8 +95,8 @@ public class MobWrapper {
             setAttribute(livingEntity, GENERIC_ATTACK_KNOCKBACK, attack_knockback);
             setAttribute(livingEntity, GENERIC_KNOCKBACK_RESISTANCE, builder.knockback_resistance);
 
-            livingEntity.getPersistentDataContainer().set(customMobHandler.getCustomNameSpacedKey(), PersistentDataType.BOOLEAN, true);
-            livingEntity.getPersistentDataContainer().set(customMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING, builder.playerUUID);
+            livingEntity.getPersistentDataContainer().set(CustomMobHandler.getCustomNameSpacedKey(), PersistentDataType.BOOLEAN, true);
+            livingEntity.getPersistentDataContainer().set(CustomMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING, builder.playerUUID);
 
             setAttribute(livingEntity, MOVEMENT_SPEED.getAttributeName(), builder.movement_speed);
             setAttribute(livingEntity, MAX_HEALTH.getAttributeName(), builder.max_health);

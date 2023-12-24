@@ -14,23 +14,6 @@ import org.bukkit.util.BlockIterator;
 
 @RequiredArgsConstructor
 public class CustomMobCommand implements CommandExecutor {
-
-
-    public static Location getLocationOnTopOfBlock(Player player) {
-        BlockIterator blockIterator = new BlockIterator(player, 5); // Adjust the range as needed
-
-        while (blockIterator.hasNext()) {
-            Block block = blockIterator.next();
-            if (!block.isEmpty() && !block.isLiquid()) {
-                return block.getLocation()
-                            .add(0.5, 1.0, 0.5); // Adjust the offset as needed
-            }
-        }
-
-        // Default to player's location if no block is found
-        return player.getLocation();
-    }
-
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         Player sourcePlayer = (Player) commandSender;
@@ -50,8 +33,6 @@ public class CustomMobCommand implements CommandExecutor {
             return false;
         }
 
-        CustomMob customMob;
-
         int amount = 1;
         try {
             amount = Integer.parseInt(args[2]);
@@ -59,6 +40,7 @@ public class CustomMobCommand implements CommandExecutor {
             sourcePlayer.sendMessage("No/wrong amount specified, defaulting 1.");
         }
 
+        CustomMob customMob;
         for (int i = 0; i < amount; i++) {
             switch (typeString.toLowerCase()) {
                 case "zombie":
@@ -70,10 +52,24 @@ public class CustomMobCommand implements CommandExecutor {
             }
 
             customMob.summon(getLocationOnTopOfBlock(sourcePlayer));
-            customMob.getMob()
-                     .setTarget(sourcePlayer);
+            customMob.getMob().setTarget(sourcePlayer);
         }
 
         return true;
+    }
+
+    public static Location getLocationOnTopOfBlock(Player player) {
+        BlockIterator blockIterator = new BlockIterator(player, 5); // Adjust the range as needed
+
+        while (blockIterator.hasNext()) {
+            Block block = blockIterator.next();
+            if (!block.isEmpty() && !block.isLiquid()) {
+                return block.getLocation()
+                            .add(0.5, 1.0, 0.5); // Adjust the offset as needed
+            }
+        }
+
+        // Default to player's location if no block is found
+        return player.getLocation();
     }
 }

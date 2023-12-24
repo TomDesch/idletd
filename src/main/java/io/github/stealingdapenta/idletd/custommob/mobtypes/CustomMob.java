@@ -149,7 +149,7 @@ public abstract class CustomMob {
         initializeCriticalHitDamageMultiplier();
 
         MobWrapper customMob = MobWrapper.builder()
-                                         .playerUUID(plot.getPlayerUUID())
+                                         .playerUUID(Objects.nonNull(plot) ? plot.getPlayerUUID() : null)
                                          .location(location)
                                          .name(generateMobName())
                                          .entityType(entityType)
@@ -178,15 +178,13 @@ public abstract class CustomMob {
                                          .critical_hit_damage_multiplier(critical_hit_damage_multiplier)
                                          .build();
 
-        mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob)
-                                          .getSummonedEntity();
+        mob = (Mob) new CustomMobHandler().spawnCustomMob(customMob).getSummonedEntity();
 
         // todo set Target to the main agent of the plot (we have this.plot)
 
         preventMobFromFallingTask();
 
-        mob.getPersistentDataContainer()
-           .set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
+        mob.getPersistentDataContainer().set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
 
         return mob;
     }
