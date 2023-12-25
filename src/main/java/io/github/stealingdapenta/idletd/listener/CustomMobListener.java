@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.listener;
 
+import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
@@ -40,7 +41,7 @@ public class CustomMobListener implements Listener {
 
         Entity target = event.getTarget();
 
-        if (Objects.isNull(target) || !customMobHandler.isCustomMob(mob) || target.hasMetadata("NPC")) {
+        if (Objects.isNull(target) || !customMobHandler.isCustomMob(mob) || AgentNPCHandler.isNPC(target)) {
             return; // Assuming the NPC is the correct one.
         }
 

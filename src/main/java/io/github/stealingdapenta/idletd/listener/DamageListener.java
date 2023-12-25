@@ -1,6 +1,8 @@
 package io.github.stealingdapenta.idletd.listener;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.agent.AgentManager;
+import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -27,6 +29,40 @@ public class DamageListener implements Listener {
     // todo cancel dmg done by agent to player or agent
 
     private final CustomMobHandler customMobHandler;
+    private final AgentManager agentManager;
+
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void calculateDamage(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) return;
+
+        Entity source = event.getDamager();
+        Entity target = event.getEntity();
+
+        if (customMobHandler.isCustomMob(source) && AgentNPCHandler.isNPC(target)) {
+            handleMobHittingAgent((LivingEntity) source, (NPC) target, event);
+
+        } else if (AgentNPCHandler.isNPC(source) && customMobHandler.isCustomMob(target)) {
+            handleAgentHittingMob((NPC) source, (LivingEntity) target, event);
+
+        } else if (source instanceof Player sourcePlayer && customMobHandler.isCustomMob(target)) {
+            handlePlayerHittingMob(sourcePlayer, (LivingEntity) target, event);
+        }
+    }
+
+    private void handleMobHittingAgent(LivingEntity mob, NPC agent, EntityDamageByEntityEvent event) {
+        // Implement logic for calculating and applying damage
+    }
+
+    private void handleAgentHittingMob(NPC agent, LivingEntity mob, EntityDamageByEntityEvent event) {
+        // Implement logic for calculating and applying damage
+    }
+
+    private void handlePlayerHittingMob(Player player, LivingEntity mob, EntityDamageByEntityEvent event) {
+        // Implement logic for calculating and applying damage
+
+    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void cancelUnwantedDamageEvents(EntityDamageByEntityEvent event) {

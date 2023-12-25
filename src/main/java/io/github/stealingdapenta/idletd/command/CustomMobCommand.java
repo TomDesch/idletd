@@ -80,7 +80,6 @@ public class CustomMobCommand implements CommandExecutor {
         return true;
     }
 
-
     private NamespacedKey getCustomSummonKey() {
         return new NamespacedKey(Idletd.getInstance(), CUSTOM_SUMMON);
     }

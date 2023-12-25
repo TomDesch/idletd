@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.idleplayer;
 
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,8 @@ public class IdlePlayer {
     private UUID playerUUID;
     private double balance;
     private Long fkPlot;
+
+    private BattleStats fetchedBattleStats;
 
     @Override
     public boolean equals(Object o) {

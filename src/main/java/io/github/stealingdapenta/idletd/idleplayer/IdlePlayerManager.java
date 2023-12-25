@@ -3,6 +3,7 @@ package io.github.stealingdapenta.idletd.idleplayer;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefense;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
@@ -28,6 +29,7 @@ public class IdlePlayerManager {
     private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
     private static volatile Set<UUID> noLoginAllowed = new HashSet<>();
     private final IdlePlayerService idlePlayerService;
+    private final BattleStatsService battleStatsService;
     private final AgentManager agentManager;
     private final TowerDefenseManager towerDefenseManager;
     private final TowerDefenseService towerDefenseService;
@@ -99,9 +101,10 @@ public class IdlePlayerManager {
 
         try {
             idlePlayerService.updateIdlePlayer(idlePlayer);
+            battleStatsService.update(idlePlayer.getFetchedBattleStats());
         } catch (Exception e) {
             logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer).getName());
-            e.printStackTrace();
+            logger.warning(e.getMessage());
         } finally {
             if (!isShuttingDown()) {
                 boolean unregistered = unregisterOnlinePlayer(idlePlayer);

@@ -15,6 +15,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
@@ -80,6 +81,11 @@ public class CustomMobHandler {
 
     public boolean isCustomMob(LivingEntity livingEntity) {
         return Boolean.TRUE.equals(livingEntity.getPersistentDataContainer()
+                                               .get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+    }
+
+    public boolean isCustomMob(Entity entity) {
+        return Boolean.TRUE.equals(entity.getPersistentDataContainer()
                                                .get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
     }
 

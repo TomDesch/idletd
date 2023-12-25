@@ -3,6 +3,8 @@ package io.github.stealingdapenta.idletd.listener;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,7 @@ public class IdlePlayerListener implements Listener {
     private static final String WAIT_BEFORE_LOGGING = "&cPlease wait before logging in!";
     private final IdlePlayerManager idlePlayerManager;
     private final IdlePlayerService idlePlayerService;
+    private final BattleStatsService battleStatsService;
     private long lastNewPlayer = -1;
 
     @EventHandler
@@ -55,6 +58,7 @@ public class IdlePlayerListener implements Listener {
         }
 
         IdlePlayer idlePlayer;
+        BattleStats battleStats;
 
         IdlePlayer cachedIdlePlayer = getOfflinePlayerCache().getIfPresent(uuid);
         if (Objects.nonNull(cachedIdlePlayer)) {
@@ -62,10 +66,15 @@ public class IdlePlayerListener implements Listener {
             getOfflinePlayerCache().invalidate(uuid);
         } else {
             idlePlayer = idlePlayerService.getIdlePlayer(uuid);
+            battleStats = battleStatsService.getFor(uuid);
+
 
             if (Objects.isNull(idlePlayer)) {
                 idlePlayer = idlePlayerService.createNewIdlePlayer(uuid);
+                battleStats = battleStatsService.createNew(uuid);
             }
+
+            idlePlayer.setFetchedBattleStats(battleStats);
 
             boolean registered = idlePlayerManager.registerOnlinePlayer(idlePlayer);
             logger.info("Registering online player was " + (registered ? "successful." : "unsuccessful!"));
@@ -90,7 +99,7 @@ public class IdlePlayerListener implements Listener {
         Player player = event.getPlayer();
         idlePlayerManager.postLogOut(player);
         // todo quit message
-        event.leaveMessage(null);
+//        event.leaveMessage(null);
     }
 
     @EventHandler
