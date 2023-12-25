@@ -26,31 +26,29 @@ public class CustomMobCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         Player sourcePlayer = (Player) commandSender;
 
-        if (args.length < 1) {
+        if (args.length < 2) {
             return false;
         }
 
-        if (args.length < 2) {
-            if ("killall".equals(args[0])) {
-                sourcePlayer.sendMessage("Killing all custom summoned monsters nearby you.");
-                sourcePlayer.getLocation()
-                            .getNearbyEntities(20, 20, 20)
-                            .stream()
-                            .filter(this::isCustomSummoned)
-                            .forEach(org.bukkit.entity.Entity::remove);
-                return true;
-            }
-        }
-
-        String typeString = args[0];
-        String levelString = args.length > 1 ? args[1] : "1";
+        String firstArg = args[0];
+        String secondArg = args[1];
         int level;
 
         try {
-            level = Integer.parseInt(levelString);
+            level = Integer.parseInt(secondArg);
         } catch (NumberFormatException e) {
-            sourcePlayer.sendMessage("Invalid level.");
+            sourcePlayer.sendMessage("Invalid level or radius.");
             return false;
+        }
+
+        if ("killall".equals(firstArg)) {
+            sourcePlayer.sendMessage("Killing all custom summoned monsters nearby you.");
+            sourcePlayer.getLocation()
+                        .getNearbyEntities(level, level, level)
+                        .stream()
+                        .filter(this::isCustomSummoned)
+                        .forEach(org.bukkit.entity.Entity::remove);
+            return true;
         }
 
         int amount = 1;
@@ -65,7 +63,7 @@ public class CustomMobCommand implements CommandExecutor {
         Plot fictionalPlot = new Plot(0, 0, 0, sourcePlayer.getUniqueId());
 
         for (int i = 0; i < amount; i++) {
-            CustomMob customMob = switch (typeString.toLowerCase()) {
+            CustomMob customMob = switch (firstArg.toLowerCase()) {
                 case "zombie" -> new ZombieMob(fictionalPlot, level);
                 case "skeleton" -> new SkeletonMob(fictionalPlot, level);
                 default -> new ZombieMob(fictionalPlot, level);
@@ -97,12 +95,15 @@ public class CustomMobCommand implements CommandExecutor {
 
         while (blockIterator.hasNext()) {
             Block block = blockIterator.next();
-            if (!block.getType().isAir() && !block.isLiquid()) {
-                return block.getLocation().add(0.5, 1.0, 0.5);
+            if (!block.getType()
+                      .isAir() && !block.isLiquid()) {
+                return block.getLocation()
+                            .add(0.5, 1.0, 0.5);
             }
         }
 
-        return player.getEyeLocation().add(0, 1, 0);
+        return player.getEyeLocation()
+                     .add(0, 1, 0);
     }
 
     // fix agents duplication (npc) todo
