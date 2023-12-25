@@ -35,5 +35,5 @@ commands:
 
   custommob:
     description: Debug command to summon a mob.
-    usage: /<command> <type> <level> <quantity>
+    usage: /<command> <type> <level> <quantity> or /<command> killall
 
