@@ -17,6 +17,8 @@ import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerRepository;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsRepository;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
 import io.github.stealingdapenta.idletd.listener.DamageListener;
@@ -43,7 +45,6 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Idletd extends JavaPlugin {
@@ -70,6 +71,8 @@ public class Idletd extends JavaPlugin {
     private final SkinService skinService = new SkinService(skinRepository, coloring);
     private final SkinManager skinManager = new SkinManager(coloring, skinService);
     private final EntityTracker entityTracker = new EntityTracker(customMobHandler);
+    private final BattleStatsRepository battleStatsRepository = new BattleStatsRepository();
+    private final BattleStatsService battleStatsService = new BattleStatsService(battleStatsRepository);
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker);
     private final AgentManager agentManager = new AgentManager(agentService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler,
@@ -77,15 +80,16 @@ public class Idletd extends JavaPlugin {
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager,
             agentManager);
-    private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, agentManager, towerDefenseManager, towerDefenseService);
+    private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, battleStatsService, agentManager, towerDefenseManager,
+            towerDefenseService);
     private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobCommand customMobCommand = new CustomMobCommand();
-    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService);
+    private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler, idlePlayerService, towerDefenseManager);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService);
-    private final DamageListener damageListener = new DamageListener(customMobHandler);
+    private final DamageListener damageListener = new DamageListener(customMobHandler, agentManager);
     private final SpawnListener spawnListener = new SpawnListener();
 
     public static void shutDown() {
@@ -192,7 +196,8 @@ public class Idletd extends JavaPlugin {
     }
 
     private void kickAllPlayers() {
-        Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Idle TD is reloading.")));
+        Bukkit.getOnlinePlayers()
+              .forEach(player -> player.kick(Component.text("Idle TD is reloading.")));
     }
 
     public static boolean isShuttingDown() {
