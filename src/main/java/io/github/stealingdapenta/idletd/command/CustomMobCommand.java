@@ -93,21 +93,18 @@ public class CustomMobCommand implements CommandExecutor {
     }
 
     public static Location getLocationOnTopOfBlock(Player player) {
-        // todo: fix the spawn position
-        // fix agents duplication (npc) todo
-        // Scale movement speed with a max lvl todo
-
-        BlockIterator blockIterator = new BlockIterator(player, 5); // Adjust the range as needed
+        BlockIterator blockIterator = new BlockIterator(player, 50);
 
         while (blockIterator.hasNext()) {
             Block block = blockIterator.next();
-            if (!block.isEmpty() && !block.isLiquid()) {
-                return block.getLocation()
-                            .add(0.5, 1.0, 0.5); // Adjust the offset as needed
+            if (!block.getType().isAir() && !block.isLiquid()) {
+                return block.getLocation().add(0.5, 1.0, 0.5);
             }
         }
 
-        // Default to player's location if no block is found
-        return player.getLocation();
+        return player.getEyeLocation().add(0, 1, 0);
     }
+
+    // fix agents duplication (npc) todo
+    // Scale movement speed with a max lvl todo
 }
