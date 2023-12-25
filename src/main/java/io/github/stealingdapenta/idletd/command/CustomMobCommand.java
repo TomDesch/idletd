@@ -107,5 +107,4 @@ public class CustomMobCommand implements CommandExecutor {
     }
 
     // fix agents duplication (npc) todo
-    // Scale movement speed with a max lvl todo
 }

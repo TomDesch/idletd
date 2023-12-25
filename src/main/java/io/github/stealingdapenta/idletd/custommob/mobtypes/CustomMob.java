@@ -180,8 +180,6 @@ public abstract class CustomMob {
         new CustomMobHandler().spawnCustomMob(customMob);
         mob = (Mob) customMob.getSummonedEntity();
 
-        // todo set Target to the main agent of the plot (we have this.plot)
-
         preventMobFromFallingTask();
 
         mob.getPersistentDataContainer().set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());

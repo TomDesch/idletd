@@ -23,7 +23,10 @@ public class SkeletonMob extends CustomMob {
 
     @Override
     protected void initializeMovementSpeed() {
-        movement_speed = 0.2 + (double) getLevel() / 1000;
+        double baseSpeed = 0.2;
+        double maxSpeed = 1.0;
+
+        movement_speed = Math.min(maxSpeed, baseSpeed + (level > 250 ? 0 : (level - 1) * (maxSpeed - baseSpeed) / 249.0));
     }
 
     @Override
