@@ -4,6 +4,9 @@ import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentService;
 import io.github.stealingdapenta.idletd.agent.AgentType;
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStats;
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsRepository;
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
@@ -30,6 +33,7 @@ public class AgentCommand implements CommandExecutor {
     private final AgentService agentService;
     private final AgentManager agentManager;
     private final IdleLocationService idleLocationService;
+    private final MainAgentStatsService mainAgentStatsService;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -63,7 +67,38 @@ public class AgentCommand implements CommandExecutor {
                                .activeSkinId(5)
                                .build();
 
-            agentService.saveAgent(agent);
+
+
+            long agentId = agentService.saveAgent(agent);
+            MainAgentStats mainAgentStats = MainAgentStats.builder()
+                                                          .agentId(agentId)
+                                                          .maxHealth(1.0)
+                                                          .regenerationPerSecond(1.0)
+                                                          .overhealShieldLimit(1.0)
+                                                          .overhealShieldRegenerationPerSecond(1.0)
+                                                          .knockbackResistance(1.0)
+                                                          .swordResistance(1.0)
+                                                          .axeResistance(1.0)
+                                                          .magicResistance(1.0)
+                                                          .arrowResistance(1.0)
+                                                          .tridentResistance(1.0)
+                                                          .explosionResistance(1.0)
+                                                          .fireResistance(1.0)
+                                                          .poisonResistance(1.0)
+                                                          .criticalHitResistance(1.0)
+                                                          .blockChance(1.0)
+                                                          .attackPower(1.0)
+                                                          .attackRange(1.0)
+                                                          .attackKnockback(1.0)
+                                                          .attackSpeed(1.0)
+                                                          .projectileSpeed(1.0)
+                                                          .criticalHitChance(1.0)
+                                                          .criticalHitDamageMultiplier(1.0)
+                                                          .build();
+
+            mainAgentStatsService.saveMainAgentStats(mainAgentStats);
+
+
         }
 
         agentManager.activateAllInactiveAgents(idlePlayer);

@@ -94,8 +94,8 @@ public class AgentService {
         return agents;
     }
 
-    public void saveAgent(Agent agent) {
-        agentRepository.saveAgent(agent);
+    public long saveAgent(Agent agent) {
+        return agentRepository.saveAgent(agent);
     }
 
     public void updateAgent(Agent agent) {

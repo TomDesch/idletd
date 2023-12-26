@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.agent;
 
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +16,9 @@ import static io.github.stealingdapenta.idletd.Idletd.logger;
 public class AgentManager {
 
     private static final Set<Agent> activeAgents = new HashSet<>();
+    private static final Set<AgentStats> activeAgentsStats = new HashSet<>(); // todo use
     private final AgentService agentService;
+    private final AgentStatsService agentStatsService; // todo use
 
     public Agent getActiveMainAgent(IdlePlayer idlePlayer) {
         return getAllActiveAgents(idlePlayer)
@@ -49,6 +52,7 @@ public class AgentManager {
 
     public boolean activateAgent(Agent agent) {
         agentService.summonNPC(agent);
+
         return activeAgents.add(agent);
     }
 
@@ -78,7 +82,7 @@ public class AgentManager {
     }
 
     public void deactivateAndSaveAgent(Agent agent) {
-        if (Objects.isNull(agent.getId())) {
+        if (agent.getId() == 0) {
             agentService.saveAgent(agent);
         } else {
             agentService.updateAgent(agent);

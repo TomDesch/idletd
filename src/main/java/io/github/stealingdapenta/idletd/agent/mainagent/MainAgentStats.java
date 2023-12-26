@@ -1,17 +1,19 @@
 package io.github.stealingdapenta.idletd.agent.mainagent;
 
+import io.github.stealingdapenta.idletd.agent.AgentStats;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
 @Builder
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class MainAgentStats {
+public class MainAgentStats extends AgentStats {
 
-    private long agentId;
     private double maxHealth;
     private double regenerationPerSecond;
     private double overhealShieldLimit;

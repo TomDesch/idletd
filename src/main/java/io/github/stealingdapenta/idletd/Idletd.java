@@ -5,6 +5,9 @@ import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEF
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentRepository;
 import io.github.stealingdapenta.idletd.agent.AgentService;
+import io.github.stealingdapenta.idletd.agent.AgentStatsService;
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsRepository;
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import io.github.stealingdapenta.idletd.command.AgentCommand;
 import io.github.stealingdapenta.idletd.command.BalanceCommand;
 import io.github.stealingdapenta.idletd.command.CustomMobCommand;
@@ -74,7 +77,10 @@ public class Idletd extends JavaPlugin {
     private final BattleStatsRepository battleStatsRepository = new BattleStatsRepository();
     private final BattleStatsService battleStatsService = new BattleStatsService(battleStatsRepository);
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker);
-    private final AgentManager agentManager = new AgentManager(agentService);
+    private final MainAgentStatsRepository mainAgentStatsRepository = new MainAgentStatsRepository();
+    private final MainAgentStatsService mainAgentStatsService = new MainAgentStatsService(mainAgentStatsRepository);
+    private final AgentStatsService agentStatsService = new AgentStatsService(agentService, mainAgentStatsService);
+    private final AgentManager agentManager = new AgentManager(agentService, agentStatsService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler,
             agentManager);
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
@@ -88,8 +94,8 @@ public class Idletd extends JavaPlugin {
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler, idlePlayerService, towerDefenseManager);
-    private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService);
-    private final DamageListener damageListener = new DamageListener(customMobHandler, agentManager);
+    private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService, mainAgentStatsService);
+    private final DamageListener damageListener = new DamageListener(customMobHandler, agentManager, idlePlayerManager);
     private final SpawnListener spawnListener = new SpawnListener();
 
     public static void shutDown() {
@@ -141,17 +147,17 @@ public class Idletd extends JavaPlugin {
     }
 
     private void pluginEnabledLog() {
-        getLogger().info("IdleMCTD enabled.");
+        logger.info("IdleMCTD enabled.");
     }
 
     private void pluginDisabledLog() {
-        getLogger().info("IdleMCTD is now disabled.");
+        logger.info("IdleMCTD is now disabled.");
     }
 
     public File getIdleTdFolder() {
         File pluginFolder = this.getDataFolder();
         if (!pluginFolder.exists() && (!pluginFolder.mkdirs())) {
-            getLogger().warning("Failed to generate idletd data folder!");
+            logger.warning("Failed to generate idletd data folder!");
         }
         return pluginFolder;
     }
@@ -161,7 +167,7 @@ public class Idletd extends JavaPlugin {
         File schematicsFolder = new File(dataFolder, "schematics");
 
         if (!schematicsFolder.exists() && schematicsFolder.mkdirs()) {
-            getLogger().info("Schematics folder created.");
+            logger.info("Schematics folder created.");
         }
 
         this.copyResource("/schematics/" + TOWER_DEFENSE_SCHEMATIC.getFileName(), new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
@@ -179,10 +185,10 @@ public class Idletd extends JavaPlugin {
                 outputStream.write(buffer, 0, length);
             }
 
-            getLogger().info("Copied resource: " + resourcePath);
+            logger.info("Copied resource: " + resourcePath);
         } catch (IOException e) {
-            getLogger().warning("Failed to copy resource: " + resourcePath);
-            e.printStackTrace();
+            logger.warning("Failed to copy resource: " + resourcePath);
+            logger.warning(e.getMessage());
         }
     }
 

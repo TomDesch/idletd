@@ -18,21 +18,31 @@ import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataS
 @RequiredArgsConstructor
 public class AgentRepository {
 
-    public void saveAgent(Agent agent) {
+    public long saveAgent(Agent agent) {
         try (Connection connection = getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO AGENT (PLAYERUUID, AGENT_TYPE, FK_LOCATION, ACTIVE_SKIN_ID) VALUES (?, ?, ?, ?)",
-                                                                       Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO AGENT (PLAYERUUID, AGENT_TYPE, FK_LOCATION, ACTIVE_SKIN_ID) VALUES (?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, agent.getPlayerUUID().toString());
             statement.setInt(2, agent.getAgentType().getTypeId());
             statement.setLong(3, agent.getFkLocation());
             statement.setInt(4, agent.getActiveSkinId());
 
-            statement.execute();
+            statement.executeUpdate();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                } else {
+                    throw new SQLException("Creating Agent failed, no ID obtained.");
+                }
+            }
         } catch (SQLException e) {
             logger.severe("Error inserting Agent: " + e.getMessage());
+            return -1; // Or handle the error accordingly
         }
     }
+
 
     public Agent getAgent(int id) {
         try (Connection connection = getDataSource().getConnection();
