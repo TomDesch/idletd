@@ -13,7 +13,7 @@ public class MainAgentStats extends AgentStats {
 
     @Builder
     public MainAgentStats(int agentId, double maxHealth, double regenerationPerSecond, double overhealShieldLimit, double overhealShieldRegenerationPerSecond,
-            double knockbackResistance, double swordResistance, double axeResistance, double magicResistance, double arrowResistance, double tridentResistance,
+            double swordResistance, double axeResistance, double magicResistance, double arrowResistance, double tridentResistance,
             double explosionResistance, double fireResistance, double poisonResistance, double criticalHitResistance, double blockChance, double attackPower,
             double attackRange, double attackKnockback, double attackSpeed, double projectileSpeed, double criticalHitChance,
             double criticalHitDamageMultiplier) {
@@ -22,7 +22,6 @@ public class MainAgentStats extends AgentStats {
         this.regenerationPerSecond = regenerationPerSecond;
         this.overhealShieldLimit = overhealShieldLimit;
         this.overhealShieldRegenerationPerSecond = overhealShieldRegenerationPerSecond;
-        this.knockbackResistance = knockbackResistance;
         this.swordResistance = swordResistance;
         this.axeResistance = axeResistance;
         this.magicResistance = magicResistance;

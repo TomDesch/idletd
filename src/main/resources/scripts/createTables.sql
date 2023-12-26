@@ -98,7 +98,6 @@ CREATE TABLE IF NOT EXISTS MAIN_AGENT_STATS (
                                                 REGENERATION_PER_SECOND DOUBLE NOT NULL,
                                                 OVERHEAL_SHIELD_LIMIT DOUBLE NOT NULL,
                                                 OVERHEAL_SHIELD_REGEN_PER_SECOND DOUBLE NOT NULL,
-                                                KNOCKBACK_RESISTANCE DOUBLE NOT NULL,
                                                 SWORD_RESISTANCE DOUBLE NOT NULL,
                                                 AXE_RESISTANCE DOUBLE NOT NULL,
                                                 MAGIC_RESISTANCE DOUBLE NOT NULL,

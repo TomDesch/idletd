@@ -71,12 +71,11 @@ public class AgentCommand implements CommandExecutor {
 
             long agentId = agentService.saveAgent(agent);
             MainAgentStats mainAgentStats = MainAgentStats.builder()
-                                                          .agentId(agentId)
-                                                          .maxHealth(1.0)
-                                                          .regenerationPerSecond(1.0)
-                                                          .overhealShieldLimit(1.0)
-                                                          .overhealShieldRegenerationPerSecond(1.0)
-                                                          .knockbackResistance(1.0)
+                                                          .agentId((int) agentId)
+                                                          .maxHealth(10.0)
+                                                          .regenerationPerSecond(0)
+                                                          .overhealShieldLimit(0)
+                                                          .overhealShieldRegenerationPerSecond(0)
                                                           .swordResistance(1.0)
                                                           .axeResistance(1.0)
                                                           .magicResistance(1.0)
@@ -97,8 +96,6 @@ public class AgentCommand implements CommandExecutor {
                                                           .build();
 
             mainAgentStatsService.saveMainAgentStats(mainAgentStats);
-
-
         }
 
         agentManager.activateAllInactiveAgents(idlePlayer);
