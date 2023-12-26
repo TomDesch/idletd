@@ -7,51 +7,42 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AgentStatsService {
 
-    private final AgentService agentService;
     private final MainAgentStatsService mainAgentStatsService;
 
 
-    public void saveMainAgentStats(AgentStats agentStats) {
-        AgentType agentType = getAgentType(agentStats.getAgentId());
-
-        switch (agentType) {
-            case MAIN_AGENT -> mainAgentStatsService.saveMainAgentStats((MainAgentStats) agentStats);
+    public void saveAgentStats(AgentStats agentStats) {
+        if (agentStats instanceof MainAgentStats mainAgentStats) {
+            mainAgentStatsService.saveMainAgentStats(mainAgentStats);
         }
-
         // todo extend for all agent types
     }
 
-    private AgentType getAgentType(int agentId) {
-        Agent agent = agentService.getAgent(agentId);
-        return agent.getAgentType();
-    }
-
-    public MainAgentStats getMainAgentStats(int agentId) {
-        AgentType agentType = getAgentType(agentId);
+    public AgentStats getAgentStats(Agent agent) {
+        AgentType agentType = agent.getAgentType();
 
         return switch (agentType) {
-            case MAIN_AGENT -> mainAgentStatsService.getMainAgentStats(agentId);
+            case MAIN_AGENT -> mainAgentStatsService.getMainAgentStats(agent.getId());
             case MELEE -> null;
             case RANGED -> null;
             case MAGE -> null;
             case NECROMANCER -> null;
         };
+        // todo extend for all agent types
+
     }
 
-    public void updateMainAgentStats(AgentStats agentStats) {
-        AgentType agentType = getAgentType(agentStats.getAgentId());
-
-        switch (agentType) {
-            case MAIN_AGENT -> mainAgentStatsService.updateMainAgentStats((MainAgentStats) agentStats);
+    public void updateAgentStats(AgentStats agentStats) {
+        if (agentStats instanceof MainAgentStats mainAgentStats) {
+            mainAgentStatsService.updateMainAgentStats(mainAgentStats);
         }
+        // todo extend for all agent types
+
     }
 
-    public void deleteMainAgentStats(int agentId) {
-        AgentType agentType = getAgentType(agentId);
-
-        switch (agentType) {
-            case MAIN_AGENT -> mainAgentStatsService.deleteMainAgentStats(agentId);
-
+    public void deleteAgentStats(AgentStats agentStats) {
+        if (agentStats instanceof MainAgentStats mainAgentStats) {
+            mainAgentStatsService.deleteMainAgentStats(mainAgentStats.getAgentId());
         }
+        // todo extend for all agent types
     }
 }

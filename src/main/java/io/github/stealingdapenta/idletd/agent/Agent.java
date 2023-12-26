@@ -26,6 +26,7 @@ public class Agent {
 
 
     // calculated fields
+    private AgentStats fetchedAgentStats;
     private IdlePlayer fetchedPlayer;
     private Location fetchedLocation;
     private Skin fetchedSkin;

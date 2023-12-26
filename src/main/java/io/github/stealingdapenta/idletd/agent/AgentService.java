@@ -26,6 +26,7 @@ public class AgentService {
     private final IdleLocationService idleLocationService;
     private final SkinService skinService;
     private final EntityTracker entityTracker;
+    private final AgentStatsService agentStatsService;
 
     public Agent getAgent(int id) {
         Agent agent = agentRepository.getAgent(id);
@@ -110,6 +111,14 @@ public class AgentService {
         fetchIdlePlayerIfNull(agent);
         fetchLocationIfNull(agent);
         fetchSkinIfNull(agent);
+        fetchStatsIfNull(agent);
+    }
+
+    private AgentStats fetchStatsIfNull(Agent agent) {
+        if (Objects.isNull(agent.getFetchedAgentStats())) {
+            agent.setFetchedAgentStats(agentStatsService.getAgentStats(agent));
+        }
+        return agent.getFetchedAgentStats();
     }
 
     private Skin fetchSkinIfNull(Agent agent) {

@@ -76,10 +76,11 @@ public class Idletd extends JavaPlugin {
     private final EntityTracker entityTracker = new EntityTracker(customMobHandler);
     private final BattleStatsRepository battleStatsRepository = new BattleStatsRepository();
     private final BattleStatsService battleStatsService = new BattleStatsService(battleStatsRepository);
-    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker);
     private final MainAgentStatsRepository mainAgentStatsRepository = new MainAgentStatsRepository();
     private final MainAgentStatsService mainAgentStatsService = new MainAgentStatsService(mainAgentStatsRepository);
-    private final AgentStatsService agentStatsService = new AgentStatsService(agentService, mainAgentStatsService);
+    private final AgentStatsService agentStatsService = new AgentStatsService(mainAgentStatsService);
+    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker,
+            agentStatsService);
     private final AgentManager agentManager = new AgentManager(agentService, agentStatsService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler,
             agentManager);
@@ -94,7 +95,8 @@ public class Idletd extends JavaPlugin {
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler, idlePlayerService, towerDefenseManager);
-    private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService, mainAgentStatsService);
+    private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService,
+            mainAgentStatsService);
     private final DamageListener damageListener = new DamageListener(customMobHandler, agentManager, idlePlayerManager);
     private final SpawnListener spawnListener = new SpawnListener();
 

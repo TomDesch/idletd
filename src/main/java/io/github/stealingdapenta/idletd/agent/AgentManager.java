@@ -1,29 +1,27 @@
 package io.github.stealingdapenta.idletd.agent;
 
-import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
-import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
-import lombok.RequiredArgsConstructor;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import lombok.RequiredArgsConstructor;
 
 
 @RequiredArgsConstructor
 public class AgentManager {
 
     private static final Set<Agent> activeAgents = new HashSet<>();
-    private static final Set<AgentStats> activeAgentsStats = new HashSet<>(); // todo use
     private final AgentService agentService;
-    private final AgentStatsService agentStatsService; // todo use
+    private final AgentStatsService agentStatsService;
 
     public Agent getActiveMainAgent(IdlePlayer idlePlayer) {
         return getAllActiveAgents(idlePlayer)
                 .stream()
-                .filter(agent -> agent.getAgentType().equals(AgentType.MAIN_AGENT))
+                .filter(agent -> agent.getAgentType()
+                                      .equals(AgentType.MAIN_AGENT))
                 .findFirst()
                 .orElse(null);
     }
@@ -46,17 +44,19 @@ public class AgentManager {
         if (Objects.isNull(agents) || agents.isEmpty()) {
             return;
         }
-        agents = agents.stream().filter(this::isInactive).toList();
-        agents.forEach(this::activateAgent);
+        agents = agents.stream()
+                       .filter(this::isInactive)
+                       .toList();
+        agents.forEach(this::activate);
     }
 
-    public boolean activateAgent(Agent agent) {
+    public boolean activate(Agent agent) {
         agentService.summonNPC(agent);
 
         return activeAgents.add(agent);
     }
 
-    public boolean deactivateAgent(Agent agent) {
+    public boolean deactivate(Agent agent) {
         agentService.despawnAndDestroyNPC(agent);
         return activeAgents.remove(agent);
     }
@@ -68,25 +68,29 @@ public class AgentManager {
     }
 
     private boolean agentBelongsToPlayer(Agent agent, IdlePlayer idlePlayer) {
-        return Objects.nonNull(agent.getPlayerUUID()) && agent.getPlayerUUID().equals(idlePlayer.getPlayerUUID());
+        return Objects.nonNull(agent.getPlayerUUID()) && agent.getPlayerUUID()
+                                                              .equals(idlePlayer.getPlayerUUID());
     }
 
     public void deactivateAndSaveAllAgents(IdlePlayer idlePlayer) {
         List<Agent> activeAgentsForPlayer = getAllActiveAgents(idlePlayer);
         if (Objects.isNull(activeAgentsForPlayer)) {
-            logger.info("No active agents found for " + idlePlayer.getPlayerUUID().toString());
+            logger.info("No active agents found for " + idlePlayer.getPlayerUUID()
+                                                                  .toString());
             return;
         }
 
-        activeAgentsForPlayer.forEach(this::deactivateAndSaveAgent);
+        activeAgentsForPlayer.forEach(this::saveAndDeactivate);
     }
 
-    public void deactivateAndSaveAgent(Agent agent) {
+    public void saveAndDeactivate(Agent agent) {
         if (agent.getId() == 0) {
             agentService.saveAgent(agent);
+            agentStatsService.saveAgentStats(agent.getFetchedAgentStats());
         } else {
             agentService.updateAgent(agent);
+            agentStatsService.updateAgentStats(agent.getFetchedAgentStats());
         }
-        deactivateAgent(agent);
+        deactivate(agent);
     }
 }
