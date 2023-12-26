@@ -1,18 +1,46 @@
 package io.github.stealingdapenta.idletd.agent.mainagent;
 
 import io.github.stealingdapenta.idletd.agent.AgentStats;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @EqualsAndHashCode(callSuper = true)
-@Builder
-@Data
-@AllArgsConstructor
-@RequiredArgsConstructor
+@Getter
+@Setter
 public class MainAgentStats extends AgentStats {
+
+    @Builder
+    public MainAgentStats(int agentId, double maxHealth, double regenerationPerSecond, double overhealShieldLimit, double overhealShieldRegenerationPerSecond,
+            double knockbackResistance, double swordResistance, double axeResistance, double magicResistance, double arrowResistance, double tridentResistance,
+            double explosionResistance, double fireResistance, double poisonResistance, double criticalHitResistance, double blockChance, double attackPower,
+            double attackRange, double attackKnockback, double attackSpeed, double projectileSpeed, double criticalHitChance,
+            double criticalHitDamageMultiplier) {
+        super(agentId);
+        this.maxHealth = maxHealth;
+        this.regenerationPerSecond = regenerationPerSecond;
+        this.overhealShieldLimit = overhealShieldLimit;
+        this.overhealShieldRegenerationPerSecond = overhealShieldRegenerationPerSecond;
+        this.knockbackResistance = knockbackResistance;
+        this.swordResistance = swordResistance;
+        this.axeResistance = axeResistance;
+        this.magicResistance = magicResistance;
+        this.arrowResistance = arrowResistance;
+        this.tridentResistance = tridentResistance;
+        this.explosionResistance = explosionResistance;
+        this.fireResistance = fireResistance;
+        this.poisonResistance = poisonResistance;
+        this.criticalHitResistance = criticalHitResistance;
+        this.blockChance = blockChance;
+        this.attackPower = attackPower;
+        this.attackRange = attackRange;
+        this.attackKnockback = attackKnockback;
+        this.attackSpeed = attackSpeed;
+        this.projectileSpeed = projectileSpeed;
+        this.criticalHitChance = criticalHitChance;
+        this.criticalHitDamageMultiplier = criticalHitDamageMultiplier;
+    }
 
     private double maxHealth;
     private double regenerationPerSecond;

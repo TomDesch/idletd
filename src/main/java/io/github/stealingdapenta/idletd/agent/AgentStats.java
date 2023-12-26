@@ -1,9 +1,11 @@
 package io.github.stealingdapenta.idletd.agent;
 
 import java.util.Objects;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public abstract class AgentStats {
 
     private int agentId;
