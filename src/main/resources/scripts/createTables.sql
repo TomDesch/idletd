@@ -91,6 +91,36 @@ CREATE TABLE IF NOT EXISTS BATTLE_STATS (
     );
 
 
+-- Create the MAIN_AGENT_STATS table
+CREATE TABLE IF NOT EXISTS MAIN_AGENT_STATS (
+                                                AGENT_ID INT PRIMARY KEY NOT NULL,
+                                                MAX_HEALTH DOUBLE NOT NULL,
+                                                REGENERATION_PER_SECOND DOUBLE NOT NULL,
+                                                OVERHEAL_SHIELD_LIMIT DOUBLE NOT NULL,
+                                                OVERHEAL_SHIELD_REGEN_PER_SECOND DOUBLE NOT NULL,
+                                                KNOCKBACK_RESISTANCE DOUBLE NOT NULL,
+                                                SWORD_RESISTANCE DOUBLE NOT NULL,
+                                                AXE_RESISTANCE DOUBLE NOT NULL,
+                                                MAGIC_RESISTANCE DOUBLE NOT NULL,
+                                                ARROW_RESISTANCE DOUBLE NOT NULL,
+                                                TRIDENT_RESISTANCE DOUBLE NOT NULL,
+                                                EXPLOSION_RESISTANCE DOUBLE NOT NULL,
+                                                FIRE_RESISTANCE DOUBLE NOT NULL,
+                                                POISON_RESISTANCE DOUBLE NOT NULL,
+                                                CRITICAL_HIT_RESISTANCE DOUBLE NOT NULL,
+                                                BLOCK_CHANCE DOUBLE NOT NULL,
+                                                ATTACK_POWER DOUBLE NOT NULL,
+                                                ATTACK_RANGE DOUBLE NOT NULL,
+                                                ATTACK_KNOCKBACK DOUBLE NOT NULL,
+                                                ATTACK_SPEED DOUBLE NOT NULL,
+                                                PROJECTILE_SPEED DOUBLE NOT NULL,
+                                                CRITICAL_HIT_CHANCE DOUBLE NOT NULL,
+                                                CRITICAL_HIT_DAMAGE_MULTIPLIER DOUBLE NOT NULL,
+                                                FOREIGN KEY (AGENT_ID) REFERENCES AGENT(ID)
+    );
+
+
+
 
 
 
