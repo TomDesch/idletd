@@ -4,10 +4,16 @@ import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.custommob.MobWrapper;
+import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -15,10 +21,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 
 import java.util.List;
 import java.util.Objects;
+import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 public class DamageListener implements Listener {
@@ -30,6 +38,7 @@ public class DamageListener implements Listener {
 
     private final CustomMobHandler customMobHandler;
     private final AgentManager agentManager;
+    private final IdlePlayerManager idlePlayerManager;
 
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -51,16 +60,44 @@ public class DamageListener implements Listener {
     }
 
     private void handleMobHittingAgent(LivingEntity mob, NPC agent, EntityDamageByEntityEvent event) {
-        // Implement logic for calculating and applying damage
+        // Implement logic for calculating and applying damage todo
     }
 
     private void handleAgentHittingMob(NPC agent, LivingEntity mob, EntityDamageByEntityEvent event) {
-        // Implement logic for calculating and applying damage
+        // Implement logic for calculating and applying damage todo
     }
 
     private void handlePlayerHittingMob(Player player, LivingEntity mob, EntityDamageByEntityEvent event) {
-        // Implement logic for calculating and applying damage
+        IdlePlayer attackingPlayer = idlePlayerManager.getOnlineIdlePlayer(player);
+        BattleStats attackingStats = attackingPlayer.getFetchedBattleStats();
+        MobWrapper defendingMobStats = CustomMob.createFrom(mob);
+        // todo fix it all like this this is all botched and not functional
+        double damage = attackingStats.getAttackPower();
 
+        if (isMelee(event.getCause())) {
+            if (isPlayerHoldingAxe(player)) {
+                damage = damage - (damage * defendingMobStats.getAxe_resistance());
+            } else {
+                damage = damage - (damage * defendingMobStats.getSword_resistance());
+            }
+        }
+
+        event.setDamage(damage);
+        // Implement logic for calculating and applying damage todo
+
+    }
+
+    private boolean isPlayerHoldingAxe(Player player) {
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+
+        return mainHandItem.getType() == Material.DIAMOND_AXE || mainHandItem.getType() == Material.GOLDEN_AXE
+                || mainHandItem.getType() == Material.IRON_AXE || mainHandItem.getType() == Material.STONE_AXE
+                || mainHandItem.getType() == Material.WOODEN_AXE;
+    }
+
+    private boolean isMelee(DamageCause attack) {
+        return attack.equals(DamageCause.ENTITY_ATTACK) ||
+                attack.equals(DamageCause.ENTITY_SWEEP_ATTACK);
     }
 
 

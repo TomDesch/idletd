@@ -12,30 +12,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BattleStats {
     private UUID playerUUID;
-    private double movement_speed; // 0.2 = default zombie speed
+    private double movementSpeed; // 0.2 = default zombie speed
 
-    private double max_health;
-    private double regeneration_per_second;
-    private double overheal_shield_limit;
-    private double overheal_shield_regeneration_per_second;
-    private double knockback_resistance;
+    private double maxHealth;
+    private double regenerationPerSecond;
+    private double overhealShieldLimit;
+    private double overhealShieldRegenerationPerSecond;
+    private double knockbackResistance;
 
-    private double sword_resistance;
-    private double axe_resistance;
-    private double magic_resistance;
-    private double arrow_resistance;
-    private double trident_resistance;
-    private double explosion_resistance;
-    private double fire_resistance;
-    private double poison_resistance;
-    private double critical_hit_resistance;
-    private double block_chance;
+    private double swordResistance;
+    private double axeResistance;
+    private double magicResistance;
+    private double arrowResistance;
+    private double tridentResistance;
+    private double explosionResistance;
+    private double fireResistance;
+    private double poisonResistance;
+    private double criticalHitResistance;
+    private double blockChance;
 
-    private double attack_power;
-    private double attack_range;
-    private double attack_knockback;
-    private double attack_speed;
-    private double projectile_speed;
-    private double critical_hit_chance;
-    private double critical_hit_damage_multiplier;
+    private double attackPower;
+    private double attackRange;
+    private double attackKnockback;
+    private double attackSpeed;
+    private double projectileSpeed;
+    private double criticalHitChance;
+    private double criticalHitDamageMultiplier;
 }
