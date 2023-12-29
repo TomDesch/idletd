@@ -1,17 +1,20 @@
 package io.github.stealingdapenta.idletd.command;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentService;
 import io.github.stealingdapenta.idletd.agent.AgentType;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStats;
-import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsRepository;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.plot.PlotService;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -19,11 +22,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.Objects;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 @RequiredArgsConstructor
 public class AgentCommand implements CommandExecutor {

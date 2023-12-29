@@ -29,17 +29,6 @@ import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_TICK;
 @Builder
 public class AgentNPC {
 
-    // knockback resistant
-    // Regeneration /s
-    // "Overheal" (when full health, generate a shield at a lower rate)
-    // anti projectile armor
-    // anti sword armor
-    // anti axe armor
-    // attack power
-    // Attack range
-    // attack speed
-    // crit hit chance
-    // crit hit multiplier
     // splash dmg
     // Summon allies ability?
     // wololo ability?
@@ -57,8 +46,8 @@ public class AgentNPC {
     private NPC npc;
     private Location location;
     private String name;
-    // Stats
-    private int levelHealth; // stuff like this should be stored as a level; and when initialized, calculated with a formula; e.g. lv * 2 for hp; and then possibly add multipliers
+
+    // Calculated
     private Skin currentSkin;
     private Entity target;
 
