@@ -1,32 +1,35 @@
 package io.github.stealingdapenta.idletd.idleplayer;
 
+import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
+import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefense;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.bukkit.entity.Player;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 @Getter
 @Setter
 public class IdlePlayerManager {
+
     private static final Set<IdlePlayer> onlinePlayers = new HashSet<>();
-    private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
+    private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder()
+                                                                            .expireAfterAccess(20, TimeUnit.MINUTES)
+                                                                            .build();
     private static volatile Set<UUID> noLoginAllowed = new HashSet<>();
     private final IdlePlayerService idlePlayerService;
     private final BattleStatsService battleStatsService;
@@ -43,6 +46,11 @@ public class IdlePlayerManager {
     }
 
     public boolean registerOnlinePlayer(IdlePlayer idlePlayer) {
+        BattleStats battleStats = battleStatsService.getFor(idlePlayer);
+        if (Objects.isNull(battleStats)) {
+            battleStats = battleStatsService.createNew(idlePlayer.getPlayerUUID());
+        }
+        idlePlayer.setFetchedBattleStats(battleStats);
         return onlinePlayers.add(idlePlayer);
     }
 
@@ -55,7 +63,11 @@ public class IdlePlayerManager {
     }
 
     public IdlePlayer getOnlineIdlePlayer(UUID uuid) {
-        return onlinePlayers.stream().filter(onlinePlayer -> onlinePlayer.getPlayerUUID().equals(uuid)).findFirst().orElse(null);
+        return onlinePlayers.stream()
+                            .filter(onlinePlayer -> onlinePlayer.getPlayerUUID()
+                                                                .equals(uuid))
+                            .findFirst()
+                            .orElse(null);
     }
 
     public IdlePlayer getOnlineIdlePlayer(Player player) {
@@ -66,7 +78,8 @@ public class IdlePlayerManager {
         // Generate player scoreboard
         // Generate stuff based on settings e.g. username
         // Handle lastLogin time etc
-        idlePlayerService.getPlayer(idlePlayer.getPlayerUUID()).setGlowing(false);
+        idlePlayerService.getPlayer(idlePlayer.getPlayerUUID())
+                         .setGlowing(false);
         agentManager.activateAllInactiveAgents(idlePlayer);
     }
 
@@ -103,7 +116,8 @@ public class IdlePlayerManager {
             idlePlayerService.updateIdlePlayer(idlePlayer);
             battleStatsService.update(idlePlayer.getFetchedBattleStats());
         } catch (Exception e) {
-            logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer).getName());
+            logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer)
+                                                                              .getName());
             logger.warning(e.getMessage());
         } finally {
             if (!isShuttingDown()) {
