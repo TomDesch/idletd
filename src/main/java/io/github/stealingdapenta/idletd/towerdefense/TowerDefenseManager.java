@@ -1,5 +1,8 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
+
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.SkeletonMob;
@@ -9,22 +12,19 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.plot.PlotService;
 import io.github.stealingdapenta.idletd.service.utils.Countdown;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
 
 @RequiredArgsConstructor
 @Getter
@@ -111,6 +111,15 @@ public class TowerDefenseManager {
                 int finalI = i;
                 long delayBetweenMobSummon = 2 * ONE_SECOND_IN_TICKS * i;
 
+                // Recalculating the NPC on every iteration, because the player can disconnect during the summoning-process of a wave.
+                NPC mainAgentNPC = towerDefenseService.fetchTargetAgentIfNull(towerDefense)
+                                                      .getAgentNPC()
+                                                      .getNpc();
+                if (Objects.isNull(mainAgentNPC)) {
+                    logger.warning("Cancelling summoning for %s because the main agent NPC is null.".formatted(towerDefense.getPlayerUUID()));
+                    break;
+                }
+
                 scheduler.runTaskLater(Idletd.getInstance(), task -> {
                     // Event where player logs out during the countdown
                     if (handlePlayerOffline(towerDefense)) {
@@ -118,7 +127,8 @@ public class TowerDefenseManager {
                     }
                     CustomMob mob = generateRandomMob(towerDefense);
                     mob.summon(plot.getMobSpawnLocation());
-                    mob.getMob().setTarget((LivingEntity) towerDefenseService.fetchTargetAgentIfNull(towerDefense).getAgentNPC().getNpc().getEntity());
+                    mob.getMob()
+                       .setTarget((LivingEntity) mainAgentNPC.getEntity());
                     towerDefense.addMob(mob);
 
                     if (isFinalIteration(finalI, amountOfMobsToSpawn)) {
