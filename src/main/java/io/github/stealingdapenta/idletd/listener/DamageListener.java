@@ -20,16 +20,13 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
@@ -113,23 +110,6 @@ public class DamageListener implements Listener {
     private boolean isMelee(DamageCause attack) {
         return attack.equals(DamageCause.ENTITY_ATTACK) ||
                 attack.equals(DamageCause.ENTITY_SWEEP_ATTACK);
-    }
-
-    private boolean isMob(Entity entity) {
-        return entity instanceof Mob;
-    }
-
-    private boolean isProjectile(Entity entity) {
-        return entity instanceof Projectile;
-    }
-
-    private boolean isCustomMobDamage(Entity source, Entity target) {
-        return isMob(source) && customMobHandler.isCustomMob((Mob) source) && isMob(target) && customMobHandler.isCustomMob((Mob) target);
-    }
-
-    private void cancelDamageEvent(EntityDamageEvent event) {
-        event.setDamage(0);
-        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
