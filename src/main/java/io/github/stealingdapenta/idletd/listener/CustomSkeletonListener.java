@@ -1,13 +1,13 @@
 package io.github.stealingdapenta.idletd.listener;
 
 import io.github.stealingdapenta.idletd.Idletd;
-import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -92,7 +92,7 @@ public class CustomSkeletonListener implements Listener {
             if (particleCollidesWithEntity(particleLocation)) {
                 List<LivingEntity> collidedEntities = getCollidedEntities(particleLocation);
                 LivingEntity possibleNPC = collidedEntities.stream()
-                                                           .filter(AgentNPCHandler::isNPC)
+                                                           .filter(CitizensAPI.getNPCRegistry()::isNPC)
                                                            .findFirst()
                                                            .orElse(null);
                 if (Objects.nonNull(possibleNPC)) {
@@ -108,7 +108,7 @@ public class CustomSkeletonListener implements Listener {
 
             Color color = Color.fromRGB(123, 13, 123);
 
-            spawnColoredParticleDelayed(particleLocation, color, (int) (index * numberOfParticles * flySpeed)); // Introduce a delay
+            spawnColoredParticleDelayed(particleLocation, color, (int) (index * numberOfParticles / flySpeed)); // Introduce a delay
 
             index += step;
         }

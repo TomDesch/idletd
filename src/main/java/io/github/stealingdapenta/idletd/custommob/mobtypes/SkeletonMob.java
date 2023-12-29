@@ -1,8 +1,13 @@
 package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
+import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.custommob.CustomMobGoal;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 
 public class SkeletonMob extends CustomMob {
 
@@ -12,6 +17,15 @@ public class SkeletonMob extends CustomMob {
         this.level = level;
         this.entityType = EntityType.SKELETON;
         this.nameColor = generateNameColor();
+    }
+
+    @Override
+    public Mob summon(Location location, Agent agent) {
+        Mob mob = super.summon(location, agent);
+
+        Bukkit.getMobGoals()
+              .addGoal(mob, 0, new CustomMobGoal(mob, agent));
+        return mob;
     }
 
     // Goes from light red to dark red based on Level (peaking at Lv. 1000)
@@ -133,9 +147,13 @@ public class SkeletonMob extends CustomMob {
         attackKnockback = 0 + (double) getLevel() / 1000;
     }
 
+    /**
+     * Initializes the attack speed based on the level of the entity. The speed is capped at its maximum value of 10.0 when the entity's level exceeds 1107 (123
+     * * 10). Desmos: f\left(x\right)\ =\ \min\left(10,\ 1+\left(\frac{x}{123}\right)\right)
+     */
     @Override
     protected void initializeAttackSpeed() {
-        attackSpeed = 0.5 + ((double) getLevel() / 1000);
+        attackSpeed = Math.min(10.0, 1.0 + (getLevel() / 123.0));
     }
 
     @Override

@@ -1,11 +1,17 @@
 package io.github.stealingdapenta.idletd.command;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.SkeletonMob;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.ZombieMob;
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
+import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.plot.Plot;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -21,6 +27,10 @@ import org.bukkit.util.BlockIterator;
 public class CustomMobCommand implements CommandExecutor {
 
     private static final String CUSTOM_SUMMON = "customsummon";
+
+    private static final String CONTAINS_AGENT = "Successfully summoned the mob(s) %s main agent selected.";
+    private final IdlePlayerManager idlePlayerManager;
+    private final AgentManager agentManager;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
@@ -69,9 +79,13 @@ public class CustomMobCommand implements CommandExecutor {
                 default -> new ZombieMob(fictionalPlot, level);
             };
 
-            customMob.summon(getLocationOnTopOfBlock(sourcePlayer));
-            customMob.getMob()
-                     .setTarget(sourcePlayer);
+            IdlePlayer onlineIdlePlayer = idlePlayerManager.getOnlineIdlePlayer(sourcePlayer);
+            Agent activeMainAgent = (Objects.nonNull(onlineIdlePlayer)) ? agentManager.getActiveMainAgent(onlineIdlePlayer) : null;
+
+            customMob.summon(getLocationOnTopOfBlock(sourcePlayer), activeMainAgent);
+            sourcePlayer.sendMessage(TextColor.color(19, 147, 56) + CONTAINS_AGENT.formatted(
+                    (Objects.nonNull(activeMainAgent)) ? TextColor.color(56, 255, 33) + "with" : TextColor.color(255, 0, 60) + "without"));
+
             customMob.getMob()
                      .getPersistentDataContainer()
                      .set(getCustomSummonKey(), PersistentDataType.BOOLEAN, true);

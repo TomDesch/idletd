@@ -92,7 +92,7 @@ public class Idletd extends JavaPlugin {
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, battleStatsService, agentManager, towerDefenseManager,
             towerDefenseService);
     private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
-    private final CustomMobCommand customMobCommand = new CustomMobCommand();
+    private final CustomMobCommand customMobCommand = new CustomMobCommand(idlePlayerManager, agentManager);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);

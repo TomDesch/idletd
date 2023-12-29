@@ -92,7 +92,7 @@ public class MobWrapper {
 
             setAttribute(livingEntity, GENERIC_MAX_HEALTH, builder.maxHealth);
             setAttribute(livingEntity, GENERIC_MOVEMENT_SPEED, builder.movementSpeed);
-            setAttribute(livingEntity, GENERIC_ATTACK_KNOCKBACK, attackKnockback);
+            setAttribute(livingEntity, GENERIC_ATTACK_KNOCKBACK, builder.attackKnockback);
             setAttribute(livingEntity, GENERIC_KNOCKBACK_RESISTANCE, builder.knockbackResistance);
 
             livingEntity.getPersistentDataContainer().set(CustomMobHandler.getCustomNameSpacedKey(), PersistentDataType.BOOLEAN, true);

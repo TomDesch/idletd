@@ -28,6 +28,7 @@ import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_
 import static io.github.stealingdapenta.idletd.service.utils.Time.ZERO_TICKS;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -124,7 +125,7 @@ public abstract class CustomMob {
                          .build();
     }
 
-    public Mob summon(Location location) {
+    public Mob summon(Location location, Agent agent) {
         initializeMovementSpeed();
         initializeMaxHealth();
         initializeRegenerationPerSecond();

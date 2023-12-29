@@ -2,7 +2,6 @@ package io.github.stealingdapenta.idletd.listener;
 
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
-import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
@@ -10,6 +9,7 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -40,11 +40,13 @@ public class DamageListener implements Listener {
         Entity source = event.getDamager();
         Entity target = event.getEntity();
 
-        if (customMobHandler.isCustomMob(source) && AgentNPCHandler.isNPC(target)) {
+        if (customMobHandler.isCustomMob(source) && CitizensAPI.getNPCRegistry()
+                                                               .isNPC(target)) {
             Agent targetAgent = agentManager.getAgentMatchingNPC(target);
             handleMobHittingAgent((LivingEntity) source, targetAgent, event);
 
-        } else if (AgentNPCHandler.isNPC(source) && customMobHandler.isCustomMob(target)) {
+        } else if (CitizensAPI.getNPCRegistry()
+                              .isNPC(source) && customMobHandler.isCustomMob(target)) {
             handleAgentHittingMob((NPC) source, (LivingEntity) target, event);
 
         } else if (source instanceof Player sourcePlayer && customMobHandler.isCustomMob(target)) {

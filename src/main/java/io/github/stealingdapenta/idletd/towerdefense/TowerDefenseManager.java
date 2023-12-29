@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -126,9 +125,7 @@ public class TowerDefenseManager {
                         task.cancel();
                     }
                     CustomMob mob = generateRandomMob(towerDefense);
-                    mob.summon(plot.getMobSpawnLocation());
-                    mob.getMob()
-                       .setTarget((LivingEntity) mainAgentNPC.getEntity());
+                    mob.summon(plot.getMobSpawnLocation(), towerDefenseService.fetchTargetAgentIfNull(towerDefense));
                     towerDefense.addMob(mob);
 
                     if (isFinalIteration(finalI, amountOfMobsToSpawn)) {

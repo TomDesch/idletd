@@ -1,12 +1,13 @@
 package io.github.stealingdapenta.idletd.listener;
 
-import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefense;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -14,8 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-
-import java.util.Objects;
 
 @RequiredArgsConstructor
 public class CustomMobListener implements Listener {
@@ -41,7 +40,8 @@ public class CustomMobListener implements Listener {
 
         Entity target = event.getTarget();
 
-        if (Objects.isNull(target) || !customMobHandler.isCustomMob(mob) || AgentNPCHandler.isNPC(target)) {
+        if (Objects.isNull(target) || !customMobHandler.isCustomMob(mob) || CitizensAPI.getNPCRegistry()
+                                                                                       .isNPC(target)) {
             return; // Assuming the NPC is the correct one.
         }
 
