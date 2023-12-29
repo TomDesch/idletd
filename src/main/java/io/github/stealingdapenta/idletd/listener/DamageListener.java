@@ -115,29 +115,6 @@ public class DamageListener implements Listener {
                 attack.equals(DamageCause.ENTITY_SWEEP_ATTACK);
     }
 
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void cancelUnwantedDamageEvents(EntityDamageByEntityEvent event) {
-        Entity source = event.getDamager();
-        Entity target = event.getEntity();
-
-        if (isCustomMobDamage(source, target)) {
-            cancelDamageEvent(event);
-            return;
-        }
-
-        if (isProjectile(source)) {
-            Projectile projectile = (Projectile) source;
-
-            if ((isMob(target) && customMobHandler.isCustomMob((Mob) target))) {
-                if (projectile.getShooter() instanceof LivingEntity shooter && customMobHandler.isCustomMob(shooter)) {
-                    cancelDamageEvent(event);
-                }
-
-            }
-        }
-    }
-
     private boolean isMob(Entity entity) {
         return entity instanceof Mob;
     }
