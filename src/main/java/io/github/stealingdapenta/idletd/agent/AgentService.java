@@ -1,5 +1,7 @@
 package io.github.stealingdapenta.idletd.agent;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
@@ -7,17 +9,14 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.service.utils.EntityTracker;
 import io.github.stealingdapenta.idletd.skin.Skin;
 import io.github.stealingdapenta.idletd.skin.SkinService;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 @RequiredArgsConstructor
 public class AgentService {
@@ -58,7 +57,6 @@ public class AgentService {
                                .currentSkin(agent.getFetchedSkin())
                                .target(owner)
                                .name(agent.getAgentType().getName())
-                               .levelHealth(100)
                                .build();
             agent.setAgentNPC(agentNPC);
         }

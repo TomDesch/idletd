@@ -1,13 +1,16 @@
 package io.github.stealingdapenta.idletd.agent.npc;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_TICK;
+
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.skin.Skin;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.SkinTrait;
@@ -16,11 +19,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.Objects;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_TICK;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -63,7 +61,8 @@ public class AgentNPC {
         }
 
         if (Objects.isNull(npc)) {
-            this.npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, Objects.nonNull(name) ? name : "DEFAULT NAME");
+
+            this.npc = AgentNPCHandler.registry.createNPC(EntityType.PLAYER, Objects.nonNull(name) ? name : "DEFAULT NAME");
         }
 
         this.npc.spawn(location);
