@@ -27,17 +27,23 @@ import org.bukkit.entity.Player;
 public class IdlePlayerManager {
 
     private static final Set<IdlePlayer> onlinePlayers = new HashSet<>();
-    @Getter
     private static Cache<UUID, IdlePlayer> offlinePlayerCache = CacheBuilder.newBuilder()
                                                                             .expireAfterAccess(20, TimeUnit.MINUTES)
                                                                             .build();
-    @Getter
     private static volatile Set<UUID> noLoginAllowed = new HashSet<>();
     private final IdlePlayerService idlePlayerService;
     private final BattleStatsService battleStatsService;
     private final AgentManager agentManager;
     private final TowerDefenseManager towerDefenseManager;
     private final TowerDefenseService towerDefenseService;
+
+    public static Cache<UUID, IdlePlayer> getOfflinePlayerCache() {
+        return offlinePlayerCache;
+    }
+
+    public static Set<UUID> getNoLoginAllowed() {
+        return noLoginAllowed;
+    }
 
     public boolean registerOnlinePlayer(IdlePlayer idlePlayer) {
         BattleStats battleStats = battleStatsService.getFor(idlePlayer);
