@@ -19,7 +19,7 @@ public class BattleStatsRepository {
                         "MAGIC_RESISTANCE, ARROW_RESISTANCE, TRIDENT_RESISTANCE, EXPLOSION_RESISTANCE, FIRE_RESISTANCE, " +
                         "POISON_RESISTANCE, CRITICAL_HIT_RESISTANCE, BLOCK_CHANCE, ATTACK_POWER, ATTACK_RANGE, " +
                         "ATTACK_KNOCKBACK, ATTACK_SPEED, PROJECTILE_SPEED, CRITICAL_HIT_CHANCE, CRITICAL_HIT_DAMAGE_MULTIPLIER) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
             statement.setString(1, battleStats.getPlayerUUID().toString());
             statement.setDouble(2, battleStats.getMovementSpeed());
