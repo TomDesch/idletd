@@ -23,6 +23,7 @@ public class SkeletonMob extends CustomMob {
     public Mob summon(Location location, Agent agent) {
         Mob mob = super.summon(location, agent);
 
+        // todo this does not fix the attack speed animation issue
         Bukkit.getMobGoals()
               .addGoal(mob, 0, new CustomMobGoal(mob, agent));
         return mob;

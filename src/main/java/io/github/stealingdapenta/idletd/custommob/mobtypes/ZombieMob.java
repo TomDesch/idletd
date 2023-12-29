@@ -1,8 +1,14 @@
 package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
+import com.destroystokyo.paper.entity.ai.GoalType;
+import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.custommob.CustomMobGoal;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 
 public class ZombieMob extends CustomMob {
     // Tank mob
@@ -13,6 +19,23 @@ public class ZombieMob extends CustomMob {
         this.level = level;
         this.entityType = EntityType.ZOMBIE;
         this.nameColor = generateNameColor();
+    }
+
+    @Override
+    public Mob summon(Location location, Agent agent) {
+        Mob mob = super.summon(location, agent);
+
+        // todo this does not fix the attack issue
+        // also movement speed on zombies .. not set? Or botched?
+
+        Bukkit.getMobGoals()
+              .getAllGoals(mob)
+              .removeIf(goal -> goal.getTypes()
+                                    .contains(GoalType.TARGET));
+
+        Bukkit.getMobGoals()
+              .addGoal(mob, 0, new CustomMobGoal(mob, agent));
+        return mob;
     }
 
     // Goes from light green to dark green based on Level (peaking at Lv. 1000)
