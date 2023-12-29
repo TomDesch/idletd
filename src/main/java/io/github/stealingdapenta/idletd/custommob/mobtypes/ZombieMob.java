@@ -28,117 +28,117 @@ public class ZombieMob extends CustomMob {
         double baseSpeed = 0.2;
         double maxSpeed = 1.0;
 
-        movement_speed = Math.min(maxSpeed, baseSpeed + (level > 250 ? 0 : (level - 1) * (maxSpeed - baseSpeed) / 249.0));
+        movementSpeed = Math.min(maxSpeed, baseSpeed + (level > 250 ? 0 : (level - 1) * (maxSpeed - baseSpeed) / 249.0));
     }
 
     @Override
     protected void initializeMaxHealth() {
-        max_health = 10 + (double) getLevel() / 10;
+        maxHealth = 10 + (double) getLevel() / 10;
     }
 
     @Override
     protected void initializeRegenerationPerSecond() {
-        regeneration_per_second = 0.1 + (double) getLevel() / 1000;
+        regenerationPerSecond = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeOverhealShieldLimit() {
-        overheal_shield_limit = 1.0 + (double) getLevel() / 1000;
+        overhealShieldLimit = 1.0 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeOverhealShieldRegenerationPerSecond() {
-        overheal_shield_regeneration_per_second = 0.05 + (double) getLevel() / 1000;
+        overhealShieldRegenerationPerSecond = 0.05 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeKnockbackResistance() {
-        knockback_resistance = 0.1 + (double) getLevel() / 1000;
+        knockbackResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeSwordResistance() {
-        sword_resistance = 0.1 + (double) getLevel() / 1000;
+        swordResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeAxeResistance() {
-        axe_resistance = 0.1 + (double) getLevel() / 1000;
+        axeResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeMagicResistance() {
-        magic_resistance = 0.1 + (double) getLevel() / 1000;
+        magicResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeArrowResistance() {
-        arrow_resistance = 0.1 + (double) getLevel() / 1000;
+        arrowResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeTridentResistance() {
-        trident_resistance = 0.1 + (double) getLevel() / 1000;
+        tridentResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeExplosionResistance() {
-        explosion_resistance = 0.1 + (double) getLevel() / 1000;
+        explosionResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeFireResistance() {
-        fire_resistance = 0.1 + (double) getLevel() / 1000;
+        fireResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializePoisonResistance() {
-        poison_resistance = 0.1 + (double) getLevel() / 1000;
+        poisonResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeCriticalHitResistance() {
-        critical_hit_resistance = 0.1 + (double) getLevel() / 1000;
+        criticalHitResistance = 0.1 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeBlockChance() {
-        block_chance = 0 + (double) getLevel() / 1000;
+        blockChance = 0 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeAttackPower() {
-        attack_power = 1.0 + (double) getLevel() / 100;
+        attackPower = 1.0 + (double) getLevel() / 100;
     }
 
     @Override
     protected void initializeAttackRange() {
-        attack_range = 1.0 + (double) getLevel() / 100;
+        attackRange = 1.0 + (double) getLevel() / 100;
     }
 
     @Override
     protected void initializeAttackKnockback() {
-        attack_knockback = 0 + (double) getLevel() / 1000;
+        attackKnockback = 0 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeAttackSpeed() {
-        attack_speed = 0.5 + ((double) getLevel() / 1000);
+        attackSpeed = 0.5 + ((double) getLevel() / 1000);
     }
 
     @Override
     protected void initializeProjectileSpeed() {
-        projectile_speed = 1.0 + (double) getLevel() / 1000;
+        projectileSpeed = 1.0 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeCriticalHitChance() {
-        critical_hit_chance = 0.01 + (double) getLevel() / 1000;
+        criticalHitChance = 0.01 + (double) getLevel() / 1000;
     }
 
     @Override
     protected void initializeCriticalHitDamageMultiplier() {
-        critical_hit_damage_multiplier = 1.1 + (double) getLevel() / 1000;
+        criticalHitDamageMultiplier = 1.1 + (double) getLevel() / 1000;
     }
 
 }

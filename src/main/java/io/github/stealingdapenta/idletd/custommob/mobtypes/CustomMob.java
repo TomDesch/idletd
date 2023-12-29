@@ -56,32 +56,32 @@ public abstract class CustomMob {
     protected Plot plot;
     protected int level;
 
-    protected double movement_speed = 0.2; // 0.2 = default zombie speed
+    protected double movementSpeed = 0.2; // 0.2 = default zombie speed
 
-    protected double max_health = 10.0;
-    protected double regeneration_per_second = 1.0;
-    protected double overheal_shield_limit = 1.0;
-    protected double overheal_shield_regeneration_per_second = 1.0;
-    protected double knockback_resistance = 1.0;
+    protected double maxHealth = 10.0;
+    protected double regenerationPerSecond = 1.0;
+    protected double overhealShieldLimit = 1.0;
+    protected double overhealShieldRegenerationPerSecond = 1.0;
+    protected double knockbackResistance = 1.0;
 
-    protected double sword_resistance = 1.0;
-    protected double axe_resistance = 1.0;
-    protected double magic_resistance = 1.0;
-    protected double arrow_resistance = 1.0;
-    protected double trident_resistance = 1.0;
-    protected double explosion_resistance = 1.0;
-    protected double fire_resistance = 1.0;
-    protected double poison_resistance = 1.0;
-    protected double critical_hit_resistance = 1.0;
-    protected double block_chance = 1.0;
+    protected double swordResistance = 1.0;
+    protected double axeResistance = 1.0;
+    protected double magicResistance = 1.0;
+    protected double arrowResistance = 1.0;
+    protected double tridentResistance = 1.0;
+    protected double explosionResistance = 1.0;
+    protected double fireResistance = 1.0;
+    protected double poisonResistance = 1.0;
+    protected double criticalHitResistance = 1.0;
+    protected double blockChance = 1.0;
 
-    protected double attack_power = 1.0;
-    protected double attack_range = 1.0;
-    protected double attack_knockback = 1.0;
-    protected double attack_speed = 1.0;
-    protected double projectile_speed = 1.0;
-    protected double critical_hit_chance = 1.0;
-    protected double critical_hit_damage_multiplier = 1.0;
+    protected double attackPower = 1.0;
+    protected double attackRange = 1.0;
+    protected double attackKnockback = 1.0;
+    protected double attackSpeed = 1.0;
+    protected double projectileSpeed = 1.0;
+    protected double criticalHitChance = 1.0;
+    protected double criticalHitDamageMultiplier = 1.0;
 
 
     protected TextColor nameColor = TextColor.color(146, 9, 9);
@@ -97,29 +97,29 @@ public abstract class CustomMob {
                          .location(livingEntity.getLocation())
                          .name(Objects.nonNull(livingEntity.customName()) ? (TextComponent) livingEntity.customName() : Component.text(livingEntity.getName()))
                          .entityType(livingEntity.getType())
-                         .movement_speed(MOVEMENT_SPEED.getValueFor(livingEntity))
-                         .max_health(MAX_HEALTH.getValueFor(livingEntity))
-                         .regeneration_per_second(REGENERATION_PER_SECOND.getValueFor(livingEntity))
-                         .overheal_shield_limit(OVERHEAL_SHIELD_LIMIT.getValueFor(livingEntity))
-                         .overheal_shield_regeneration_per_second(OVERHEAL_SHIELD_REGEN_PER_SECOND.getValueFor(livingEntity))
-                         .knockback_resistance(KNOCKBACK_RESISTANCE.getValueFor(livingEntity))
-                         .sword_resistance(SWORD_RESISTANCE.getValueFor(livingEntity))
-                         .axe_resistance(AXE_RESISTANCE.getValueFor(livingEntity))
-                         .magic_resistance(MAGIC_RESISTANCE.getValueFor(livingEntity))
-                         .arrow_resistance(ARROW_RESISTANCE.getValueFor(livingEntity))
-                         .trident_resistance(TRIDENT_RESISTANCE.getValueFor(livingEntity))
-                         .explosion_resistance(EXPLOSION_RESISTANCE.getValueFor(livingEntity))
-                         .fire_resistance(FIRE_RESISTANCE.getValueFor(livingEntity))
-                         .poison_resistance(POISON_RESISTANCE.getValueFor(livingEntity))
-                         .critical_hit_resistance(CRITICAL_HIT_RESISTANCE.getValueFor(livingEntity))
-                         .block_chance(BLOCK_CHANCE.getValueFor(livingEntity))
-                         .attack_power(ATTACK_POWER.getValueFor(livingEntity))
-                         .attack_range(ATTACK_RANGE.getValueFor(livingEntity))
-                         .attack_knockback(ATTACK_KNOCKBACK.getValueFor(livingEntity))
-                         .attack_speed(ATTACK_SPEED.getValueFor(livingEntity))
-                         .projectile_speed(PROJECTILE_SPEED.getValueFor(livingEntity))
-                         .critical_hit_chance(CRITICAL_HIT_CHANCE.getValueFor(livingEntity))
-                         .critical_hit_damage_multiplier(CRITICAL_HIT_DAMAGE_MULTIPLIER.getValueFor(livingEntity))
+                         .movementSpeed(MOVEMENT_SPEED.getValueFor(livingEntity))
+                         .maxHealth(MAX_HEALTH.getValueFor(livingEntity))
+                         .regenerationPerSecond(REGENERATION_PER_SECOND.getValueFor(livingEntity))
+                         .overhealShieldLimit(OVERHEAL_SHIELD_LIMIT.getValueFor(livingEntity))
+                         .overhealShieldRegenerationPerSecond(OVERHEAL_SHIELD_REGEN_PER_SECOND.getValueFor(livingEntity))
+                         .knockbackResistance(KNOCKBACK_RESISTANCE.getValueFor(livingEntity))
+                         .swordResistance(SWORD_RESISTANCE.getValueFor(livingEntity))
+                         .axeResistance(AXE_RESISTANCE.getValueFor(livingEntity))
+                         .magicResistance(MAGIC_RESISTANCE.getValueFor(livingEntity))
+                         .arrowResistance(ARROW_RESISTANCE.getValueFor(livingEntity))
+                         .tridentResistance(TRIDENT_RESISTANCE.getValueFor(livingEntity))
+                         .explosionResistance(EXPLOSION_RESISTANCE.getValueFor(livingEntity))
+                         .fireResistance(FIRE_RESISTANCE.getValueFor(livingEntity))
+                         .poisonResistance(POISON_RESISTANCE.getValueFor(livingEntity))
+                         .criticalHitResistance(CRITICAL_HIT_RESISTANCE.getValueFor(livingEntity))
+                         .blockChance(BLOCK_CHANCE.getValueFor(livingEntity))
+                         .attackPower(ATTACK_POWER.getValueFor(livingEntity))
+                         .attackRange(ATTACK_RANGE.getValueFor(livingEntity))
+                         .attackKnockback(ATTACK_KNOCKBACK.getValueFor(livingEntity))
+                         .attackSpeed(ATTACK_SPEED.getValueFor(livingEntity))
+                         .projectileSpeed(PROJECTILE_SPEED.getValueFor(livingEntity))
+                         .criticalHitChance(CRITICAL_HIT_CHANCE.getValueFor(livingEntity))
+                         .criticalHitDamageMultiplier(CRITICAL_HIT_DAMAGE_MULTIPLIER.getValueFor(livingEntity))
                          .build();
     }
 
@@ -153,29 +153,29 @@ public abstract class CustomMob {
                                                         .location(location)
                                                         .name(generateMobName())
                                                         .entityType(entityType)
-                                                        .movement_speed(movement_speed)
-                                                        .max_health(max_health)
-                                                        .regeneration_per_second(regeneration_per_second)
-                                                        .overheal_shield_limit(overheal_shield_limit)
-                                                        .overheal_shield_regeneration_per_second(overheal_shield_regeneration_per_second)
-                                                        .knockback_resistance(knockback_resistance)
-                                                        .sword_resistance(sword_resistance)
-                                                        .axe_resistance(axe_resistance)
-                                                        .magic_resistance(magic_resistance)
-                                                        .arrow_resistance(arrow_resistance)
-                                                        .trident_resistance(trident_resistance)
-                                                        .explosion_resistance(explosion_resistance)
-                                                        .fire_resistance(fire_resistance)
-                                                        .poison_resistance(poison_resistance)
-                                                        .critical_hit_resistance(critical_hit_resistance)
-                                                        .block_chance(block_chance)
-                                                        .attack_power(attack_power)
-                                                        .attack_range(attack_range)
-                                                        .attack_knockback(attack_knockback)
-                                                        .attack_speed(attack_speed)
-                                                        .projectile_speed(projectile_speed)
-                                                        .critical_hit_chance(critical_hit_chance)
-                                                        .critical_hit_damage_multiplier(critical_hit_damage_multiplier));
+                                                        .movementSpeed(movementSpeed)
+                                                        .maxHealth(maxHealth)
+                                                        .regenerationPerSecond(regenerationPerSecond)
+                                                        .overhealShieldLimit(overhealShieldLimit)
+                                                        .overhealShieldRegenerationPerSecond(overhealShieldRegenerationPerSecond)
+                                                        .knockbackResistance(knockbackResistance)
+                                                        .swordResistance(swordResistance)
+                                                        .axeResistance(axeResistance)
+                                                        .magicResistance(magicResistance)
+                                                        .arrowResistance(arrowResistance)
+                                                        .tridentResistance(tridentResistance)
+                                                        .explosionResistance(explosionResistance)
+                                                        .fireResistance(fireResistance)
+                                                        .poisonResistance(poisonResistance)
+                                                        .criticalHitResistance(criticalHitResistance)
+                                                        .blockChance(blockChance)
+                                                        .attackPower(attackPower)
+                                                        .attackRange(attackRange)
+                                                        .attackKnockback(attackKnockback)
+                                                        .attackSpeed(attackSpeed)
+                                                        .projectileSpeed(projectileSpeed)
+                                                        .criticalHitChance(criticalHitChance)
+                                                        .criticalHitDamageMultiplier(criticalHitDamageMultiplier));
 
         new CustomMobHandler().spawnCustomMob(customMob);
         mob = (Mob) customMob.getSummonedEntity();
@@ -256,4 +256,7 @@ public abstract class CustomMob {
         }.runTaskTimer(Idletd.getInstance(), ZERO_TICKS, 2 * ONE_SECOND_IN_TICKS);
     }
 
+    public double getAttackRangeSquared() {
+        return attackRange * attackRange;
+    }
 }

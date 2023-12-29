@@ -53,31 +53,31 @@ public class MobWrapper {
     EntityType entityType;
     Location location;
     TextComponent name;
-    double movement_speed;
-    double max_health;
-    double regeneration_per_second;
-    double overheal_shield_limit;
-    double overheal_shield_regeneration_per_second;
-    double knockback_resistance;
+    double movementSpeed;
+    double maxHealth;
+    double regenerationPerSecond;
+    double overhealShieldLimit;
+    double overhealShieldRegenerationPerSecond;
+    double knockbackResistance;
 
-    double sword_resistance;
-    double axe_resistance;
-    double magic_resistance;
-    double arrow_resistance;
-    double trident_resistance;
-    double explosion_resistance;
-    double fire_resistance;
-    double poison_resistance;
-    double critical_hit_resistance;
-    double block_chance;
+    double swordResistance;
+    double axeResistance;
+    double magicResistance;
+    double arrowResistance;
+    double tridentResistance;
+    double explosionResistance;
+    double fireResistance;
+    double poisonResistance;
+    double criticalHitResistance;
+    double blockChance;
 
-    double attack_power;
-    double attack_range;
-    double attack_knockback;
-    double attack_speed;
-    double projectile_speed;
-    double critical_hit_chance;
-    double critical_hit_damage_multiplier;
+    double attackPower;
+    double attackRange;
+    double attackKnockback;
+    double attackSpeed;
+    double projectileSpeed;
+    double criticalHitChance;
+    double criticalHitDamageMultiplier;
 
 
     public MobWrapper(MobWrapperBuilder builder) {
@@ -90,39 +90,39 @@ public class MobWrapper {
             entity.customName(builder.name);
             entity.setCustomNameVisible(true);
 
-            setAttribute(livingEntity, GENERIC_MAX_HEALTH, builder.max_health);
-            setAttribute(livingEntity, GENERIC_MOVEMENT_SPEED, builder.movement_speed);
-            setAttribute(livingEntity, GENERIC_ATTACK_KNOCKBACK, attack_knockback);
-            setAttribute(livingEntity, GENERIC_KNOCKBACK_RESISTANCE, builder.knockback_resistance);
+            setAttribute(livingEntity, GENERIC_MAX_HEALTH, builder.maxHealth);
+            setAttribute(livingEntity, GENERIC_MOVEMENT_SPEED, builder.movementSpeed);
+            setAttribute(livingEntity, GENERIC_ATTACK_KNOCKBACK, attackKnockback);
+            setAttribute(livingEntity, GENERIC_KNOCKBACK_RESISTANCE, builder.knockbackResistance);
 
             livingEntity.getPersistentDataContainer().set(CustomMobHandler.getCustomNameSpacedKey(), PersistentDataType.BOOLEAN, true);
             livingEntity.getPersistentDataContainer().set(CustomMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING, builder.playerUUID);
 
-            setAttribute(livingEntity, MOVEMENT_SPEED.getAttributeName(), builder.movement_speed);
-            setAttribute(livingEntity, MAX_HEALTH.getAttributeName(), builder.max_health);
-            setAttribute(livingEntity, REGENERATION_PER_SECOND.getAttributeName(), builder.regeneration_per_second);
-            setAttribute(livingEntity, OVERHEAL_SHIELD_LIMIT.getAttributeName(), builder.overheal_shield_limit);
-            setAttribute(livingEntity, OVERHEAL_SHIELD_REGEN_PER_SECOND.getAttributeName(), builder.overheal_shield_regeneration_per_second);
-            setAttribute(livingEntity, KNOCKBACK_RESISTANCE.getAttributeName(), builder.knockback_resistance);
+            setAttribute(livingEntity, MOVEMENT_SPEED.getAttributeName(), builder.movementSpeed);
+            setAttribute(livingEntity, MAX_HEALTH.getAttributeName(), builder.maxHealth);
+            setAttribute(livingEntity, REGENERATION_PER_SECOND.getAttributeName(), builder.regenerationPerSecond);
+            setAttribute(livingEntity, OVERHEAL_SHIELD_LIMIT.getAttributeName(), builder.overhealShieldLimit);
+            setAttribute(livingEntity, OVERHEAL_SHIELD_REGEN_PER_SECOND.getAttributeName(), builder.overhealShieldRegenerationPerSecond);
+            setAttribute(livingEntity, KNOCKBACK_RESISTANCE.getAttributeName(), builder.knockbackResistance);
 
-            setAttribute(livingEntity, SWORD_RESISTANCE.getAttributeName(), builder.sword_resistance);
-            setAttribute(livingEntity, AXE_RESISTANCE.getAttributeName(), builder.axe_resistance);
-            setAttribute(livingEntity, MAGIC_RESISTANCE.getAttributeName(), builder.magic_resistance);
-            setAttribute(livingEntity, ARROW_RESISTANCE.getAttributeName(), builder.arrow_resistance);
-            setAttribute(livingEntity, TRIDENT_RESISTANCE.getAttributeName(), builder.trident_resistance);
-            setAttribute(livingEntity, EXPLOSION_RESISTANCE.getAttributeName(), builder.explosion_resistance);
-            setAttribute(livingEntity, FIRE_RESISTANCE.getAttributeName(), builder.fire_resistance);
-            setAttribute(livingEntity, POISON_RESISTANCE.getAttributeName(), builder.poison_resistance);
-            setAttribute(livingEntity, CRITICAL_HIT_RESISTANCE.getAttributeName(), builder.critical_hit_resistance);
-            setAttribute(livingEntity, BLOCK_CHANCE.getAttributeName(), builder.block_chance);
+            setAttribute(livingEntity, SWORD_RESISTANCE.getAttributeName(), builder.swordResistance);
+            setAttribute(livingEntity, AXE_RESISTANCE.getAttributeName(), builder.axeResistance);
+            setAttribute(livingEntity, MAGIC_RESISTANCE.getAttributeName(), builder.magicResistance);
+            setAttribute(livingEntity, ARROW_RESISTANCE.getAttributeName(), builder.arrowResistance);
+            setAttribute(livingEntity, TRIDENT_RESISTANCE.getAttributeName(), builder.tridentResistance);
+            setAttribute(livingEntity, EXPLOSION_RESISTANCE.getAttributeName(), builder.explosionResistance);
+            setAttribute(livingEntity, FIRE_RESISTANCE.getAttributeName(), builder.fireResistance);
+            setAttribute(livingEntity, POISON_RESISTANCE.getAttributeName(), builder.poisonResistance);
+            setAttribute(livingEntity, CRITICAL_HIT_RESISTANCE.getAttributeName(), builder.criticalHitResistance);
+            setAttribute(livingEntity, BLOCK_CHANCE.getAttributeName(), builder.blockChance);
 
-            setAttribute(livingEntity, ATTACK_POWER.getAttributeName(), builder.attack_power);
-            setAttribute(livingEntity, ATTACK_RANGE.getAttributeName(), builder.attack_range);
-            setAttribute(livingEntity, ATTACK_KNOCKBACK.getAttributeName(), builder.attack_knockback);
-            setAttribute(livingEntity, ATTACK_SPEED.getAttributeName(), builder.attack_speed);
-            setAttribute(livingEntity, PROJECTILE_SPEED.getAttributeName(), builder.projectile_speed);
-            setAttribute(livingEntity, CRITICAL_HIT_CHANCE.getAttributeName(), builder.critical_hit_chance);
-            setAttribute(livingEntity, CRITICAL_HIT_DAMAGE_MULTIPLIER.getAttributeName(), builder.critical_hit_damage_multiplier);
+            setAttribute(livingEntity, ATTACK_POWER.getAttributeName(), builder.attackPower);
+            setAttribute(livingEntity, ATTACK_RANGE.getAttributeName(), builder.attackRange);
+            setAttribute(livingEntity, ATTACK_KNOCKBACK.getAttributeName(), builder.attackKnockback);
+            setAttribute(livingEntity, ATTACK_SPEED.getAttributeName(), builder.attackSpeed);
+            setAttribute(livingEntity, PROJECTILE_SPEED.getAttributeName(), builder.projectileSpeed);
+            setAttribute(livingEntity, CRITICAL_HIT_CHANCE.getAttributeName(), builder.criticalHitChance);
+            setAttribute(livingEntity, CRITICAL_HIT_DAMAGE_MULTIPLIER.getAttributeName(), builder.criticalHitDamageMultiplier);
 
         });
     }

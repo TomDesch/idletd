@@ -1,7 +1,10 @@
 package io.github.stealingdapenta.idletd.listener;
 
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.custommob.MobWrapper;
+import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +44,11 @@ public class CustomSkeletonListener implements Listener {
 
         Location targetLocation = targetEntity.getLocation();
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
+
+        if (targetIsOutOfRange(CustomMob.createFrom(shooter), targetLocation)) {
+
+        }
+
         Location arrowLocation = originalArrow.getLocation();
 
         int skeletonLevel = customMobHandler.getMobLevel(shooter);
@@ -48,6 +56,14 @@ public class CustomSkeletonListener implements Listener {
 
         createParabolicParticleTrail(arrowLocation, 1.5, targetLocation, flySpeed);
     }
+
+    private boolean targetIsOutOfRange(MobWrapper attacker, Location targetLocation) {
+        return attacker.getMob()
+                       .getLocation()
+                       .distanceSquared(targetLocation) > attacker.getAttackRangeSquared();
+    }
+
+
 
 
     public void createParabolicParticleTrail(Location startLocation, double offset, Location targetLocation, double flySpeed) {
@@ -75,8 +91,17 @@ public class CustomSkeletonListener implements Listener {
 
             if (particleCollidesWithEntity(particleLocation)) {
                 List<LivingEntity> collidedEntities = getCollidedEntities(particleLocation);
-                if (!collidedEntities.stream()
-                                     .allMatch(customMobHandler::isCustomMobOrCustomArmorStand)) {
+//                if (!collidedEntities.stream()
+//                                     .allMatch(customMobHandler::isCustomMobOrCustomArmorStand)) {
+//                    animateEntityImpactParticles(particleLocation);
+//                    return;
+//                }
+                LivingEntity possibleNPC = collidedEntities.stream()
+                                                           .filter(AgentNPCHandler::isNPC)
+                                                           .findFirst()
+                                                           .orElse(null);
+                if (Objects.nonNull(possibleNPC)) {
+                    System.out.printf("'Arrow' hit an NPC !! %s%n", possibleNPC.getName());
                     animateEntityImpactParticles(particleLocation);
                     return;
                 }

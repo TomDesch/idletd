@@ -9,10 +9,10 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
 import lombok.RequiredArgsConstructor;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,18 +36,8 @@ public class DamageListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void calculateDamage(EntityDamageByEntityEvent event) {
-        if (event.isCancelled()) return;
-
         Entity source = event.getDamager();
         Entity target = event.getEntity();
-
-        if (customMobHandler.isCustomMob(source)) {
-            System.out.println("Custom mob is doing a hit :)");
-        }
-
-        if (AgentNPCHandler.isNPC(target)) {
-            System.out.println("Agent NPC is taking a hit :)");
-        }
 
         if (customMobHandler.isCustomMob(source) && AgentNPCHandler.isNPC(target)) {
             handleMobHittingAgent((LivingEntity) source, (NPC) target, event);
@@ -78,9 +68,9 @@ public class DamageListener implements Listener {
 
         if (isMelee(event.getCause())) {
             if (isPlayerHoldingAxe(player)) {
-                damage = damage - (damage * defendingMobStats.getAxe_resistance());
+                damage = damage - (damage * defendingMobStats.getAxeResistance());
             } else {
-                damage = damage - (damage * defendingMobStats.getSword_resistance());
+                damage = damage - (damage * defendingMobStats.getSwordResistance());
             }
         }
 
