@@ -46,7 +46,6 @@ public class CustomSkeletonListener implements Listener {
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
 
         if (targetIsOutOfRange(CustomMob.createFrom(shooter), targetLocation)) {
-            System.out.println("%s shot at %s, but is out of range");
             shooter.getWorld()
                    .spawnParticle(Particle.VILLAGER_ANGRY, shooter.getEyeLocation()
                                                                   .add(0, 1, 0), 2);

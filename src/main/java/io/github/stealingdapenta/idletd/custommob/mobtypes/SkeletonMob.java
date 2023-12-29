@@ -104,15 +104,29 @@ public class SkeletonMob extends CustomMob {
         blockChance = 0 + (double) getLevel() / 1000;
     }
 
+    /**
+     * Initializes the attack power of the skeleton based on its level. The attack power starts at 1.0 for a level 1 mob and scales linearly, reaching a maximum
+     * of 50.0 at level 1000. Desmos: f\left(x\right)=\min\left(1\ +\ \frac{x\cdot49}{1000},\ 50\right)
+     */
     @Override
     protected void initializeAttackPower() {
-        attackPower = 1.0 + (double) getLevel() / 100;
+        int level = getLevel();
+        attackPower = Math.min(1.0 + (level) / 1000.0 * 49.0, 50.0);
     }
 
+
+    /**
+     * Initializes the attack range of the skeleton based on its level.
+     * The attack range is calculated to be between 10.0 and 30.0, scaling linearly with the level.
+     * It is capped at 30.0 when the level exceeds 1000.
+     * Desmos: f\left(x\right)=\min\left(10+\left(\frac{x}{1000}\cdot20\right),\ 30\right)
+     */
     @Override
     protected void initializeAttackRange() {
-        attackRange = 1.0 + (double) getLevel() / 100;
+        int level = getLevel();
+        attackRange = Math.min(10.0 + (level / 1000.0) * 20.0, 30.0);
     }
+
 
     @Override
     protected void initializeAttackKnockback() {
