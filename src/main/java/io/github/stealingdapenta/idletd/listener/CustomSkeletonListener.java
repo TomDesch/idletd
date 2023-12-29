@@ -46,7 +46,11 @@ public class CustomSkeletonListener implements Listener {
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
 
         if (targetIsOutOfRange(CustomMob.createFrom(shooter), targetLocation)) {
-
+            System.out.println("%s shot at %s, but is out of range");
+            shooter.getWorld()
+                   .spawnParticle(Particle.VILLAGER_ANGRY, shooter.getEyeLocation()
+                                                                  .add(0, 1, 0), 2);
+            return;
         }
 
         Location arrowLocation = originalArrow.getLocation();
@@ -58,12 +62,10 @@ public class CustomSkeletonListener implements Listener {
     }
 
     private boolean targetIsOutOfRange(MobWrapper attacker, Location targetLocation) {
-        return attacker.getMob()
+        return attacker.getSummonedEntity()
                        .getLocation()
                        .distanceSquared(targetLocation) > attacker.getAttackRangeSquared();
     }
-
-
 
 
     public void createParabolicParticleTrail(Location startLocation, double offset, Location targetLocation, double flySpeed) {

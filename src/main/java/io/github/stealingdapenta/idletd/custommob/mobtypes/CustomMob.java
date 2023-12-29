@@ -94,6 +94,7 @@ public abstract class CustomMob {
         return MobWrapper.builder()
                          .playerUUID(livingEntity.getPersistentDataContainer()
                                                  .get(getPlayerNameSpacedKey(), PersistentDataType.STRING))
+                         .summonedEntity(livingEntity)
                          .location(livingEntity.getLocation())
                          .name(Objects.nonNull(livingEntity.customName()) ? (TextComponent) livingEntity.customName() : Component.text(livingEntity.getName()))
                          .entityType(livingEntity.getType())
@@ -182,7 +183,8 @@ public abstract class CustomMob {
 
         preventMobFromFallingTask();
 
-        mob.getPersistentDataContainer().set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
+        mob.getPersistentDataContainer()
+           .set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
 
         return mob;
     }
@@ -254,9 +256,5 @@ public abstract class CustomMob {
                 }
             }
         }.runTaskTimer(Idletd.getInstance(), ZERO_TICKS, 2 * ONE_SECOND_IN_TICKS);
-    }
-
-    public double getAttackRangeSquared() {
-        return attackRange * attackRange;
     }
 }

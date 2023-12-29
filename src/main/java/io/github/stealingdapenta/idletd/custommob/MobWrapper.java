@@ -145,4 +145,8 @@ public class MobWrapper {
             Idletd.getInstance().getLogger().severe("The attribute " + attribute.name() + " is null for " + entity.getName() + ".");
         }
     }
+
+    public double getAttackRangeSquared() {
+        return attackRange * attackRange;
+    }
 }
