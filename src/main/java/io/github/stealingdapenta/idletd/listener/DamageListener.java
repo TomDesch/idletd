@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.listener;
 
+import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPCHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
@@ -40,7 +41,8 @@ public class DamageListener implements Listener {
         Entity target = event.getEntity();
 
         if (customMobHandler.isCustomMob(source) && AgentNPCHandler.isNPC(target)) {
-            handleMobHittingAgent((LivingEntity) source, (NPC) target, event);
+            Agent targetAgent = agentManager.getAgentMatchingNPC(target);
+            handleMobHittingAgent((LivingEntity) source, targetAgent, event);
 
         } else if (AgentNPCHandler.isNPC(source) && customMobHandler.isCustomMob(target)) {
             handleAgentHittingMob((NPC) source, (LivingEntity) target, event);
@@ -50,9 +52,11 @@ public class DamageListener implements Listener {
         }
     }
 
-    private void handleMobHittingAgent(LivingEntity mob, NPC agent, EntityDamageByEntityEvent event) {
+    private void handleMobHittingAgent(LivingEntity mob, Agent agent, EntityDamageByEntityEvent event) {
         // Implement logic for calculating and applying damage todo
-        System.out.printf("Mob %s is hitting agent %s for %s damage.%n", mob.getName(), agent.getName(), event.getFinalDamage());
+        System.out.printf("Mob %s is hitting agent %s for %s damage.%n", mob.getName(), agent.getAgentNPC()
+                                                                                             .getNpc()
+                                                                                             .getName(), event.getFinalDamage());
     }
 
     private void handleAgentHittingMob(NPC agent, LivingEntity mob, EntityDamageByEntityEvent event) {

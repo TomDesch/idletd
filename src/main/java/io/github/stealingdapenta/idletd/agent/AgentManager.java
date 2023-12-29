@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Entity;
 
 
 @RequiredArgsConstructor
@@ -16,6 +17,18 @@ public class AgentManager {
     private static final Set<Agent> activeAgents = new HashSet<>();
     private final AgentService agentService;
     private final AgentStatsService agentStatsService;
+
+    public Agent getAgentMatchingNPC(Entity entity) {
+        return activeAgents
+                .stream()
+                .filter(agent -> agent.getAgentNPC()
+                                      .getNpc()
+                                      .getEntity()
+                                      .getUniqueId()
+                                      .equals(entity.getUniqueId()))
+                .findFirst()
+                .orElse(null);
+    }
 
     public Agent getActiveMainAgent(IdlePlayer idlePlayer) {
         return getAllActiveAgents(idlePlayer)

@@ -47,8 +47,7 @@ public class CustomSkeletonListener implements Listener {
 
         if (targetIsOutOfRange(CustomMob.createFrom(shooter), targetLocation)) {
             shooter.getWorld()
-                   .spawnParticle(Particle.VILLAGER_ANGRY, shooter.getEyeLocation()
-                                                                  .add(0, 1, 0), 2);
+                   .spawnParticle(Particle.VILLAGER_ANGRY, shooter.getEyeLocation(), 2);
             return;
         }
 
@@ -92,17 +91,13 @@ public class CustomSkeletonListener implements Listener {
 
             if (particleCollidesWithEntity(particleLocation)) {
                 List<LivingEntity> collidedEntities = getCollidedEntities(particleLocation);
-//                if (!collidedEntities.stream()
-//                                     .allMatch(customMobHandler::isCustomMobOrCustomArmorStand)) {
-//                    animateEntityImpactParticles(particleLocation);
-//                    return;
-//                }
                 LivingEntity possibleNPC = collidedEntities.stream()
                                                            .filter(AgentNPCHandler::isNPC)
                                                            .findFirst()
                                                            .orElse(null);
                 if (Objects.nonNull(possibleNPC)) {
                     System.out.printf("'Arrow' hit an NPC !! %s%n", possibleNPC.getName());
+                    // todo deal dmg to npc
                     animateEntityImpactParticles(particleLocation);
                     return;
                 }
