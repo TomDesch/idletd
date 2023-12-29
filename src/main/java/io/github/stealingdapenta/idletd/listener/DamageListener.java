@@ -9,13 +9,22 @@ import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.NPC;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,9 +32,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityShootBowEvent;
-
-import java.util.List;
-import java.util.Objects;
 import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
@@ -48,6 +54,14 @@ public class DamageListener implements Listener {
         Entity source = event.getDamager();
         Entity target = event.getEntity();
 
+        if (customMobHandler.isCustomMob(source)) {
+            System.out.println("Custom mob is doing a hit :)");
+        }
+
+        if (AgentNPCHandler.isNPC(target)) {
+            System.out.println("Agent NPC is taking a hit :)");
+        }
+
         if (customMobHandler.isCustomMob(source) && AgentNPCHandler.isNPC(target)) {
             handleMobHittingAgent((LivingEntity) source, (NPC) target, event);
 
@@ -61,6 +75,7 @@ public class DamageListener implements Listener {
 
     private void handleMobHittingAgent(LivingEntity mob, NPC agent, EntityDamageByEntityEvent event) {
         // Implement logic for calculating and applying damage todo
+        System.out.printf("Mob %s is hitting agent %s for %s damage.%n", mob.getName(), agent.getName(), event.getFinalDamage());
     }
 
     private void handleAgentHittingMob(NPC agent, LivingEntity mob, EntityDamageByEntityEvent event) {

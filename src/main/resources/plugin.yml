@@ -18,7 +18,7 @@ commands:
   towerdefense:
     description: Launches your Idle Tower Defense game!
     usage: /<command>
-    aliases: [td, idletd, tower]
+    aliases: [ td, idletd, tower, wave ]
 
   agent:
     description: Temporary debug command to summon main agent.
