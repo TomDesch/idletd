@@ -32,6 +32,7 @@ import static io.github.stealingdapenta.idletd.service.utils.Time.ZERO_TICKS;
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.custommob.AttackType;
+import io.github.stealingdapenta.idletd.custommob.CustomMobAttackHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -54,6 +55,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Setter
 @Getter
 public abstract class CustomMob {
+
+    private final CustomMobAttackHandler customMobAttackHandler;
 
     protected final EntityType entityType;
     protected Mob mob;
@@ -192,6 +195,8 @@ public abstract class CustomMob {
 
         mob.getPersistentDataContainer()
            .set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
+
+        customMobAttackHandler.addCustomMob(this);
 
         return mob;
     }
