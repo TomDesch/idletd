@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -112,13 +111,6 @@ public class CustomMobHandler {
         }
         return customMob.getPersistentDataContainer()
                         .get(getPlayerNameSpacedKey(), PersistentDataType.STRING);
-    }
-
-    public void setNewTarget(MobWrapper mobWrapper, LivingEntity target) {
-        if (!(mobWrapper.getSummonedEntity() instanceof Creature entityCreature)) {
-            return;
-        }
-        entityCreature.setTarget(target);
     }
 
     public MobWrapper spawnCustomMob(MobWrapper mobWrapper) {

@@ -14,6 +14,8 @@ import io.github.stealingdapenta.idletd.command.CustomMobCommand;
 import io.github.stealingdapenta.idletd.command.PayCommand;
 import io.github.stealingdapenta.idletd.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.command.plot.PlotCommand;
+import io.github.stealingdapenta.idletd.custommob.CustomMobAttackHandler;
+import io.github.stealingdapenta.idletd.custommob.CustomMobAttackTask;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationRepository;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
@@ -46,6 +48,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 import java.util.logging.Logger;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -100,6 +103,10 @@ public class Idletd extends JavaPlugin {
     private final DamageListener damageListener = new DamageListener(customMobHandler, agentManager, idlePlayerManager);
     private final SpawnListener spawnListener = new SpawnListener();
 
+    @Getter
+    private final CustomMobAttackHandler customMobAttackHandler = new CustomMobAttackHandler();
+
+
     public static void shutDown() {
         shuttingDown = true;
     }
@@ -117,6 +124,7 @@ public class Idletd extends JavaPlugin {
         this.pluginEnabledLog();
 
         this.towerDefenseManager.initializeActiveGameManager();
+        CustomMobAttackTask.startTask();
     }
 
     private void registerCommands() {

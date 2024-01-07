@@ -2,10 +2,8 @@ package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.custommob.AttackType;
-import io.github.stealingdapenta.idletd.custommob.CustomMobGoal;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
@@ -20,14 +18,12 @@ public class SkeletonMob extends CustomMob {
     @Override
     public Mob summon(Location location, Agent agent) {
         Mob mob = super.summon(location, agent);
-
-        // todo this does not fix the attack speed animation issue
-        Bukkit.getMobGoals()
-              .addGoal(mob, 0, new CustomMobGoal(mob, agent));
         return mob;
     }
 
-    // Goes from light red to dark red based on Level (peaking at Lv. 1000)
+    /**
+     * @return a color from light red to dark red based on Level (peaking at Lv. 1000)
+     */
     private TextColor generateNameColor() {
         int colorValue = 156 - level / 5;
         colorValue = Math.max(colorValue, 0);

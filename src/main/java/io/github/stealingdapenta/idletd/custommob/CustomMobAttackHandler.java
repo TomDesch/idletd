@@ -8,6 +8,7 @@ import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Bukkit;
@@ -19,12 +20,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 
 @RequiredArgsConstructor
-public class MobAttackHandler {
+@Getter
+public class CustomMobAttackHandler {
 
     private static final int SECOND_IN_MS = 1000;
 
     // map<Living custom mob, last attack time
     private final HashMap<CustomMob, Long> livingCustomMobs = new HashMap<>();
+
 
     public void addCustomMob(CustomMob customMob) {
         livingCustomMobs.put(customMob, System.currentTimeMillis());
@@ -41,11 +44,7 @@ public class MobAttackHandler {
                                                                                                                    .isDead();
     }
 
-    private void checkAllAttacks() {
-        // todo have one task that loops over them, removes dead mobs, checks if remaining can attack
-
-        removeDeadMobs();
-
+    public void checkAllAttacks() {
         livingCustomMobs.keySet()
                         .forEach(customMob -> {
                             if (canAttack(customMob, livingCustomMobs.get(customMob))) {

@@ -3,7 +3,6 @@ package io.github.stealingdapenta.idletd.custommob.mobtypes;
 import com.destroystokyo.paper.entity.ai.GoalType;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.custommob.AttackType;
-import io.github.stealingdapenta.idletd.custommob.CustomMobGoal;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -25,13 +24,12 @@ public class ZombieMob extends CustomMob {
         // todo this does not fix the attack issue
         // also movement speed on zombies .. not set? Or botched?
 
+        // attempt to remove auto fight <= todo test
         Bukkit.getMobGoals()
               .getAllGoals(mob)
               .removeIf(goal -> goal.getTypes()
                                     .contains(GoalType.TARGET));
 
-        Bukkit.getMobGoals()
-              .addGoal(mob, 0, new CustomMobGoal(mob, agent));
         return mob;
     }
 
