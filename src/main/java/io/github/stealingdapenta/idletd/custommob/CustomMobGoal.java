@@ -11,7 +11,6 @@ import java.util.EnumSet;
 import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Skeleton;
@@ -19,7 +18,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomMobGoal implements Goal<Mob>, Listener {
@@ -83,10 +81,10 @@ public class CustomMobGoal implements Goal<Mob>, Listener {
         if (canAttackAgain()) {
             lastAttack = System.currentTimeMillis();
             if (mob instanceof Skeleton skeleton) {
-                skeleton.setArrowCooldown(0);
+//                skeleton.setArrowCooldown(0);
                 // trigger the entityShootBow event
                 // todo this does NOT trigger the entityShootBow event
-                skeleton.launchProjectile(Arrow.class, new Vector(1, 1, 1));
+//                skeleton.launchProjectile(Arrow.class, new Vector(1, 1, 1));
             } else if (mob instanceof Zombie zombie) {
                 if (!targetIsOutOfRange()) {
                     // todo this does NOT flick the arms as quickly as it should
