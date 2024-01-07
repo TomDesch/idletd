@@ -32,7 +32,8 @@ public enum MobAttributes {
     ATTACK_SPEED("attackSpeed"),
     PROJECTILE_SPEED("projectileSpeed"),
     CRITICAL_HIT_CHANCE("criticalHitChance"),
-    CRITICAL_HIT_DAMAGE_MULTIPLIER("criticalHitDamageMultiplier");
+    CRITICAL_HIT_DAMAGE_MULTIPLIER("criticalHitDamageMultiplier"),
+    ATTACK_TYPE("attackType");
 
     private static final String ENTITY_DOESNT_HAVE_ATTRIBUTE = "Couldn't find attribute %s for entity %s";
     private final String attributeName;
@@ -49,6 +50,19 @@ public enum MobAttributes {
         if (Objects.isNull(possibleValue)) {
             Idletd.logger.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
             possibleValue = 0.0;
+        }
+
+        return possibleValue;
+    }
+
+    public String getStringValueFor(LivingEntity livingEntity) {
+        NamespacedKey attributeKey = new NamespacedKey(Idletd.getInstance(), getAttributeName());
+        PersistentDataContainer container = livingEntity.getPersistentDataContainer();
+        String possibleValue = container.get(attributeKey, PersistentDataType.STRING);
+
+        if (Objects.isNull(possibleValue)) {
+            Idletd.logger.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
+            possibleValue = "";
         }
 
         return possibleValue;

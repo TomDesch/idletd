@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import com.destroystokyo.paper.entity.ai.GoalType;
 import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.custommob.AttackType;
 import io.github.stealingdapenta.idletd.custommob.CustomMobGoal;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
@@ -19,6 +20,7 @@ public class ZombieMob extends CustomMob {
         this.level = level;
         this.entityType = EntityType.ZOMBIE;
         this.nameColor = generateNameColor();
+        this.attackType = AttackType.MELEE;
     }
 
     @Override

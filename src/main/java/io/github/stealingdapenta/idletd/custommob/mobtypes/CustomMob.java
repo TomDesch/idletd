@@ -1,11 +1,13 @@
 package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
+import static io.github.stealingdapenta.idletd.custommob.AttackType.fromString;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getPlayerNameSpacedKey;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ARROW_RESISTANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_KNOCKBACK;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_POWER;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_RANGE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_SPEED;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_TYPE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.AXE_RESISTANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.BLOCK_CHANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.CRITICAL_HIT_CHANCE;
@@ -29,6 +31,7 @@ import static io.github.stealingdapenta.idletd.service.utils.Time.ZERO_TICKS;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.custommob.AttackType;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.plot.Plot;
@@ -56,6 +59,7 @@ public abstract class CustomMob {
     protected Mob mob;
     protected Plot plot;
     protected int level;
+    protected AttackType attackType;
 
     protected double movementSpeed = 0.2; // 0.2 = default zombie speed
 
@@ -122,6 +126,7 @@ public abstract class CustomMob {
                          .projectileSpeed(PROJECTILE_SPEED.getValueFor(livingEntity))
                          .criticalHitChance(CRITICAL_HIT_CHANCE.getValueFor(livingEntity))
                          .criticalHitDamageMultiplier(CRITICAL_HIT_DAMAGE_MULTIPLIER.getValueFor(livingEntity))
+                         .attackType(fromString(ATTACK_TYPE.getStringValueFor(livingEntity)))
                          .build();
     }
 
@@ -177,7 +182,8 @@ public abstract class CustomMob {
                                                         .attackSpeed(attackSpeed)
                                                         .projectileSpeed(projectileSpeed)
                                                         .criticalHitChance(criticalHitChance)
-                                                        .criticalHitDamageMultiplier(criticalHitDamageMultiplier));
+                                                        .criticalHitDamageMultiplier(criticalHitDamageMultiplier)
+                                                        .attackType(attackType));
 
         new CustomMobHandler().spawnCustomMob(customMob);
         mob = (Mob) customMob.getSummonedEntity();

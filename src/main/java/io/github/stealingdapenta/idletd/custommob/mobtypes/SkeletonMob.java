@@ -1,6 +1,7 @@
 package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import io.github.stealingdapenta.idletd.agent.Agent;
+import io.github.stealingdapenta.idletd.custommob.AttackType;
 import io.github.stealingdapenta.idletd.custommob.CustomMobGoal;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import net.kyori.adventure.text.format.TextColor;
@@ -17,6 +18,7 @@ public class SkeletonMob extends CustomMob {
         this.level = level;
         this.entityType = EntityType.SKELETON;
         this.nameColor = generateNameColor();
+        this.attackType = AttackType.RANGED;
     }
 
     @Override
@@ -156,6 +158,7 @@ public class SkeletonMob extends CustomMob {
     /**
      * Initializes the attack speed based on the level of the entity. The speed is capped at its maximum value of 10.0 when the entity's level exceeds 1107 (123
      * * 10). Desmos: f\left(x\right)\ =\ \min\left(10,\ 1+\left(\frac{x}{123}\right)\right)
+     * Attack speed value = amount of times the mob can attack per second
      */
     @Override
     protected void initializeAttackSpeed() {

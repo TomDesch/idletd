@@ -5,6 +5,7 @@ import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_KN
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_POWER;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_RANGE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_SPEED;
+import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_TYPE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.AXE_RESISTANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.BLOCK_CHANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.CRITICAL_HIT_CHANCE;
@@ -44,6 +45,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+/**
+ * MobWrapper uses the attribute tags So even though CustomMob objects hold values, the MobWrapper of the mob will ALWAYS hold the most up-to-date values. This
+ * is relevant once temporary effects (e.g. slow atk speed) come in to play.
+ */
 @Getter
 @Builder
 @AllArgsConstructor
@@ -79,6 +84,8 @@ public class MobWrapper {
     double criticalHitChance;
     double criticalHitDamageMultiplier;
 
+    AttackType attackType;
+
 
     public MobWrapper(MobWrapperBuilder builder) {
         summonedEntity = (LivingEntity) builder.location.getWorld().spawnEntity(builder.location, builder.entityType, CreatureSpawnEvent.SpawnReason.CUSTOM, entity -> {
@@ -89,6 +96,8 @@ public class MobWrapper {
             livingEntity.setRemoveWhenFarAway(false);
             entity.customName(builder.name);
             entity.setCustomNameVisible(true);
+
+            setAttribute(livingEntity, ATTACK_TYPE.getAttributeName(), builder.attackType.getAttackTypeTag());
 
             setAttribute(livingEntity, GENERIC_MAX_HEALTH, builder.maxHealth);
             setAttribute(livingEntity, GENERIC_MOVEMENT_SPEED, builder.movementSpeed);
@@ -129,6 +138,12 @@ public class MobWrapper {
 
     public NamespacedKey getNameSpacedKey(String keyName) {
         return new NamespacedKey(Idletd.getInstance(), keyName);
+    }
+
+    private void setAttribute(LivingEntity entity, String attributeName, String value) {
+        NamespacedKey key = getNameSpacedKey(attributeName);
+        PersistentDataContainer container = entity.getPersistentDataContainer();
+        container.set(key, PersistentDataType.STRING, value);
     }
 
     private void setAttribute(LivingEntity entity, String attributeName, double value) {
