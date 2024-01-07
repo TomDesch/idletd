@@ -68,6 +68,8 @@ public class CustomMobAttackHandler {
         MobWrapper mobWrapper = createFrom(customMob.getMob());
         double attackSpeedPerSecond = mobWrapper.getAttackSpeed();
 
+        // todo check the atk speed per level with skeletons.. somethings off....
+
         return enoughTimePassed(attackSpeedPerSecond, msSinceLastAttack);
     }
 

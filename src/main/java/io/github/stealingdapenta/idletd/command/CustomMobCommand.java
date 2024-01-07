@@ -28,13 +28,26 @@ public class CustomMobCommand implements CommandExecutor {
 
     private static final String CUSTOM_SUMMON = "customsummon";
 
-    private static final String CONTAINS_AGENT = "Successfully summoned the mob(s) %s main agent selected.";
+    private static final String CONTAINS_AGENT = "Successfully summoned the mob(s) with agent %s selected.";
+    private static final String NO_IDLE_PLAYER = "No linked IdlePlayer found.";
+    private static final String WRONG_AMOUNT = "No/wrong amount specified, defaulting 1.";
+    private static final String KILLING_ALL = "Killing all custom summoned monsters nearby you, radius: %s.";
+    private static final String INVALID_LEVEL = "Invalid level or radius.";
+    private static final String ZOMBIE_STRING = "zombie";
+    private static final String SKELETON_STRING = "skeleton";
     private final IdlePlayerManager idlePlayerManager;
     private final AgentManager agentManager;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         Player sourcePlayer = (Player) commandSender;
+
+        IdlePlayer onlineIdlePlayer = idlePlayerManager.getOnlineIdlePlayer(sourcePlayer);
+
+        if (Objects.isNull(onlineIdlePlayer)) {
+            sourcePlayer.sendMessage(NO_IDLE_PLAYER);
+            return false;
+        }
 
         if (args.length < 2) {
             return false;
@@ -47,12 +60,12 @@ public class CustomMobCommand implements CommandExecutor {
         try {
             level = Integer.parseInt(secondArg);
         } catch (NumberFormatException e) {
-            sourcePlayer.sendMessage("Invalid level or radius.");
+            sourcePlayer.sendMessage(INVALID_LEVEL);
             return false;
         }
 
         if ("killall".equals(firstArg)) {
-            sourcePlayer.sendMessage("Killing all custom summoned monsters nearby you.");
+            sourcePlayer.sendMessage(KILLING_ALL.formatted(level));
             sourcePlayer.getLocation()
                         .getNearbyEntities(level, level, level)
                         .stream()
@@ -67,24 +80,22 @@ public class CustomMobCommand implements CommandExecutor {
                 amount = Integer.parseInt(args[2]);
             }
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            sourcePlayer.sendMessage("No/wrong amount specified, defaulting 1.");
+            sourcePlayer.sendMessage(WRONG_AMOUNT);
         }
 
         Plot fictionalPlot = new Plot(0, 0, 0, sourcePlayer.getUniqueId());
 
         for (int i = 0; i < amount; i++) {
             CustomMob customMob = switch (firstArg.toLowerCase()) {
-                case "zombie" -> new ZombieMob(fictionalPlot, level);
-                case "skeleton" -> new SkeletonMob(fictionalPlot, level);
+                case ZOMBIE_STRING -> new ZombieMob(fictionalPlot, level);
+                case SKELETON_STRING -> new SkeletonMob(fictionalPlot, level);
                 default -> new ZombieMob(fictionalPlot, level);
             };
 
-            IdlePlayer onlineIdlePlayer = idlePlayerManager.getOnlineIdlePlayer(sourcePlayer);
-            Agent activeMainAgent = (Objects.nonNull(onlineIdlePlayer)) ? agentManager.getActiveMainAgent(onlineIdlePlayer) : null;
+            Agent activeMainAgent = agentManager.getActiveMainAgent(onlineIdlePlayer);
 
             customMob.summon(getLocationOnTopOfBlock(sourcePlayer), activeMainAgent);
-            sourcePlayer.sendMessage(TextColor.color(19, 147, 56) + CONTAINS_AGENT.formatted(
-                    (Objects.nonNull(activeMainAgent)) ? TextColor.color(56, 255, 33) + "with" : TextColor.color(255, 0, 60) + "without"));
+            sourcePlayer.sendMessage(TextColor.color(19, 147, 56) + CONTAINS_AGENT.formatted(TextColor.color(56, 255, 33) + activeMainAgent.toString()));
 
             customMob.getMob()
                      .getPersistentDataContainer()

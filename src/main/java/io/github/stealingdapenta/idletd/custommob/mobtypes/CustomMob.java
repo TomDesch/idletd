@@ -193,6 +193,10 @@ public abstract class CustomMob {
 
         preventMobFromFallingTask();
 
+        mob.setTarget((LivingEntity) agent.getAgentNPC()
+                                          .getNpc()
+                                          .getEntity()); // todo make NPE proof
+
         mob.getPersistentDataContainer()
            .set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
 
