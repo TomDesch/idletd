@@ -126,7 +126,7 @@ public class CustomMobHandler {
         return mobWrapper;
     }
 
-    public int getMobLevel(LivingEntity livingEntity) {
+    public static int getMobLevel(LivingEntity livingEntity) {
         Integer level = livingEntity.getPersistentDataContainer()
                                     .get(getLevelNSK(), PersistentDataType.INTEGER);
         if (Objects.nonNull(level)) {

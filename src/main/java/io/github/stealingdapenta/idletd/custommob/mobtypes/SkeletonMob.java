@@ -13,12 +13,8 @@ import org.bukkit.entity.Mob;
 public class SkeletonMob extends CustomMob {
 
     public SkeletonMob(Plot plot, int level) {
-        super();
-        this.plot = plot;
-        this.level = level;
-        this.entityType = EntityType.SKELETON;
+        super(EntityType.SKELETON, plot, level, AttackType.RANGED);
         this.nameColor = generateNameColor();
-        this.attackType = AttackType.RANGED;
     }
 
     @Override

@@ -55,11 +55,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public abstract class CustomMob {
 
-    protected EntityType entityType;
+    protected final EntityType entityType;
     protected Mob mob;
-    protected Plot plot;
-    protected int level;
-    protected AttackType attackType;
+    protected final Plot plot;
+    protected final int level;
+    protected final AttackType attackType;
 
     protected double movementSpeed = 0.2; // 0.2 = default zombie speed
 

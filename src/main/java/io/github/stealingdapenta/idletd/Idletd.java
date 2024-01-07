@@ -24,7 +24,6 @@ import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsReposi
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
-import io.github.stealingdapenta.idletd.listener.CustomSkeletonListener;
 import io.github.stealingdapenta.idletd.listener.DamageListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
 import io.github.stealingdapenta.idletd.listener.IncomeListener;
@@ -83,7 +82,6 @@ public class Idletd extends JavaPlugin {
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker,
             agentStatsService);
     private final AgentManager agentManager = new AgentManager(agentService, agentStatsService);
-    private final CustomSkeletonListener customSkeletonListener = new CustomSkeletonListener(customMobHandler);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler,
             agentManager);
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
@@ -148,8 +146,6 @@ public class Idletd extends JavaPlugin {
               .registerEvents(incomeListener, getInstance());
         Bukkit.getPluginManager()
               .registerEvents(damageListener, getInstance());
-        Bukkit.getPluginManager()
-              .registerEvents(customSkeletonListener, getInstance());
     }
 
     private void pluginEnabledLog() {

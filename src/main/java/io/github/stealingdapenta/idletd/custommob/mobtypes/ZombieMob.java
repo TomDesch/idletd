@@ -13,14 +13,9 @@ import org.bukkit.entity.Mob;
 
 public class ZombieMob extends CustomMob {
     // Tank mob
-
     public ZombieMob(Plot plot, int level) {
-        super();
-        this.plot = plot;
-        this.level = level;
-        this.entityType = EntityType.ZOMBIE;
+        super(EntityType.ZOMBIE, plot, level, AttackType.MELEE);
         this.nameColor = generateNameColor();
-        this.attackType = AttackType.MELEE;
     }
 
     @Override
