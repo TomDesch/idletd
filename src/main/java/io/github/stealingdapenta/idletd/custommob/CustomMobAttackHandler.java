@@ -23,6 +23,15 @@ import org.bukkit.entity.Mob;
 @Getter
 public class CustomMobAttackHandler {
 
+    private static CustomMobAttackHandler instance = null;
+
+    public static CustomMobAttackHandler getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new CustomMobAttackHandler();
+        }
+        return instance;
+    }
+
     private static final int SECOND_IN_MS = 1000;
 
     // map<Living custom mob, last attack time

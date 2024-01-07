@@ -16,8 +16,7 @@ public class CustomMobAttackTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        CustomMobAttackHandler customMobAttackHandler = Idletd.getInstance()
-                                                              .getCustomMobAttackHandler();
+        CustomMobAttackHandler customMobAttackHandler = CustomMobAttackHandler.getInstance();
 
         customMobAttackHandler.removeDeadMobs();
         customMobAttackHandler.checkAllAttacks();

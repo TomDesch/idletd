@@ -56,7 +56,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public abstract class CustomMob {
 
-    private final CustomMobAttackHandler customMobAttackHandler;
+    private static final CustomMobAttackHandler customMobAttackHandler = CustomMobAttackHandler.getInstance();
 
     protected final EntityType entityType;
     protected Mob mob;
