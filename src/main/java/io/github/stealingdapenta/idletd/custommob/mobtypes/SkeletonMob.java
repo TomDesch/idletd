@@ -36,13 +36,18 @@ public class SkeletonMob extends CustomMob {
         return TextColor.color(colorValue, colorValue, colorValue);
     }
 
+    /**
+     * Initializes the movement speed based on the character's level. Uses a formula to calculate the movement speed with a base and maximum speed. Formula:
+     * speed = min(maxSpeed, baseSpeed + level * (maxSpeed - baseSpeed) / 500) desmos: f\left(x\right)=\min\left(0.2\ +\ \frac{x\cdot\left(1-0.2\right)}{500},\
+     * 1.0\right)
+     */
     @Override
     protected void initializeMovementSpeed() {
         double baseSpeed = 0.2;
         double maxSpeed = 1.0;
-
-        movementSpeed = Math.min(maxSpeed, baseSpeed + (level > 250 ? 0 : (level - 1) * (maxSpeed - baseSpeed) / 249.0));
+        movementSpeed = Math.min(maxSpeed, baseSpeed + level * (maxSpeed - baseSpeed) / 500);
     }
+
 
     @Override
     protected void initializeMaxHealth() {
