@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.custommob.AttackType.fromString;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getPlayerNameSpacedKey;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ARROW_RESISTANCE;
@@ -57,6 +58,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public abstract class CustomMob {
 
     private static final CustomMobAttackHandler customMobAttackHandler = CustomMobAttackHandler.getInstance();
+    private static final String NULL_AGENT = "Error setting target agent in custom mob class.";
 
     protected final EntityType entityType;
     protected Mob mob;
@@ -193,9 +195,16 @@ public abstract class CustomMob {
 
         preventMobFromFallingTask();
 
-        mob.setTarget((LivingEntity) agent.getAgentNPC()
-                                          .getNpc()
-                                          .getEntity()); // todo make NPE proof
+        if (Objects.nonNull(agent) && Objects.nonNull(agent.getAgentNPC()) && Objects.nonNull(agent.getAgentNPC()
+                                                                                                   .getNpc()) && Objects.nonNull(agent.getAgentNPC()
+                                                                                                                                      .getNpc()
+                                                                                                                                      .getEntity())) {
+            mob.setTarget((LivingEntity) agent.getAgentNPC()
+                                              .getNpc()
+                                              .getEntity());
+        } else {
+            logger.warning(NULL_AGENT);
+        }
 
         mob.getPersistentDataContainer()
            .set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
