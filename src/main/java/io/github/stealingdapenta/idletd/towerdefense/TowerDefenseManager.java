@@ -29,13 +29,13 @@ import org.bukkit.scheduler.BukkitTask;
 @Getter
 @Setter
 public class TowerDefenseManager {
+
     private static final Set<TowerDefense> activeTDGames = new HashSet<>();
+    private static final String PLAYER_OFFLINE = "Player %s has an active TD Game but is not online.";
     private static BukkitTask activeGameManager;
     private final IdlePlayerService idlePlayerService;
     private final PlotService plotService;
     private final TowerDefenseService towerDefenseService;
-
-    // todo turn POC wave mobs into real deal with levels on mobs etc
 
     public void initializeActiveGameManager() {
         if (Objects.isNull(activeGameManager)) {
@@ -78,12 +78,15 @@ public class TowerDefenseManager {
     }
 
     private void killAllMobs(TowerDefense towerDefense) {
-        towerDefense.getLivingMobs().forEach(mob -> mob.getMob().remove());
+        towerDefense.getLivingMobs()
+                    .forEach(mob -> mob.getMob()
+                                       .remove());
     }
 
     public TowerDefense getActiveTDGame(IdlePlayer idlePlayer) {
         return activeTDGames.stream()
-                            .filter(towerDefense -> idlePlayer.getPlayerUUID().equals(towerDefense.getPlayerUUID()))
+                            .filter(towerDefense -> idlePlayer.getPlayerUUID()
+                                                              .equals(towerDefense.getPlayerUUID()))
                             .findFirst()
                             .orElse(null);
     }
@@ -99,12 +102,17 @@ public class TowerDefenseManager {
             towerDefense.setWave(new WaveConfiguration(towerDefense.getStageLevel()));
 
             // Event where player logs out during the countdown
-            if (handlePlayerOffline(towerDefense)) return;
+            if (handlePlayerOffline(towerDefense)) {
+                return;
+            }
 
-            idlePlayerService.getPlayer(towerDefense.getPlayerUUID()).sendMessage(">> Starting wave " + towerDefense.getStageLevel() + "!");
+            idlePlayerService.getPlayer(towerDefense.getPlayerUUID())
+                             .sendMessage(">> Starting wave " + towerDefense.getStageLevel() + "!");
 
-            BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-            int amountOfMobsToSpawn = towerDefense.getWave().getAmountOfMobs();
+            BukkitScheduler scheduler = Bukkit.getServer()
+                                              .getScheduler();
+            int amountOfMobsToSpawn = towerDefense.getWave()
+                                                  .getAmountOfMobs();
 
             for (int i = 0; i < amountOfMobsToSpawn; i++) {
                 int finalI = i;
@@ -139,18 +147,21 @@ public class TowerDefenseManager {
     public void handleWaveEnd(TowerDefense towerDefense) {
         if (towerDefense.allMobsDead() && !towerDefense.isWaveActive()) {
             String duration = towerDefense.getWaveDuration();
-            idlePlayerService.getPlayer(towerDefense.getPlayerUUID()).sendMessage("You took " + duration + " to complete wave " + towerDefense.getStageLevel() + "!");
+            idlePlayerService.getPlayer(towerDefense.getPlayerUUID())
+                             .sendMessage("You took " + duration + " to complete wave " + towerDefense.getStageLevel() + "!");
             towerDefense.increaseStageLevelWithOne();
             startWave(towerDefense);
         }
     }
 
     private CustomMob generateRandomMob(TowerDefense towerDefense) {
-        int mobLevel = towerDefense.getWave().getRandomMobLevelBasedOnStageLevel();
+        int mobLevel = towerDefense.getWave()
+                                   .getRandomMobLevelBasedOnStageLevel();
 
         Plot plot = towerDefenseService.fetchPlotIfNull(towerDefense);
 
-        return switch (towerDefense.getWave().chooseMobType()) {
+        return switch (towerDefense.getWave()
+                                   .chooseMobType()) {
             case ZOMBIE -> new ZombieMob(plot, mobLevel);
             case SKELETON -> new SkeletonMob(plot, mobLevel);
             default -> new ZombieMob(plot, mobLevel);
@@ -162,9 +173,11 @@ public class TowerDefenseManager {
     }
 
     private boolean handlePlayerOffline(TowerDefense towerDefense) {
-        Player player = Idletd.getInstance().getServer().getPlayer(towerDefense.getPlayerUUID());
+        Player player = Idletd.getInstance()
+                              .getServer()
+                              .getPlayer(towerDefense.getPlayerUUID());
         if (Objects.isNull(player)) {
-            logger.warning("Player has an active TD Game but is not online: " + towerDefense.getPlayerUUID());
+            logger.warning(PLAYER_OFFLINE.formatted(towerDefense.getPlayerUUID()));
             deactivateTDGame(towerDefense);
             return true;
         }

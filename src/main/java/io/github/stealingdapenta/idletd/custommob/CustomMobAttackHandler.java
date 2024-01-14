@@ -78,6 +78,7 @@ public class CustomMobAttackHandler {
                                                              .getAttackSpeed();
 
         // todo check the atk speed per level with skeletons.. somethings off....
+        // todo atk speed per level for zombies is currently not functional; they all hit equally quick.
 
         return enoughTimePassed(attackSpeedPerSecond, msSinceLastAttack);
     }

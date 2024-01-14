@@ -128,6 +128,4 @@ public class CustomMobCommand implements CommandExecutor {
         return player.getEyeLocation()
                      .add(0, 1, 0);
     }
-
-    // fix agents duplication (npc) todo
 }
