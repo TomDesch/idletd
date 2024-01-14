@@ -3,8 +3,8 @@ package io.github.stealingdapenta.idletd.listener;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.custommob.CustomMobLiveDataHandle;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
-import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
@@ -30,7 +30,8 @@ public class DamageListener implements Listener {
     // todo calculate dmg done by Agent to custom mob
     // todo cancel dmg done by agent to player or agent
 
-    private final CustomMobHandler customMobHandler;
+    private final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
+    ;
     private final AgentManager agentManager;
     private final IdlePlayerManager idlePlayerManager;
 
@@ -68,7 +69,8 @@ public class DamageListener implements Listener {
     private void handlePlayerHittingMob(Player player, LivingEntity mob, EntityDamageByEntityEvent event) {
         IdlePlayer attackingPlayer = idlePlayerManager.getOnlineIdlePlayer(player);
         BattleStats attackingStats = attackingPlayer.getFetchedBattleStats();
-        MobWrapper defendingMobStats = CustomMob.createFrom(mob);
+        CustomMobLiveDataHandle defendingMobLiveData = customMobHandler.findBy(mob); // todo make NPE proof
+        MobWrapper defendingMobStats = defendingMobLiveData.getMobWrapper();
         // todo fix it all like this this is all botched and not functional
         double damage = attackingStats.getAttackPower();
 

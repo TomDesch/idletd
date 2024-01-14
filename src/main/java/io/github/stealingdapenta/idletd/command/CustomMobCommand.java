@@ -27,7 +27,6 @@ import org.bukkit.util.BlockIterator;
 public class CustomMobCommand implements CommandExecutor {
 
     private static final String CUSTOM_SUMMON = "customsummon";
-
     private static final String CONTAINS_AGENT = "Successfully summoned the mob(s) with agent %s selected.";
     private static final String NO_IDLE_PLAYER = "No linked IdlePlayer found.";
     private static final String WRONG_AMOUNT = "No/wrong amount specified, defaulting 1.";

@@ -15,7 +15,6 @@ import io.github.stealingdapenta.idletd.command.PayCommand;
 import io.github.stealingdapenta.idletd.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.command.plot.PlotCommand;
 import io.github.stealingdapenta.idletd.custommob.CustomMobAttackTask;
-import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationRepository;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
@@ -65,7 +64,6 @@ public class Idletd extends JavaPlugin {
     private final IdleLocationRepository idleLocationRepository = new IdleLocationRepository();
     private final AgentRepository agentRepository = new AgentRepository();
     private final Coloring coloring = new Coloring();
-    private final CustomMobHandler customMobHandler = new CustomMobHandler();
     private final SchematicHandler schematicHandler = new SchematicHandler();
     private final PlotService plotService = new PlotService(schematicHandler, plotRepository);
     private final IdlePlayerService idlePlayerService = new IdlePlayerService(idlePlayerRepository, plotService);
@@ -74,7 +72,7 @@ public class Idletd extends JavaPlugin {
     private final IdleLocationService idleLocationService = new IdleLocationService(idleLocationRepository);
     private final SkinService skinService = new SkinService(skinRepository, coloring);
     private final SkinManager skinManager = new SkinManager(coloring, skinService);
-    private final EntityTracker entityTracker = new EntityTracker(customMobHandler);
+    private final EntityTracker entityTracker = new EntityTracker();
     private final BattleStatsRepository battleStatsRepository = new BattleStatsRepository();
     private final BattleStatsService battleStatsService = new BattleStatsService(battleStatsRepository);
     private final MainAgentStatsRepository mainAgentStatsRepository = new MainAgentStatsRepository();
@@ -94,11 +92,11 @@ public class Idletd extends JavaPlugin {
     private final CustomMobCommand customMobCommand = new CustomMobCommand(idlePlayerManager, agentManager);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
-    private final IncomeListener incomeListener = new IncomeListener(customMobHandler, idlePlayerService, idlePlayerManager, balanceHandler);
-    private final CustomMobListener customMobListener = new CustomMobListener(customMobHandler, idlePlayerService, towerDefenseManager);
+    private final IncomeListener incomeListener = new IncomeListener(idlePlayerService, idlePlayerManager, balanceHandler);
+    private final CustomMobListener customMobListener = new CustomMobListener(idlePlayerService, towerDefenseManager);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService,
             mainAgentStatsService);
-    private final DamageListener damageListener = new DamageListener(customMobHandler, agentManager, idlePlayerManager);
+    private final DamageListener damageListener = new DamageListener(agentManager, idlePlayerManager);
     private final SpawnListener spawnListener = new SpawnListener();
 
     public static void shutDown() {

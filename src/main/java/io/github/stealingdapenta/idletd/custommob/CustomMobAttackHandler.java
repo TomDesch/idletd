@@ -1,11 +1,10 @@
 package io.github.stealingdapenta.idletd.custommob;
 
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getMobLevel;
-import static io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob.createFrom;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
-import java.util.HashMap;
+import io.github.stealingdapenta.idletd.plot.Plot;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
@@ -25,6 +24,8 @@ public class CustomMobAttackHandler {
 
     private static CustomMobAttackHandler instance = null;
 
+    private static final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
+
     public static CustomMobAttackHandler getInstance() {
         if (Objects.isNull(instance)) {
             instance = new CustomMobAttackHandler();
@@ -34,17 +35,25 @@ public class CustomMobAttackHandler {
 
     private static final int SECOND_IN_MS = 1000;
 
-    // map<Living custom mob, last attack time
-    private final HashMap<CustomMob, Long> livingCustomMobs = new HashMap<>();
-
-
-    public void addCustomMob(CustomMob customMob) {
-        livingCustomMobs.put(customMob, System.currentTimeMillis());
+    public void removeDeadMobs() {
+        customMobHandler.getLivingCustomMobsLiveData()
+                        .removeIf(customMobLiveDataHandle -> this.mobRemoved(customMobLiveDataHandle.getCustomMob()));
     }
 
-    public void removeDeadMobs() {
-        livingCustomMobs.keySet()
-                        .removeIf(this::mobRemoved);
+    public void preventAllFromFalling() {
+        customMobHandler.getLivingCustomMobsLiveData()
+                        .forEach(customMobLiveDataHandle -> {
+                            Plot plot = customMobLiveDataHandle.getCustomMob()
+                                                               .getPlot();
+                            Mob mob = customMobLiveDataHandle.getCustomMob()
+                                                             .getMob();
+                            if (Objects.nonNull(plot) && Objects.nonNull(mob) && mob.isValid()) {
+                                if (mob.getFallDistance() > 5) {
+                                    mob.setFallDistance(0); // prevents fall dmg
+                                    mob.teleport(plot.getMobSpawnLocation());
+                                }
+                            }
+                        });
     }
 
     private boolean mobRemoved(CustomMob customMob) {
@@ -54,19 +63,19 @@ public class CustomMobAttackHandler {
     }
 
     public void checkAllAttacks() {
-        livingCustomMobs.keySet()
-                        .forEach(customMob -> {
-                            if (canAttack(customMob, livingCustomMobs.get(customMob))) {
-                                doAttack(customMob);
+        customMobHandler.getLivingCustomMobsLiveData()
+                        .forEach(customMobLiveData -> {
+                            if (canAttack(customMobLiveData)) {
+                                doAttack(customMobLiveData);
                             }
                         });
     }
 
 
-    private boolean canAttack(CustomMob customMob, long lastAttack) {
-        long msSinceLastAttack = System.currentTimeMillis() - lastAttack;
-        MobWrapper mobWrapper = createFrom(customMob.getMob());
-        double attackSpeedPerSecond = mobWrapper.getAttackSpeed();
+    private boolean canAttack(CustomMobLiveDataHandle customMobLiveDataHandle) {
+        long msSinceLastAttack = System.currentTimeMillis() - customMobLiveDataHandle.getTimeSinceLastAttack();
+        double attackSpeedPerSecond = customMobLiveDataHandle.getMobWrapper()
+                                                             .getAttackSpeed();
 
         // todo check the atk speed per level with skeletons.. somethings off....
 
@@ -77,13 +86,14 @@ public class CustomMobAttackHandler {
         return minimalDelay * SECOND_IN_MS <= msPassed;
     }
 
-    private void doAttack(CustomMob customMob) {
+    private void doAttack(CustomMobLiveDataHandle customMobLiveDataHandle) {
+        CustomMob customMob = customMobLiveDataHandle.getCustomMob();
         switch (customMob.getAttackType()) {
             case MELEE -> doMeleeAttack(customMob);
             case RANGED -> doRangedAttack(customMob);
         }
 
-        this.livingCustomMobs.put(customMob, System.currentTimeMillis());
+        customMobLiveDataHandle.setTimeSinceLastAttack(System.currentTimeMillis());
     }
 
 
@@ -103,9 +113,9 @@ public class CustomMobAttackHandler {
         Location targetLocation = targetEntity.getLocation();
         targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
 
-        MobWrapper shooterWrapper = createFrom(shooter);
+        CustomMobLiveDataHandle shooterLiveData = customMobHandler.findBy(customMob);
 
-        if (targetIsOutOfRange(shooterWrapper, targetLocation)) {
+        if (targetIsOutOfRange(shooterLiveData.getMobWrapper(), targetLocation)) {
             shooter.getWorld()
                    .spawnParticle(Particle.VILLAGER_ANGRY, shooter.getEyeLocation(), 2);
             return;

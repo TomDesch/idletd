@@ -19,6 +19,7 @@ public class CustomMobAttackTask extends BukkitRunnable {
         CustomMobAttackHandler customMobAttackHandler = CustomMobAttackHandler.getInstance();
 
         customMobAttackHandler.removeDeadMobs();
+        customMobAttackHandler.preventAllFromFalling();
         customMobAttackHandler.checkAllAttacks();
     }
 }

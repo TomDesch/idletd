@@ -14,25 +14,15 @@ import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 @RequiredArgsConstructor
 public class CustomMobListener implements Listener {
-    private final CustomMobHandler customMobHandler;
+
+    private final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
     private final IdlePlayerService idlePlayerService;
     private final TowerDefenseManager towerDefenseManager;
-
-
-    @EventHandler
-    public void checkDeadCustomMobs(EntityDeathEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-
-        if (customMobHandler.isCustomMob(livingEntity)) {
-            customMobHandler.removeDeadMobsFromList();
-        }
-    }
 
     /**
      * @param event EntityShootBowEvent from SpigotMC Cancels all the skeleton shoot events from custom mobs

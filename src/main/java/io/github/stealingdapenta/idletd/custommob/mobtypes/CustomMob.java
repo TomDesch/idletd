@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
 import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.custommob.AttackType.fromString;
+import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getInstance;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getPlayerNameSpacedKey;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ARROW_RESISTANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.ATTACK_KNOCKBACK;
@@ -27,14 +28,12 @@ import static io.github.stealingdapenta.idletd.custommob.MobAttributes.PROJECTIL
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.REGENERATION_PER_SECOND;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.SWORD_RESISTANCE;
 import static io.github.stealingdapenta.idletd.custommob.MobAttributes.TRIDENT_RESISTANCE;
-import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
-import static io.github.stealingdapenta.idletd.service.utils.Time.ZERO_TICKS;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.custommob.AttackType;
 import io.github.stealingdapenta.idletd.custommob.CustomMobAttackHandler;
-import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import io.github.stealingdapenta.idletd.custommob.CustomMobLiveDataHandle;
 import io.github.stealingdapenta.idletd.custommob.MobWrapper;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import java.util.Objects;
@@ -50,7 +49,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 @RequiredArgsConstructor
 @Setter
@@ -190,10 +188,7 @@ public abstract class CustomMob {
                                                         .criticalHitDamageMultiplier(criticalHitDamageMultiplier)
                                                         .attackType(attackType));
 
-        new CustomMobHandler().spawnCustomMob(customMob);
         mob = (Mob) customMob.getSummonedEntity();
-
-        preventMobFromFallingTask();
 
         if (Objects.nonNull(agent) && Objects.nonNull(agent.getAgentNPC()) && Objects.nonNull(agent.getAgentNPC()
                                                                                                    .getNpc()) && Objects.nonNull(agent.getAgentNPC()
@@ -209,7 +204,9 @@ public abstract class CustomMob {
         mob.getPersistentDataContainer()
            .set(getLevelNSK(), PersistentDataType.INTEGER, getLevel());
 
-        customMobAttackHandler.addCustomMob(this);
+        MobWrapper mobWrapper = createFrom(mob);
+        CustomMobLiveDataHandle customMobLiveDataHandle = new CustomMobLiveDataHandle(mobWrapper, this);
+        getInstance().addCustomMob(customMobLiveDataHandle);
 
         return mob;
     }
@@ -266,20 +263,4 @@ public abstract class CustomMob {
     protected abstract void initializeCriticalHitChance();
 
     protected abstract void initializeCriticalHitDamageMultiplier();
-
-    private void preventMobFromFallingTask() { // todo in the future have one task for all mobs.
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (Objects.isNull(plot) || Objects.isNull(mob) || !mob.isValid()) {
-                    cancel();
-                }
-
-                if (mob.getFallDistance() > 5) {
-                    mob.setFallDistance(0); // prevents fall dmg
-                    mob.teleport(plot.getMobSpawnLocation());
-                }
-            }
-        }.runTaskTimer(Idletd.getInstance(), ZERO_TICKS, 2 * ONE_SECOND_IN_TICKS);
-    }
 }

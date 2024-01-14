@@ -19,7 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 @RequiredArgsConstructor
 public class IncomeListener implements Listener {
 
-    private final CustomMobHandler customMobHandler;
+    private final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
     private final IdlePlayerService idlePlayerService;
     private final IdlePlayerManager idlePlayerManager;
     private final BalanceHandler balanceHandler;

@@ -6,29 +6,36 @@ import static io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob.getL
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
+import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
 
 
-@RequiredArgsConstructor
 @Getter
 public class CustomMobHandler {
 
-    private static final ArrayList<MobWrapper> livingCustomMobs = new ArrayList<>();
+    private static final String NOT_CUSTOM_MOB = "Tried to get the Linked player uuid of an entity that is not a custom mob!";
+    private static CustomMobHandler instance = null;
     private static final String ERROR_SETTING_TARGET = "Error setting agent as target for custom mob.";
     private static final String CUSTOM_MOB_TAG = "idletd_mob";
     private static final String PLAYER_TAG = "related_p";
     private static final String CUSTOM_NSK_TAG = "customnsktag";
+    private final ArrayList<CustomMobLiveDataHandle> livingCustomMobsLiveData = new ArrayList<>();
+
+    public static CustomMobHandler getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new CustomMobHandler();
+        }
+        return instance;
+    }
 
 
     public void setTarget(Mob customMob, Agent target) {
@@ -64,18 +71,25 @@ public class CustomMobHandler {
         return new NamespacedKey(Idletd.getInstance(), PLAYER_TAG);
     }
 
-    public void addCustomMob(MobWrapper mobWrapper) {
-        livingCustomMobs.add(mobWrapper);
+    public CustomMobLiveDataHandle findBy(CustomMob customMob) {
+        return getLivingCustomMobsLiveData().stream()
+                                            .filter(customMobLiveDataHandle -> customMobLiveDataHandle.getCustomMob()
+                                                                                                      .equals(customMob))
+                                            .findFirst()
+                                            .orElse(null);
     }
 
-    public void removeDeadMobsFromList() {
-        livingCustomMobs.removeIf(mobWrapper -> {
-            LivingEntity livingMob = mobWrapper.getSummonedEntity();
-            if (Objects.nonNull(livingMob)) {
-                return livingMob.isDead();
-            }
-            return true;
-        });
+    public CustomMobLiveDataHandle findBy(LivingEntity livingEntity) {
+        return getLivingCustomMobsLiveData().stream()
+                                            .filter(customMobLiveDataHandle -> customMobLiveDataHandle.getCustomMob()
+                                                                                                      .getMob()
+                                                                                                      .equals(livingEntity))
+                                            .findFirst()
+                                            .orElse(null);
+    }
+
+    public void addCustomMob(CustomMobLiveDataHandle customMobLiveDataHandle) {
+        livingCustomMobsLiveData.add(customMobLiveDataHandle);
     }
 
     public boolean isCustomMob(LivingEntity livingEntity) {
@@ -85,37 +99,16 @@ public class CustomMobHandler {
 
     public boolean isCustomMob(Entity entity) {
         return Boolean.TRUE.equals(entity.getPersistentDataContainer()
-                                               .get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
-    }
-
-    public boolean isCustomArmorStand(LivingEntity livingEntity) {
-        if (!(livingEntity instanceof ArmorStand armorStand)) {
-            return false;
-        }
-        return Boolean.TRUE.equals(armorStand.getPersistentDataContainer()
-                                             .get(getCustomNamespacedKey(), PersistentDataType.BOOLEAN));
-    }
-
-    public boolean isCustomMobOrCustomArmorStand(LivingEntity livingEntity) {
-        return isCustomMob(livingEntity) || isCustomArmorStand(livingEntity);
-    }
-
-    private NamespacedKey getCustomNamespacedKey() {
-        return new NamespacedKey(Idletd.getInstance(), CUSTOM_NSK_TAG);
+                                         .get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
     }
 
     public String getLinkedPlayerUUID(LivingEntity customMob) {
         if (!isCustomMob(customMob)) {
-            logger.warning("Tried to get Linked player uuid of an entity that is not a cutom mob!");
+            logger.warning(NOT_CUSTOM_MOB);
             return null;
         }
         return customMob.getPersistentDataContainer()
                         .get(getPlayerNameSpacedKey(), PersistentDataType.STRING);
-    }
-
-    public MobWrapper spawnCustomMob(MobWrapper mobWrapper) {
-        addCustomMob(mobWrapper);
-        return mobWrapper;
     }
 
     public static int getMobLevel(LivingEntity livingEntity) {

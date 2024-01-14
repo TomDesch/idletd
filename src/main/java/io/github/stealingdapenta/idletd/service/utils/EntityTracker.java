@@ -1,17 +1,17 @@
 package io.github.stealingdapenta.idletd.service.utils;
 
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
+import java.util.Comparator;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
-import java.util.Comparator;
-
 @RequiredArgsConstructor
 public class EntityTracker {
-    private final CustomMobHandler customMobHandler;
+
+    private final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
 
     // todo add a setting in the future where the player can choose whether the agent targets:
     // the closest / furthest / healthiest / weakest enemy
