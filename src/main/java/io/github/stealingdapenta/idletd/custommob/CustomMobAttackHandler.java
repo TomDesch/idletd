@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.custommob;
 
+import static io.github.stealingdapenta.idletd.Idletd.logger;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getMobLevel;
 
 import io.github.stealingdapenta.idletd.Idletd;
@@ -66,6 +67,8 @@ public class CustomMobAttackHandler {
         customMobHandler.getLivingCustomMobsLiveData()
                         .forEach(customMobLiveData -> {
                             if (canAttack(customMobLiveData)) {
+                                logger.warning("Can attack = " + customMobLiveData);
+
                                 doAttack(customMobLiveData);
                             }
                         });
@@ -77,14 +80,18 @@ public class CustomMobAttackHandler {
         double attackSpeedPerSecond = customMobLiveDataHandle.getMobWrapper()
                                                              .getAttackSpeed();
 
-        // todo check the atk speed per level with skeletons.. somethings off....
+        logger.warning("Time since last attack = " + msSinceLastAttack);
+        logger.warning("atk speed / second = " + attackSpeedPerSecond);
+
         // todo atk speed per level for zombies is currently not functional; they all hit equally quick.
 
         return enoughTimePassed(attackSpeedPerSecond, msSinceLastAttack);
     }
 
-    private boolean enoughTimePassed(double minimalDelay, long msPassed) {
-        return minimalDelay * SECOND_IN_MS <= msPassed;
+    private boolean enoughTimePassed(double timesPerSecond, long msPassed) {
+        double requiredDelay = SECOND_IN_MS / timesPerSecond;
+        logger.warning("Required delay = " + requiredDelay);
+        return requiredDelay <= msPassed;
     }
 
     private void doAttack(CustomMobLiveDataHandle customMobLiveDataHandle) {
