@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_SECOND_IN_TICKS;
 
 import io.github.stealingdapenta.idletd.Idletd;
@@ -39,7 +39,7 @@ public class TowerDefenseManager {
 
     public void initializeActiveGameManager() {
         if (Objects.isNull(activeGameManager)) {
-            logger.info("Initializing Active TD Game manager.");
+            LOGGER.info("Initializing Active TD Game manager.");
             activeGameManager = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -70,9 +70,8 @@ public class TowerDefenseManager {
     }
 
     public void deactivateTDGame(TowerDefense towerDefense) {
-        logger.info("Deactivating TD Game for " + towerDefense.getPlayerUUID());
-        boolean removed = activeTDGames.remove(towerDefense);
-        logger.info("Removal of TD Games was " + (removed ? "successful." : "unsuccessful!"));
+        LOGGER.info("Deactivating TD Game for " + towerDefense.getPlayerUUID());
+        activeTDGames.remove(towerDefense);
         towerDefense.setWaveActive(false);
         killAllMobs(towerDefense);
     }
@@ -123,7 +122,7 @@ public class TowerDefenseManager {
                                                       .getAgentNPC()
                                                       .getNpc();
                 if (Objects.isNull(mainAgentNPC)) {
-                    logger.warning("Cancelling summoning for %s because the main agent NPC is null.".formatted(towerDefense.getPlayerUUID()));
+                    LOGGER.warning("Cancelling summoning for %s because the main agent NPC is null.".formatted(towerDefense.getPlayerUUID()));
                     break;
                 }
 
@@ -177,7 +176,7 @@ public class TowerDefenseManager {
                               .getServer()
                               .getPlayer(towerDefense.getPlayerUUID());
         if (Objects.isNull(player)) {
-            logger.warning(PLAYER_OFFLINE.formatted(towerDefense.getPlayerUUID()));
+            LOGGER.warning(PLAYER_OFFLINE.formatted(towerDefense.getPlayerUUID()));
             deactivateTDGame(towerDefense);
             return true;
         }

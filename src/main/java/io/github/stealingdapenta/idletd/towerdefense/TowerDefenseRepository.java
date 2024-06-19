@@ -1,6 +1,7 @@
 package io.github.stealingdapenta.idletd.towerdefense;
 
-import lombok.RequiredArgsConstructor;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,9 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TowerDefenseRepository {
@@ -27,7 +26,7 @@ public class TowerDefenseRepository {
 
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error inserting TowerDefense: " + e.getMessage());
+            LOGGER.severe("Error inserting TowerDefense: " + e.getMessage());
         }
     }
 
@@ -44,7 +43,7 @@ public class TowerDefenseRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting TowerDefense by IdlePlayer ID: " + e.getMessage());
+            LOGGER.severe("Error getting TowerDefense by IdlePlayer ID: " + e.getMessage());
         }
         return null;
     }
@@ -58,7 +57,7 @@ public class TowerDefenseRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error updating TowerDefense: " + e.getMessage());
+            LOGGER.severe("Error updating TowerDefense: " + e.getMessage());
         }
     }
 
@@ -71,7 +70,7 @@ public class TowerDefenseRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error deleting TowerDefense: " + e.getMessage());
+            LOGGER.severe("Error deleting TowerDefense: " + e.getMessage());
         }
     }
 

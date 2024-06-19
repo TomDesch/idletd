@@ -1,6 +1,8 @@
 package io.github.stealingdapenta.idletd.agent;
 
-import lombok.RequiredArgsConstructor;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+import static io.github.stealingdapenta.idletd.agent.AgentType.getAgentTypeById;
+import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,10 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.agent.AgentType.getAgentTypeById;
-import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AgentRepository {
@@ -38,8 +37,8 @@ public class AgentRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error inserting Agent: " + e.getMessage());
-            return -1; // Or handle the error accordingly
+            LOGGER.severe("Error inserting Agent: " + e.getMessage());
+            return -1;
         }
     }
 
@@ -57,7 +56,7 @@ public class AgentRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting Agent by ID: " + e.getMessage());
+            LOGGER.severe("Error getting Agent by ID: " + e.getMessage());
         }
         return null;
     }
@@ -77,7 +76,7 @@ public class AgentRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting Agents by PLAYERUUID: " + e.getMessage());
+            LOGGER.severe("Error getting Agents by PLAYERUUID: " + e.getMessage());
         }
 
         return agentList;
@@ -97,7 +96,7 @@ public class AgentRepository {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            logger.severe("Error updating Agent: " + e.getMessage());
+            LOGGER.severe("Error updating Agent: " + e.getMessage());
         }
     }
 
@@ -110,7 +109,7 @@ public class AgentRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error deleting Agent: " + e.getMessage());
+            LOGGER.severe("Error deleting Agent: " + e.getMessage());
         }
     }
 

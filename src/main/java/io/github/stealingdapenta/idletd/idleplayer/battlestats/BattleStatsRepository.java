@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.idleplayer.battlestats;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
 import io.github.stealingdapenta.idletd.database.DatabaseManager;
 import java.sql.Connection;
@@ -48,8 +48,8 @@ public class BattleStatsRepository {
 
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error inserting BattleStats. " + battleStats.getPlayerUUID());
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error inserting BattleStats. " + battleStats.getPlayerUUID());
+            LOGGER.warning(e.getMessage());
         }
     }
 
@@ -65,8 +65,8 @@ public class BattleStatsRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting BattleStats by UUID.");
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error getting BattleStats by UUID.");
+            LOGGER.warning(e.getMessage());
         }
         return null;
     }
@@ -109,7 +109,7 @@ public class BattleStatsRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error updating BattleStats.");
+            LOGGER.severe("Error updating BattleStats.");
             e.printStackTrace();
         }
     }
@@ -122,8 +122,8 @@ public class BattleStatsRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error deleting BattleStats.");
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error deleting BattleStats.");
+            LOGGER.warning(e.getMessage());
         }
     }
 

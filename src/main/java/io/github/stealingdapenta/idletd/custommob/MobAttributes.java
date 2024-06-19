@@ -48,7 +48,7 @@ public enum MobAttributes {
         Double possibleValue = container.get(attributeKey, PersistentDataType.DOUBLE);
 
         if (Objects.isNull(possibleValue)) {
-            Idletd.logger.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
+            Idletd.LOGGER.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
             possibleValue = 0.0;
         }
 
@@ -61,7 +61,7 @@ public enum MobAttributes {
         String possibleValue = container.get(attributeKey, PersistentDataType.STRING);
 
         if (Objects.isNull(possibleValue)) {
-            Idletd.logger.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
+            Idletd.LOGGER.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
             possibleValue = "";
         }
 

@@ -52,7 +52,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Idletd extends JavaPlugin {
 
-    public static Logger logger;
+    public static Logger LOGGER;
 
     private static volatile boolean shuttingDown = false;
     private static Idletd instance = null;
@@ -79,15 +79,15 @@ public class Idletd extends JavaPlugin {
     private final MainAgentStatsService mainAgentStatsService = new MainAgentStatsService(mainAgentStatsRepository);
     private final AgentStatsService agentStatsService = new AgentStatsService(mainAgentStatsService);
     private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker,
-            agentStatsService);
+                                                               agentStatsService);
     private final AgentManager agentManager = new AgentManager(agentService, agentStatsService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler,
-            agentManager);
+                                                                                    agentManager);
     private final TowerDefenseManager towerDefenseManager = new TowerDefenseManager(idlePlayerService, plotService, towerDefenseService);
     private final TowerDefenseCommand towerDefenseCommand = new TowerDefenseCommand(plotService, towerDefenseService, idlePlayerService, towerDefenseManager,
-            agentManager);
+                                                                                    agentManager);
     private final IdlePlayerManager idlePlayerManager = new IdlePlayerManager(idlePlayerService, battleStatsService, agentManager, towerDefenseManager,
-            towerDefenseService);
+                                                                              towerDefenseService);
     private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobCommand customMobCommand = new CustomMobCommand(idlePlayerManager, agentManager);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
@@ -95,7 +95,7 @@ public class Idletd extends JavaPlugin {
     private final IncomeListener incomeListener = new IncomeListener(idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobListener customMobListener = new CustomMobListener(idlePlayerService, towerDefenseManager);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService,
-            mainAgentStatsService);
+                                                               mainAgentStatsService);
     private final DamageListener damageListener = new DamageListener(agentManager, idlePlayerManager);
     private final SpawnListener spawnListener = new SpawnListener();
 
@@ -103,10 +103,11 @@ public class Idletd extends JavaPlugin {
         shuttingDown = true;
     }
 
+
     @Override
     public void onEnable() {
         instance = this;
-        logger = this.getLogger();
+        LOGGER = this.getLogger();
 
         this.copyResourcesToDataFolder();
 
@@ -149,17 +150,17 @@ public class Idletd extends JavaPlugin {
     }
 
     private void pluginEnabledLog() {
-        logger.info("IdleMCTD enabled.");
+        LOGGER.info("IdleMCTD enabled.");
     }
 
     private void pluginDisabledLog() {
-        logger.info("IdleMCTD is now disabled.");
+        LOGGER.info("IdleMCTD is now disabled.");
     }
 
     public File getIdleTdFolder() {
         File pluginFolder = this.getDataFolder();
         if (!pluginFolder.exists() && (!pluginFolder.mkdirs())) {
-            logger.warning("Failed to generate idletd data folder!");
+            LOGGER.warning("Failed to generate idletd data folder!");
         }
         return pluginFolder;
     }
@@ -169,7 +170,7 @@ public class Idletd extends JavaPlugin {
         File schematicsFolder = new File(dataFolder, "schematics");
 
         if (!schematicsFolder.exists() && schematicsFolder.mkdirs()) {
-            logger.info("Schematics folder created.");
+            LOGGER.info("Schematics folder created.");
         }
 
         this.copyResource("/schematics/" + TOWER_DEFENSE_SCHEMATIC.getFileName(), new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
@@ -187,10 +188,10 @@ public class Idletd extends JavaPlugin {
                 outputStream.write(buffer, 0, length);
             }
 
-            logger.info("Copied resource: " + resourcePath);
+            LOGGER.info("Copied resource: " + resourcePath);
         } catch (IOException e) {
-            logger.warning("Failed to copy resource: " + resourcePath);
-            logger.warning(e.getMessage());
+            LOGGER.warning("Failed to copy resource: " + resourcePath);
+            LOGGER.warning(e.getMessage());
         }
     }
 

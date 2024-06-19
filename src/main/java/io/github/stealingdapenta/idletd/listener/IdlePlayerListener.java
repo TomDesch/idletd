@@ -1,10 +1,17 @@
 package io.github.stealingdapenta.idletd.listener;
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
+import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getNoLoginAllowed;
+import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getOfflinePlayerCache;
+
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStats;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,14 +23,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.Objects;
-import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getNoLoginAllowed;
-import static io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager.getOfflinePlayerCache;
 
 @RequiredArgsConstructor
 @Setter
@@ -77,7 +76,7 @@ public class IdlePlayerListener implements Listener {
             idlePlayer.setFetchedBattleStats(battleStats);
 
             boolean registered = idlePlayerManager.registerOnlinePlayer(idlePlayer);
-            logger.info("Registering online player was " + (registered ? "successful." : "unsuccessful!"));
+            LOGGER.info("Registering online player was " + (registered ? "successful." : "unsuccessful!"));
             // broadcast welcome msg
         }
 

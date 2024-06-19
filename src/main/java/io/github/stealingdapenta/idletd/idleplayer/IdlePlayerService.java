@@ -1,15 +1,14 @@
 package io.github.stealingdapenta.idletd.idleplayer;
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.plot.PlotService;
-import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
-
 import java.util.Objects;
 import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public class IdlePlayerService {
@@ -25,7 +24,7 @@ public class IdlePlayerService {
         try {
             return getPlayer(UUID.fromString(uuid));
         } catch (IllegalArgumentException | NullPointerException e) {
-            logger.warning(ERROR_CONVERTING_UUID.formatted(uuid));
+            LOGGER.warning(ERROR_CONVERTING_UUID.formatted(uuid));
             return null;
         }
     }
@@ -43,7 +42,7 @@ public class IdlePlayerService {
             UUID uuid = UUID.fromString(uuidString);
             return getIdlePlayer(uuid);
         } catch (IllegalArgumentException e) {
-            logger.warning(ERROR_CONVERTING_UUID.formatted(uuidString));
+            LOGGER.warning(ERROR_CONVERTING_UUID.formatted(uuidString));
             return null;
         }
     }
@@ -53,7 +52,7 @@ public class IdlePlayerService {
     }
 
     public IdlePlayer createNewIdlePlayer(UUID uuid) {
-        logger.info("Generating new IdlePlayer for " + uuid);
+        LOGGER.info("Generating new IdlePlayer for " + uuid);
 
         // Normally impossible to already have a plot...
         Plot existingPlot = plotService.findPlot(uuid);
@@ -64,7 +63,7 @@ public class IdlePlayerService {
                                           .balance(0)
                                           .build();
 
-        logger.info("Saving new idlePlayer.");
+        LOGGER.info("Saving new idlePlayer.");
         saveIdlePlayer(idlePlayer);
 
         return idlePlayer;

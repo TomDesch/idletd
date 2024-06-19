@@ -1,6 +1,7 @@
 package io.github.stealingdapenta.idletd.skin;
 
-import lombok.RequiredArgsConstructor;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,9 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class SkinRepository {
@@ -27,7 +26,7 @@ public class SkinRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting Skin by ID.");
+            LOGGER.severe("Error getting Skin by ID.");
             e.printStackTrace();
         }
         return null;
@@ -45,7 +44,7 @@ public class SkinRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting all skins from the database.");
+            LOGGER.severe("Error getting all skins from the database.");
             e.printStackTrace();
         }
 

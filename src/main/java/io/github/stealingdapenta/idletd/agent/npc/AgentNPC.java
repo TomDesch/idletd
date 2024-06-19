@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.agent.npc;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_TICK;
 
 import io.github.stealingdapenta.idletd.Idletd;
@@ -79,7 +79,7 @@ public class AgentNPC {
         SkinnableEntity skinnableEntity = (SkinnableEntity) npc.getEntity();
 
         if (Objects.isNull(skinnableEntity)) {
-            logger.warning("Error updating skin for NPC " + npc.getFullName() + ". Reason: entity = null.");
+            LOGGER.warning("Error updating skin for NPC " + npc.getFullName() + ". Reason: entity = null.");
             return;
         }
 

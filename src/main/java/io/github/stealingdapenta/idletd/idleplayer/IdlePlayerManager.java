@@ -1,7 +1,7 @@
 package io.github.stealingdapenta.idletd.idleplayer;
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.Idletd.isShuttingDown;
-import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -92,7 +92,7 @@ public class IdlePlayerManager {
                 agentManager.deactivateAndSaveAllAgents(idlePlayer);
             }
         } catch (Exception e) {
-            logger.warning("Error in log out operations for " + player.getName());
+            LOGGER.warning("Error in log out operations for " + player.getName());
         }
     }
 
@@ -116,13 +116,13 @@ public class IdlePlayerManager {
             idlePlayerService.updateIdlePlayer(idlePlayer);
             battleStatsService.update(idlePlayer.getFetchedBattleStats());
         } catch (Exception e) {
-            logger.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer)
+            LOGGER.warning("&eError saving user data for " + idlePlayerService.getPlayer(idlePlayer)
                                                                               .getName());
-            logger.warning(e.getMessage());
+            LOGGER.warning(e.getMessage());
         } finally {
             if (!isShuttingDown()) {
                 boolean unregistered = unregisterOnlinePlayer(idlePlayer);
-                logger.info("Unregistering of player was " + (unregistered ? "successful." : "unsuccessful!"));
+                LOGGER.info("Unregistering of player was " + (unregistered ? "successful." : "unsuccessful!"));
                 noLoginAllowed.remove(idlePlayer.getPlayerUUID());
             }
         }

@@ -1,7 +1,7 @@
 package io.github.stealingdapenta.idletd.plot;
 
-import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,9 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public class PlotRepository {
@@ -23,7 +22,7 @@ public class PlotRepository {
             statement.setString(3, plot.getPlayerUUID());
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error saving plot.");
+            LOGGER.severe("Error saving plot.");
             e.printStackTrace();
         }
     }
@@ -39,7 +38,7 @@ public class PlotRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting Plot by ID.");
+            LOGGER.severe("Error getting Plot by ID.");
             e.printStackTrace();
         }
         return null;
@@ -53,7 +52,7 @@ public class PlotRepository {
                 return convertResultSet(resultSet);
             }
         } catch (SQLException e) {
-            logger.severe("Error getting latest plot.");
+            LOGGER.severe("Error getting latest plot.");
             e.printStackTrace();
         }
         return null;
@@ -72,7 +71,7 @@ public class PlotRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting plot by UUID.");
+            LOGGER.severe("Error getting plot by UUID.");
             e.printStackTrace();
         }
         return null;
@@ -84,7 +83,7 @@ public class PlotRepository {
         try {
             uuid = UUID.fromString(uuidString);
         } catch (IllegalArgumentException e) {
-            logger.info("Failed to convert " + uuidString + " to UUID object. Moving on.");
+            LOGGER.info("Failed to convert " + uuidString + " to UUID object. Moving on.");
             uuid = null;
         }
 

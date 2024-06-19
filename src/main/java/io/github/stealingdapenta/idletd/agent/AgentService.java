@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.agent;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
@@ -48,7 +48,7 @@ public class AgentService {
 
         if (Objects.nonNull(agentNPC)) {
             if (Objects.nonNull(agentNPC.getNpc())) {
-                logger.info("Attempted to summon an NPC for an agent that already has one.");
+                LOGGER.info("Attempted to summon an NPC for an agent that already has one.");
                 return agent.getAgentNPC();
             }
         } else {
@@ -75,11 +75,12 @@ public class AgentService {
     public List<Agent> findAllForPlayer(IdlePlayer idlePlayer) {
         List<Agent> agents = findAllForPlayer(idlePlayer.getPlayerUUID());
         if (Objects.isNull(agents) || agents.isEmpty()) {
-            logger.info("No agents found in DB for " + idlePlayer.getPlayerUUID().toString());
+            LOGGER.info("No agents found in DB for " + idlePlayer.getPlayerUUID()
+                                                                 .toString());
             return agents;
         }
 
-        logger.info("Amount of agents found: " + agents.size());
+        LOGGER.info("Amount of agents found: " + agents.size());
         agents.forEach(this::fetchFields);
         return agents;
     }

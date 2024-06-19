@@ -1,7 +1,8 @@
 package io.github.stealingdapenta.idletd.idleplayer;
 
-import io.github.stealingdapenta.idletd.database.DatabaseManager;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
+import io.github.stealingdapenta.idletd.database.DatabaseManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,8 +10,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
 import java.util.UUID;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 public class IdlePlayerRepository {
 
@@ -28,7 +27,7 @@ public class IdlePlayerRepository {
 
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error inserting IdlePlayer. " + idlePlayer.getPlayerUUID());
+            LOGGER.severe("Error inserting IdlePlayer. " + idlePlayer.getPlayerUUID());
             e.printStackTrace();
         }
     }
@@ -45,7 +44,7 @@ public class IdlePlayerRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting IdlePlayer by UUID.");
+            LOGGER.severe("Error getting IdlePlayer by UUID.");
             e.printStackTrace();
         }
         return null;
@@ -63,7 +62,7 @@ public class IdlePlayerRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error updating IdlePlayer.");
+            LOGGER.severe("Error updating IdlePlayer.");
             e.printStackTrace();
         }
     }
@@ -76,7 +75,7 @@ public class IdlePlayerRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error deleting IdlePlayer.");
+            LOGGER.severe("Error deleting IdlePlayer.");
             e.printStackTrace();
         }
     }

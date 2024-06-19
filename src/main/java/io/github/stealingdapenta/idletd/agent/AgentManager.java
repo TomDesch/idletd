@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.agent;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import java.util.HashSet;
@@ -88,7 +88,7 @@ public class AgentManager {
     public void deactivateAndSaveAllAgents(IdlePlayer idlePlayer) {
         List<Agent> activeAgentsForPlayer = getAllActiveAgents(idlePlayer);
         if (Objects.isNull(activeAgentsForPlayer)) {
-            logger.info("No active agents found for " + idlePlayer.getPlayerUUID()
+            LOGGER.info("No active agents found for " + idlePlayer.getPlayerUUID()
                                                                   .toString());
             return;
         }

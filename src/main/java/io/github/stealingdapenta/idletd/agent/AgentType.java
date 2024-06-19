@@ -1,8 +1,8 @@
 package io.github.stealingdapenta.idletd.agent;
 
-import lombok.Getter;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import lombok.Getter;
 
 @Getter
 public enum AgentType {
@@ -28,7 +28,7 @@ public enum AgentType {
                 return agentType;
             }
         }
-        logger.warning("Error retrieving AgentType for ID " + typeId);
+        LOGGER.warning("Error retrieving AgentType for ID " + typeId);
         return null;
     }
 

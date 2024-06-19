@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.custommob;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob.getLevelNSK;
 
 import io.github.stealingdapenta.idletd.Idletd;
@@ -42,7 +42,7 @@ public class CustomMobHandler {
         String uuid = getLinkedPlayerUUID(customMob);
 
         if (Objects.isNull(customMob) || Objects.isNull(uuid) || Objects.isNull(target)) {
-            logger.warning(ERROR_SETTING_TARGET);
+            LOGGER.warning(ERROR_SETTING_TARGET);
             return;
         }
 
@@ -55,7 +55,7 @@ public class CustomMobHandler {
                                                            .orElse(null);
 
         if (Objects.isNull(targetEntity)) {
-            logger.warning(ERROR_SETTING_TARGET);
+            LOGGER.warning(ERROR_SETTING_TARGET);
             return;
         }
 
@@ -104,7 +104,7 @@ public class CustomMobHandler {
 
     public String getLinkedPlayerUUID(LivingEntity customMob) {
         if (!isCustomMob(customMob)) {
-            logger.warning(NOT_CUSTOM_MOB);
+            LOGGER.warning(NOT_CUSTOM_MOB);
             return null;
         }
         return customMob.getPersistentDataContainer()

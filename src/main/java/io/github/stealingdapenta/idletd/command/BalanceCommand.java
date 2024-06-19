@@ -1,17 +1,16 @@
 package io.github.stealingdapenta.idletd.command;
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerManager;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
 
 @RequiredArgsConstructor
 public class BalanceCommand implements CommandExecutor {
@@ -25,7 +24,7 @@ public class BalanceCommand implements CommandExecutor {
         IdlePlayer idlePlayer = idlePlayerManager.getOnlineIdlePlayer(player);
 
         if (Objects.isNull(idlePlayer)) {
-            logger.severe(player.getName() + " doesn't have a linked IdlePlayer or is not recognized as online.");
+            LOGGER.severe(player.getName() + " doesn't have a linked IdlePlayer or is not recognized as online.");
             player.sendMessage(Component.text(NO_IDLE_PLAYER));
             return true;
         }

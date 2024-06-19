@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.command;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
@@ -39,7 +39,7 @@ public class AgentCommand implements CommandExecutor {
         IdlePlayer idlePlayer = idlePlayerService.getIdlePlayer(player);
 
         if (Objects.isNull(idlePlayer)) {
-            logger.severe(player.getName() + " doesn't have a linked IdlePlayer.");
+            LOGGER.severe(player.getName() + " doesn't have a linked IdlePlayer.");
             player.sendMessage(Component.text(NO_IDLE_PLAYER));
             return true;
         }

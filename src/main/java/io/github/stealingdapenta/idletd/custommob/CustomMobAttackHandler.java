@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.custommob;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getMobLevel;
 
 import io.github.stealingdapenta.idletd.Idletd;
@@ -67,7 +67,7 @@ public class CustomMobAttackHandler {
         customMobHandler.getLivingCustomMobsLiveData()
                         .forEach(customMobLiveData -> {
                             if (canAttack(customMobLiveData)) {
-                                logger.warning("Can attack = " + customMobLiveData);
+                                LOGGER.warning("Can attack = " + customMobLiveData);
 
                                 doAttack(customMobLiveData);
                             }
@@ -80,8 +80,8 @@ public class CustomMobAttackHandler {
         double attackSpeedPerSecond = customMobLiveDataHandle.getMobWrapper()
                                                              .getAttackSpeed();
 
-        logger.warning("Time since last attack = " + msSinceLastAttack);
-        logger.warning("atk speed / second = " + attackSpeedPerSecond);
+        LOGGER.warning("Time since last attack = " + msSinceLastAttack);
+        LOGGER.warning("atk speed / second = " + attackSpeedPerSecond);
 
         // todo atk speed per level for zombies is currently not functional; they all hit equally quick.
 
@@ -90,7 +90,7 @@ public class CustomMobAttackHandler {
 
     private boolean enoughTimePassed(double timesPerSecond, long msPassed) {
         double requiredDelay = SECOND_IN_MS / timesPerSecond;
-        logger.warning("Required delay = " + requiredDelay);
+        LOGGER.warning("Required delay = " + requiredDelay);
         return requiredDelay <= msPassed;
     }
 
@@ -139,7 +139,6 @@ public class CustomMobAttackHandler {
         // todo DO BOW ANIMATION HERE
 
         createParabolicParticleTrail(arrowLaunchLocation, 1.5, targetLocation, flySpeed);
-
     }
 
 

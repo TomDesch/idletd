@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.agent.mainagent;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
 
 import java.sql.Connection;
@@ -47,8 +47,8 @@ public class MainAgentStatsRepository {
 
             statement.execute();
         } catch (SQLException e) {
-            logger.severe("Error inserting MainAgentStats. Agent ID: " + mainAgentStats.getAgentId());
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error inserting MainAgentStats. Agent ID: " + mainAgentStats.getAgentId());
+            LOGGER.warning(e.getMessage());
         }
     }
 
@@ -64,8 +64,8 @@ public class MainAgentStatsRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("Error getting MainAgentStats by Agent ID.");
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error getting MainAgentStats by Agent ID.");
+            LOGGER.warning(e.getMessage());
         }
         return null;
     }
@@ -106,8 +106,8 @@ public class MainAgentStatsRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error updating MainAgentStats.");
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error updating MainAgentStats.");
+            LOGGER.warning(e.getMessage());
         }
     }
 
@@ -119,8 +119,8 @@ public class MainAgentStatsRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            logger.severe("Error deleting MainAgentStats.");
-            logger.warning(e.getMessage());
+            LOGGER.severe("Error deleting MainAgentStats.");
+            LOGGER.warning(e.getMessage());
         }
     }
 

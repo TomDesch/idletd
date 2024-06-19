@@ -1,6 +1,8 @@
 package io.github.stealingdapenta.idletd.service.utils;
 
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
@@ -14,14 +16,11 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import io.github.stealingdapenta.idletd.Idletd;
-import lombok.RequiredArgsConstructor;
-import org.bukkit.Location;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 
 @RequiredArgsConstructor
 public class SchematicHandler {
@@ -32,7 +31,7 @@ public class SchematicHandler {
             Clipboard clipboardWithSchematic = this.loadSchematic(schematic);
             this.pasteSchematic(clipboardWithSchematic, location);
         } catch (IOException | WorldEditException e) {
-            logger.warning("Error while pasting schematic: " + e.getMessage());
+            LOGGER.warning("Error while pasting schematic: " + e.getMessage());
         }
     }
 
@@ -56,7 +55,7 @@ public class SchematicHandler {
 
     public File loadSchematicFile(String filename) {
         File schematicFile = new File(Idletd.getInstance().getIdleTdFolder(), "schematics" + File.separator + filename);
-        logger.info("Constructed File Path: " + schematicFile.getAbsolutePath());
+        LOGGER.info("Constructed File Path: " + schematicFile.getAbsolutePath());
         return schematicFile;
     }
 

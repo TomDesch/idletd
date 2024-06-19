@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.custommob.mobtypes;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.custommob.AttackType.fromString;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getInstance;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getPlayerNameSpacedKey;
@@ -190,15 +190,18 @@ public abstract class CustomMob {
 
         mob = (Mob) customMob.getSummonedEntity();
 
-        if (Objects.nonNull(agent) && Objects.nonNull(agent.getAgentNPC()) && Objects.nonNull(agent.getAgentNPC()
-                                                                                                   .getNpc()) && Objects.nonNull(agent.getAgentNPC()
-                                                                                                                                      .getNpc()
-                                                                                                                                      .getEntity())) {
+        if (Objects.nonNull(agent)
+                && Objects.nonNull(agent.getAgentNPC())
+                && Objects.nonNull(agent.getAgentNPC()
+                                        .getNpc())
+                && Objects.nonNull(agent.getAgentNPC()
+                                        .getNpc()
+                                        .getEntity())) {
             mob.setTarget((LivingEntity) agent.getAgentNPC()
                                               .getNpc()
                                               .getEntity());
         } else {
-            logger.warning(NULL_AGENT);
+            LOGGER.warning(NULL_AGENT); // todo should probably check if player logged off and remove the mob being spawned instead
         }
 
         mob.getPersistentDataContainer()

@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.listener;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
 import io.github.stealingdapenta.idletd.custommob.CustomMobHandler;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
@@ -40,7 +40,7 @@ public class IncomeListener implements Listener {
         String linkedPlayerUUID = livingEntity.getPersistentDataContainer()
                                               .get(customMobHandler.getPlayerNameSpacedKey(), PersistentDataType.STRING);
         if (Objects.isNull(linkedPlayerUUID)) {
-            logger.warning("Found a custom mob, but without a linked player UUID!");
+            LOGGER.warning("Found a custom mob, but without a linked player UUID!");
             return;
         }
 
@@ -48,12 +48,12 @@ public class IncomeListener implements Listener {
         IdlePlayer savedIdlePlayer = idlePlayerService.getIdlePlayer(linkedPlayer);
 
         if (!idlePlayerManager.isOnline(savedIdlePlayer)) {
-            logger.info("Player isn't online: " + linkedPlayer.getName());
+            LOGGER.info("Player isn't online: " + linkedPlayer.getName());
         }
 
         IdlePlayer idlePlayer = idlePlayerManager.getOnlineIdlePlayer(linkedPlayer);
         if (Objects.isNull(idlePlayer)) {
-            logger.info("Weirdly enough, the linked idle player that will receive this loot is not online: " + linkedPlayer.getName());
+            LOGGER.info("Weirdly enough, the linked idle player that will receive this loot is not online: " + linkedPlayer.getName());
             idlePlayer = idlePlayerService.getIdlePlayer(linkedPlayer);
         }
 

@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.command;
 
-import static io.github.stealingdapenta.idletd.Idletd.logger;
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
@@ -35,7 +35,7 @@ public class PayCommand implements CommandExecutor {
         IdlePlayer sourceIdlePlayer = idlePlayerManager.getOnlineIdlePlayer(sourcePlayer);
 
         if (Objects.isNull(sourceIdlePlayer)) {
-            logger.severe(sourcePlayer.getName() + " doesn't have a linked IdlePlayer online.");
+            LOGGER.severe(sourcePlayer.getName() + " doesn't have a linked IdlePlayer online.");
             sourcePlayer.sendMessage(Component.text(NO_IDLE_PLAYER));
             return true;
         }

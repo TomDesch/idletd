@@ -1,5 +1,9 @@
 package io.github.stealingdapenta.idletd.plot;
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
+import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE_WORLD;
+
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -9,19 +13,14 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
-import lombok.RequiredArgsConstructor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import static io.github.stealingdapenta.idletd.Idletd.logger;
-import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
-import static io.github.stealingdapenta.idletd.service.utils.World.TOWER_DEFENSE_WORLD;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public class PlotService {
@@ -33,7 +32,7 @@ public class PlotService {
     public Plot generatePlotWithTower(Player player) {
         Plot plot = this.generatePlotForPlayer(player);
 
-        logger.info("Started pasting structure in plot.");
+        LOGGER.info("Started pasting structure in plot.");
         this.pasteTowerInPlot(plot);
         return plot;
     }
@@ -43,11 +42,11 @@ public class PlotService {
     }
 
     public Plot generatePlotForPlayer(Player player) {
-        logger.info("Commencing plot generation for " + player.getName());
+        LOGGER.info("Commencing plot generation for " + player.getName());
 
         Plot existingPlot = plotRepository.findPlot(player);
         if (Objects.nonNull(existingPlot)) {
-            logger.warning(player.getName() + " already has a plot.");
+            LOGGER.warning(player.getName() + " already has a plot.");
             player.sendMessage("You already have a plot.");
             return existingPlot;
         }
@@ -55,7 +54,7 @@ public class PlotService {
         int lastGeneratedRow = this.getLastGeneratedRow();
         int lastGeneratedColumn = this.getLastGeneratedColumn();
 
-        logger.info("Starting plot generation for row, column: " + lastGeneratedRow + ", " + lastGeneratedColumn);
+        LOGGER.info("Starting plot generation for row, column: " + lastGeneratedRow + ", " + lastGeneratedColumn);
 
 
         int currentRow = lastGeneratedRow;
@@ -78,13 +77,13 @@ public class PlotService {
         PlotRepository.savePlot(plot);
         this.lastGeneratedPlot = plot;
 
-        logger.info("Finishing plot generation.");
+        LOGGER.info("Finishing plot generation.");
         return plot;
     }
 
     public void pasteTowerInPlot(Plot plot) {
         Location pasteLocation = plot.calculateTowerLocation();
-        logger.info("Commencing pasting new structure for plot.");
+        LOGGER.info("Commencing pasting new structure for plot.");
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
     }
 
@@ -98,7 +97,7 @@ public class PlotService {
             return asyncPlot.get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            logger.warning("Error finding plot for player.");
+            LOGGER.warning("Error finding plot for player.");
         }
         return null;
     }
@@ -108,7 +107,7 @@ public class PlotService {
         if (plot != null) {
             return plot.getStartZ() / PLOT_SIZE;
         }
-        logger.warning("Error fetching last generated plot row.");
+        LOGGER.warning("Error fetching last generated plot row.");
         return -1;
     }
 
@@ -117,7 +116,7 @@ public class PlotService {
         if (plot != null) {
             return plot.getStartX() / PLOT_SIZE;
         }
-        logger.warning("Error fetching last generated plot column.");
+        LOGGER.warning("Error fetching last generated plot column.");
         return -1;
     }
 
@@ -128,7 +127,7 @@ public class PlotService {
                 lastGeneratedPlot = asyncPlot.get(); // This blocks until the async operation completes
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace(); // Handle exceptions appropriately
-                logger.warning("Error getting last generated plot.");
+                LOGGER.warning("Error getting last generated plot.");
             }
         }
         return lastGeneratedPlot;
@@ -144,7 +143,7 @@ public class PlotService {
         int maxPointX = plot.getStartX() + PLOT_SIZE;
         int maxPointZ = plot.getStartZ() + PLOT_SIZE;
 
-        logger.info("Generating plot at (X, Y, Z): (" + minPointX + ", Y, " + minPointZ + ").");
+        LOGGER.info("Generating plot at (X, Y, Z): (" + minPointX + ", Y, " + minPointZ + ").");
 
         ProtectedCuboidRegion region = new ProtectedCuboidRegion(plot.getPlayerUUID(),
                                                                  BlockVector3.at(minPointX, bukkitWorld.getMinHeight(), minPointZ),
