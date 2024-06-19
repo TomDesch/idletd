@@ -16,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 @RequiredArgsConstructor
 public class CustomMobListener implements Listener {
@@ -23,6 +24,19 @@ public class CustomMobListener implements Listener {
     private final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
     private final IdlePlayerService idlePlayerService;
     private final TowerDefenseManager towerDefenseManager;
+
+    /**
+     * @param event The method checks if the entity that is targeting is a wave mob. If it is, the event is cancelled. This prevents the mob from targeting the
+     *              entity, thus stopping both the attack and the visual cues of the attack.
+     */
+    @EventHandler
+    public void onEntityTargetLivingEntity(EntityTargetLivingEntityEvent event) {
+        if (!customMobHandler.isCustomMob(event.getEntity())) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
 
     /**
      * @param event EntityShootBowEvent from SpigotMC Cancels all the skeleton shoot events from custom mobs

@@ -125,7 +125,7 @@ public class CustomMobAttackHandler {
 
         if (targetIsOutOfRange(shooterLiveData.getMobWrapper(), targetLocation)) {
             shooter.getWorld()
-                   .spawnParticle(Particle.VILLAGER_ANGRY, shooter.getEyeLocation(), 2);
+                   .spawnParticle(Particle.ANGRY_VILLAGER, shooter.getEyeLocation(), 2);
             return;
         }
 
@@ -207,7 +207,7 @@ public class CustomMobAttackHandler {
 
     private void spawnColoredParticle(Location location, Color color) {
         location.getWorld()
-                .spawnParticle(Particle.REDSTONE, location, 0, 0, 0, 0, new Particle.DustOptions(color, 1));
+                .spawnParticle(Particle.DUST_COLOR_TRANSITION, location, 0, 0, 0, 0, new Particle.DustOptions(color, 1));
     }
 
     private boolean particleCollidesWithEntity(Location location) {
@@ -233,13 +233,11 @@ public class CustomMobAttackHandler {
 
     private void animateEntityImpactParticles(Location location) {
         location.getWorld()
-                .spawnParticle(Particle.EXPLOSION_NORMAL, location, 3, 0, 0, 0, 0);
+                .spawnParticle(Particle.EXPLOSION, location, 3, 0, 0, 0, 0);
     }
 
     private void animateGroundImpactParticles(Location location) {
         location.getWorld()
-                .spawnParticle(Particle.SMOKE_NORMAL, location, 15, 0, 0, 0, 0.1);
+                .spawnParticle(Particle.SMOKE, location, 15, 0, 0, 0, 0.1);
     }
-
-
 }
