@@ -5,6 +5,7 @@ import static io.github.stealingdapenta.idletd.service.utils.Time.ONE_TICK;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.skin.Skin;
+import io.github.stealingdapenta.idletd.utils.ANSIColor;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -76,7 +77,14 @@ public class AgentNPC {
     }
 
     public void updateSkin() {
+        int retryCount = 0;
         SkinnableEntity skinnableEntity = (SkinnableEntity) npc.getEntity();
+
+        while (Objects.isNull(skinnableEntity) && retryCount < 20) {
+            retryCount++;
+            LOGGER.info(ANSIColor.BLUE, "Retrying updateSkin() for NPC " + npc.getFullName() + ", attempt " + retryCount);
+            skinnableEntity = (SkinnableEntity) npc.getEntity(); // Try to get entity again
+        }
 
         if (Objects.isNull(skinnableEntity)) {
             LOGGER.warning("Error updating skin for NPC " + npc.getFullName() + ". Reason: entity = null.");
