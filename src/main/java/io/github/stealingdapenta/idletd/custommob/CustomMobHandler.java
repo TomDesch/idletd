@@ -7,6 +7,7 @@ import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
+import io.github.stealingdapenta.idletd.utils.ANSIColor;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -55,7 +56,7 @@ public class CustomMobHandler {
                                                            .orElse(null);
 
         if (Objects.isNull(targetEntity)) {
-            LOGGER.warning(ERROR_SETTING_TARGET);
+            LOGGER.warning(ANSIColor.YELLOW, ERROR_SETTING_TARGET);
             return;
         }
 
@@ -104,7 +105,7 @@ public class CustomMobHandler {
 
     public String getLinkedPlayerUUID(LivingEntity customMob) {
         if (!isCustomMob(customMob)) {
-            LOGGER.warning(NOT_CUSTOM_MOB);
+            LOGGER.warning(ANSIColor.YELLOW, NOT_CUSTOM_MOB);
             return null;
         }
         return customMob.getPersistentDataContainer()

@@ -48,7 +48,6 @@ public class MainAgentStatsRepository {
             statement.execute();
         } catch (SQLException e) {
             LOGGER.severe("Error inserting MainAgentStats. Agent ID: " + mainAgentStats.getAgentId());
-            LOGGER.warning(e.getMessage());
         }
     }
 
@@ -65,7 +64,6 @@ public class MainAgentStatsRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting MainAgentStats by Agent ID.");
-            LOGGER.warning(e.getMessage());
         }
         return null;
     }
@@ -107,7 +105,6 @@ public class MainAgentStatsRepository {
 
         } catch (SQLException e) {
             LOGGER.severe("Error updating MainAgentStats.");
-            LOGGER.warning(e.getMessage());
         }
     }
 
@@ -120,7 +117,6 @@ public class MainAgentStatsRepository {
 
         } catch (SQLException e) {
             LOGGER.severe("Error deleting MainAgentStats.");
-            LOGGER.warning(e.getMessage());
         }
     }
 

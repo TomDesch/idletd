@@ -5,6 +5,7 @@ import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.plot.Plot;
 import io.github.stealingdapenta.idletd.plot.PlotService;
+import io.github.stealingdapenta.idletd.utils.ANSIColor;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,7 @@ public class IdlePlayerService {
     }
 
     public IdlePlayer createNewIdlePlayer(UUID uuid) {
-        LOGGER.info("Generating new IdlePlayer for " + uuid);
+        LOGGER.info(ANSIColor.WHITE, "Generating new IdlePlayer for " + uuid);
 
         // Normally impossible to already have a plot...
         Plot existingPlot = plotService.findPlot(uuid);
@@ -63,7 +64,7 @@ public class IdlePlayerService {
                                           .balance(0)
                                           .build();
 
-        LOGGER.info("Saving new idlePlayer.");
+        LOGGER.info(ANSIColor.WHITE, "Saving new idlePlayer.");
         saveIdlePlayer(idlePlayer);
 
         return idlePlayer;

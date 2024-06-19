@@ -80,8 +80,8 @@ public class CustomMobAttackHandler {
         double attackSpeedPerSecond = customMobLiveDataHandle.getMobWrapper()
                                                              .getAttackSpeed();
 
-        LOGGER.warning("Time since last attack = " + msSinceLastAttack);
-        LOGGER.warning("atk speed / second = " + attackSpeedPerSecond);
+//        LOGGER.warning("Time since last attack = " + msSinceLastAttack);  todo tweak atk speed later
+//        LOGGER.warning("atk speed / second = " + attackSpeedPerSecond);  todo tweak atk speed later
 
         // todo atk speed per level for zombies is currently not functional; they all hit equally quick.
 
@@ -90,7 +90,7 @@ public class CustomMobAttackHandler {
 
     private boolean enoughTimePassed(double timesPerSecond, long msPassed) {
         double requiredDelay = SECOND_IN_MS / timesPerSecond;
-        LOGGER.warning("Required delay = " + requiredDelay);
+//        LOGGER.warning("Required delay = " + requiredDelay); todo tweak atk speed later
         return requiredDelay <= msPassed;
     }
 

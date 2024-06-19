@@ -16,6 +16,7 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import io.github.stealingdapenta.idletd.Idletd;
+import io.github.stealingdapenta.idletd.utils.ANSIColor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class SchematicHandler {
 
     public File loadSchematicFile(String filename) {
         File schematicFile = new File(Idletd.getInstance().getIdleTdFolder(), "schematics" + File.separator + filename);
-        LOGGER.info("Constructed File Path: " + schematicFile.getAbsolutePath());
+        LOGGER.info(ANSIColor.WHITE, "Constructed File Path: " + schematicFile.getAbsolutePath());
         return schematicFile;
     }
 

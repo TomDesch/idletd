@@ -39,24 +39,24 @@ import io.github.stealingdapenta.idletd.skin.SkinService;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseManager;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseRepository;
 import io.github.stealingdapenta.idletd.towerdefense.TowerDefenseService;
+import io.github.stealingdapenta.idletd.utils.ANSIColor;
+import io.github.stealingdapenta.idletd.utils.ColoredConsoleLogger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
-import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Idletd extends JavaPlugin {
 
-    public static Logger LOGGER;
+    public static ColoredConsoleLogger LOGGER;
 
     private static volatile boolean shuttingDown = false;
     private static Idletd instance = null;
-
     private final PlotRepository plotRepository = new PlotRepository();
     private final IdlePlayerRepository idlePlayerRepository = new IdlePlayerRepository();
     private final TowerDefenseRepository towerDefenseRepository = new TowerDefenseRepository();
@@ -107,7 +107,7 @@ public class Idletd extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        LOGGER = this.getLogger();
+        LOGGER = new ColoredConsoleLogger(this.getLogger());
 
         this.copyResourcesToDataFolder();
 
@@ -150,17 +150,17 @@ public class Idletd extends JavaPlugin {
     }
 
     private void pluginEnabledLog() {
-        LOGGER.info("IdleMCTD enabled.");
+        LOGGER.info(ANSIColor.GREEN, "IdleMCTD enabled.");
     }
 
     private void pluginDisabledLog() {
-        LOGGER.info("IdleMCTD is now disabled.");
+        LOGGER.info(ANSIColor.RED, "IdleMCTD is now disabled.");
     }
 
     public File getIdleTdFolder() {
         File pluginFolder = this.getDataFolder();
         if (!pluginFolder.exists() && (!pluginFolder.mkdirs())) {
-            LOGGER.warning("Failed to generate idletd data folder!");
+            LOGGER.warning(ANSIColor.RED, "Failed to generate idletd data folder!");
         }
         return pluginFolder;
     }
@@ -170,7 +170,7 @@ public class Idletd extends JavaPlugin {
         File schematicsFolder = new File(dataFolder, "schematics");
 
         if (!schematicsFolder.exists() && schematicsFolder.mkdirs()) {
-            LOGGER.info("Schematics folder created.");
+            LOGGER.info(ANSIColor.GREEN, "Schematics folder created.");
         }
 
         this.copyResource("/schematics/" + TOWER_DEFENSE_SCHEMATIC.getFileName(), new File(schematicsFolder, TOWER_DEFENSE_SCHEMATIC.getFileName()));
@@ -188,10 +188,9 @@ public class Idletd extends JavaPlugin {
                 outputStream.write(buffer, 0, length);
             }
 
-            LOGGER.info("Copied resource: " + resourcePath);
+            LOGGER.info(ANSIColor.GREEN, "Copied resource: " + resourcePath);
         } catch (IOException e) {
-            LOGGER.warning("Failed to copy resource: " + resourcePath);
-            LOGGER.warning(e.getMessage());
+            LOGGER.warning(ANSIColor.RED, "Failed to copy resource: " + resourcePath);
         }
     }
 

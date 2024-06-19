@@ -28,7 +28,6 @@ public class IdlePlayerRepository {
             statement.execute();
         } catch (SQLException e) {
             LOGGER.severe("Error inserting IdlePlayer. " + idlePlayer.getPlayerUUID());
-            e.printStackTrace();
         }
     }
 
@@ -45,7 +44,6 @@ public class IdlePlayerRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting IdlePlayer by UUID.");
-            e.printStackTrace();
         }
         return null;
     }
@@ -63,7 +61,6 @@ public class IdlePlayerRepository {
 
         } catch (SQLException e) {
             LOGGER.severe("Error updating IdlePlayer.");
-            e.printStackTrace();
         }
     }
 
@@ -76,7 +73,6 @@ public class IdlePlayerRepository {
 
         } catch (SQLException e) {
             LOGGER.severe("Error deleting IdlePlayer.");
-            e.printStackTrace();
         }
     }
 

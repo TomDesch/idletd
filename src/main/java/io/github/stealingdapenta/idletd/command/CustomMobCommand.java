@@ -94,7 +94,8 @@ public class CustomMobCommand implements CommandExecutor {
             Agent activeMainAgent = agentManager.getActiveMainAgent(onlineIdlePlayer);
 
             customMob.summon(getLocationOnTopOfBlock(sourcePlayer), activeMainAgent);
-            sourcePlayer.sendMessage(TextColor.color(19, 147, 56) + CONTAINS_AGENT.formatted(TextColor.color(56, 255, 33) + activeMainAgent.toString()));
+            sourcePlayer.sendMessage(
+                    TextColor.color(19, 147, 56) + CONTAINS_AGENT.formatted(TextColor.color(56, 255, 33) + String.valueOf(activeMainAgent.getId())));
 
             customMob.getMob()
                      .getPersistentDataContainer()

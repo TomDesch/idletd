@@ -1,5 +1,7 @@
 package io.github.stealingdapenta.idletd.custommob;
 
+import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
+
 import io.github.stealingdapenta.idletd.Idletd;
 import java.util.Objects;
 import lombok.Getter;
@@ -48,7 +50,7 @@ public enum MobAttributes {
         Double possibleValue = container.get(attributeKey, PersistentDataType.DOUBLE);
 
         if (Objects.isNull(possibleValue)) {
-            Idletd.LOGGER.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
+            LOGGER.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
             possibleValue = 0.0;
         }
 
@@ -61,7 +63,7 @@ public enum MobAttributes {
         String possibleValue = container.get(attributeKey, PersistentDataType.STRING);
 
         if (Objects.isNull(possibleValue)) {
-            Idletd.LOGGER.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
+            LOGGER.warning(ENTITY_DOESNT_HAVE_ATTRIBUTE.formatted(getAttributeName(), livingEntity.getName()));
             possibleValue = "";
         }
 

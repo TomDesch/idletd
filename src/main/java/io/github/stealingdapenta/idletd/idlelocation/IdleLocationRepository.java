@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.idlelocation;
 
 import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.database.DatabaseManager.getDataSource;
+import static io.github.stealingdapenta.idletd.utils.ANSIColor.RED;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +30,7 @@ public class IdleLocationRepository {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.severe("Error saving IdleLocation: " + e.getMessage());
+            LOGGER.severe(RED, "Error saving IdleLocation: " + e.getMessage());
             return -1; // or throw a specific exception based on your error handling strategy
         }
     }
@@ -47,7 +48,7 @@ public class IdleLocationRepository {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.severe("Error getting IdleLocation by ID: " + e.getMessage());
+            LOGGER.severe(RED, "Error getting IdleLocation by ID: " + e.getMessage());
         }
         return null;
     }
@@ -62,7 +63,7 @@ public class IdleLocationRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            LOGGER.severe("Error updating IdleLocation: " + e.getMessage());
+            LOGGER.severe(RED, "Error updating IdleLocation: " + e.getMessage());
         }
     }
 
@@ -75,7 +76,7 @@ public class IdleLocationRepository {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            LOGGER.severe("Error deleting IdleLocation: " + e.getMessage());
+            LOGGER.severe(RED, "Error deleting IdleLocation: " + e.getMessage());
         }
     }
 

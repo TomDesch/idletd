@@ -49,7 +49,6 @@ public class BattleStatsRepository {
             statement.execute();
         } catch (SQLException e) {
             LOGGER.severe("Error inserting BattleStats. " + battleStats.getPlayerUUID());
-            LOGGER.warning(e.getMessage());
         }
     }
 
@@ -66,7 +65,6 @@ public class BattleStatsRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting BattleStats by UUID.");
-            LOGGER.warning(e.getMessage());
         }
         return null;
     }
@@ -110,7 +108,6 @@ public class BattleStatsRepository {
 
         } catch (SQLException e) {
             LOGGER.severe("Error updating BattleStats.");
-            e.printStackTrace();
         }
     }
 
@@ -123,7 +120,6 @@ public class BattleStatsRepository {
 
         } catch (SQLException e) {
             LOGGER.severe("Error deleting BattleStats.");
-            LOGGER.warning(e.getMessage());
         }
     }
 

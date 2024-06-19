@@ -27,7 +27,6 @@ public class SkinRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting Skin by ID.");
-            e.printStackTrace();
         }
         return null;
     }
@@ -45,7 +44,6 @@ public class SkinRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting all skins from the database.");
-            e.printStackTrace();
         }
 
         return skinList;

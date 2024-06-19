@@ -13,6 +13,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.github.stealingdapenta.idletd.service.utils.SchematicHandler;
+import io.github.stealingdapenta.idletd.utils.ANSIColor;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -32,7 +33,7 @@ public class PlotService {
     public Plot generatePlotWithTower(Player player) {
         Plot plot = this.generatePlotForPlayer(player);
 
-        LOGGER.info("Started pasting structure in plot.");
+        LOGGER.info(ANSIColor.WHITE, "Started pasting structure in plot.");
         this.pasteTowerInPlot(plot);
         return plot;
     }
@@ -42,11 +43,11 @@ public class PlotService {
     }
 
     public Plot generatePlotForPlayer(Player player) {
-        LOGGER.info("Commencing plot generation for " + player.getName());
+        LOGGER.info(ANSIColor.WHITE, "Commencing plot generation for " + player.getName());
 
         Plot existingPlot = plotRepository.findPlot(player);
         if (Objects.nonNull(existingPlot)) {
-            LOGGER.warning(player.getName() + " already has a plot.");
+            LOGGER.warning(ANSIColor.YELLOW, player.getName() + " already has a plot.");
             player.sendMessage("You already have a plot.");
             return existingPlot;
         }
@@ -54,7 +55,7 @@ public class PlotService {
         int lastGeneratedRow = this.getLastGeneratedRow();
         int lastGeneratedColumn = this.getLastGeneratedColumn();
 
-        LOGGER.info("Starting plot generation for row, column: " + lastGeneratedRow + ", " + lastGeneratedColumn);
+        LOGGER.info(ANSIColor.WHITE, "Starting plot generation for row, column: " + lastGeneratedRow + ", " + lastGeneratedColumn);
 
 
         int currentRow = lastGeneratedRow;
@@ -77,13 +78,13 @@ public class PlotService {
         PlotRepository.savePlot(plot);
         this.lastGeneratedPlot = plot;
 
-        LOGGER.info("Finishing plot generation.");
+        LOGGER.info(ANSIColor.WHITE, "Finishing plot generation.");
         return plot;
     }
 
     public void pasteTowerInPlot(Plot plot) {
         Location pasteLocation = plot.calculateTowerLocation();
-        LOGGER.info("Commencing pasting new structure for plot.");
+        LOGGER.info(ANSIColor.WHITE, "Commencing pasting new structure for plot.");
         this.schematicHandler.pasteSchematic(TOWER_DEFENSE_SCHEMATIC.getFileName(), pasteLocation);
     }
 
@@ -96,8 +97,7 @@ public class PlotService {
         try {
             return asyncPlot.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            LOGGER.warning("Error finding plot for player.");
+            LOGGER.warning(ANSIColor.YELLOW, "Error finding plot for player.");
         }
         return null;
     }
@@ -107,7 +107,7 @@ public class PlotService {
         if (plot != null) {
             return plot.getStartZ() / PLOT_SIZE;
         }
-        LOGGER.warning("Error fetching last generated plot row.");
+        LOGGER.warning(ANSIColor.YELLOW, "Error fetching last generated plot row.");
         return -1;
     }
 
@@ -116,7 +116,7 @@ public class PlotService {
         if (plot != null) {
             return plot.getStartX() / PLOT_SIZE;
         }
-        LOGGER.warning("Error fetching last generated plot column.");
+        LOGGER.warning(ANSIColor.YELLOW, "Error fetching last generated plot column.");
         return -1;
     }
 
@@ -126,8 +126,7 @@ public class PlotService {
             try {
                 lastGeneratedPlot = asyncPlot.get(); // This blocks until the async operation completes
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace(); // Handle exceptions appropriately
-                LOGGER.warning("Error getting last generated plot.");
+                LOGGER.warning(ANSIColor.YELLOW, "Error getting last generated plot.");
             }
         }
         return lastGeneratedPlot;
@@ -143,7 +142,7 @@ public class PlotService {
         int maxPointX = plot.getStartX() + PLOT_SIZE;
         int maxPointZ = plot.getStartZ() + PLOT_SIZE;
 
-        LOGGER.info("Generating plot at (X, Y, Z): (" + minPointX + ", Y, " + minPointZ + ").");
+        LOGGER.info(ANSIColor.WHITE, "Generating plot at (X, Y, Z): (" + minPointX + ", Y, " + minPointZ + ").");
 
         ProtectedCuboidRegion region = new ProtectedCuboidRegion(plot.getPlayerUUID(),
                                                                  BlockVector3.at(minPointX, bukkitWorld.getMinHeight(), minPointZ),

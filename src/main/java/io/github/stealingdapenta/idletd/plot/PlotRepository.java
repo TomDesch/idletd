@@ -23,7 +23,6 @@ public class PlotRepository {
             statement.execute();
         } catch (SQLException e) {
             LOGGER.severe("Error saving plot.");
-            e.printStackTrace();
         }
     }
 
@@ -39,7 +38,6 @@ public class PlotRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting Plot by ID.");
-            e.printStackTrace();
         }
         return null;
     }
@@ -53,7 +51,6 @@ public class PlotRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting latest plot.");
-            e.printStackTrace();
         }
         return null;
     }
@@ -72,7 +69,6 @@ public class PlotRepository {
             }
         } catch (SQLException e) {
             LOGGER.severe("Error getting plot by UUID.");
-            e.printStackTrace();
         }
         return null;
     }
