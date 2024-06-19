@@ -4,7 +4,7 @@ main: io.github.stealingdapenta.idletd.Idletd
 author: StealingDaPenta
 description: The best idle Minecraft Tower Defense game!
 api-version: 1.20
-depend: [WorldGuard, FastAsyncWorldEdit, Citizens]
+depend: [ WorldGuard, FastAsyncWorldEdit, Citizens, packetevents ]
 
 
 commands:
@@ -36,4 +36,8 @@ commands:
   custommob:
     description: Debug command to summon a mob.
     usage: /<command> <type> <level> <quantity> or /<command> killall <range>
+
+  animate:
+    description: Debug command to animate all nearby mobs
+    usage: /<command>
 

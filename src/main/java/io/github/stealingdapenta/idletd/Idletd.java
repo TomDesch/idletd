@@ -2,6 +2,11 @@ package io.github.stealingdapenta.idletd;
 
 import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEFENSE_SCHEMATIC;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
+import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentRepository;
 import io.github.stealingdapenta.idletd.agent.AgentService;
@@ -9,6 +14,7 @@ import io.github.stealingdapenta.idletd.agent.AgentStatsService;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsRepository;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import io.github.stealingdapenta.idletd.command.AgentCommand;
+import io.github.stealingdapenta.idletd.command.AnimateCommand;
 import io.github.stealingdapenta.idletd.command.BalanceCommand;
 import io.github.stealingdapenta.idletd.command.CustomMobCommand;
 import io.github.stealingdapenta.idletd.command.PayCommand;
@@ -23,6 +29,7 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsRepository;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
+import io.github.stealingdapenta.idletd.listener.AttackAnimationListener;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
 import io.github.stealingdapenta.idletd.listener.DamageListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
@@ -46,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -90,6 +98,7 @@ public class Idletd extends JavaPlugin {
                                                                               towerDefenseService);
     private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobCommand customMobCommand = new CustomMobCommand(idlePlayerManager, agentManager);
+    private final AnimateCommand animateCommand = new AnimateCommand();
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(idlePlayerService, idlePlayerManager, balanceHandler);
@@ -101,6 +110,14 @@ public class Idletd extends JavaPlugin {
 
     public static void shutDown() {
         shuttingDown = true;
+    }
+
+    @Override
+    public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        //Are all listeners read only?
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false).checkForUpdates(true).bStats(false);
+        PacketEvents.getAPI().load();
     }
 
 
@@ -118,35 +135,31 @@ public class Idletd extends JavaPlugin {
 
         this.towerDefenseManager.initializeActiveGameManager();
         CustomMobAttackTask.startTask();
+
+        Arrays.stream(EntityPose.values()).forEach(v -> LOGGER.info("The value " + v + " has id " + v.getId(ClientVersion.V_1_20_5)));
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(this.getCommand("plot"))
-               .setExecutor(plotCommand);
-        Objects.requireNonNull(this.getCommand("towerdefense"))
-               .setExecutor(towerDefenseCommand);
-        Objects.requireNonNull(this.getCommand("agent"))
-               .setExecutor(agentCommand);
-        Objects.requireNonNull(this.getCommand("bal"))
-               .setExecutor(balanceCommand);
-        Objects.requireNonNull(this.getCommand("pay"))
-               .setExecutor(payCommand);
+        Objects.requireNonNull(this.getCommand("plot")).setExecutor(plotCommand);
+        Objects.requireNonNull(this.getCommand("towerdefense")).setExecutor(towerDefenseCommand);
+        Objects.requireNonNull(this.getCommand("agent")).setExecutor(agentCommand);
+        Objects.requireNonNull(this.getCommand("bal")).setExecutor(balanceCommand);
+        Objects.requireNonNull(this.getCommand("pay")).setExecutor(payCommand);
 
-        Objects.requireNonNull(this.getCommand("custommob"))
-               .setExecutor(customMobCommand);
+        Objects.requireNonNull(this.getCommand("custommob")).setExecutor(customMobCommand);
+        Objects.requireNonNull(this.getCommand("animate")).setExecutor(animateCommand);
     }
 
     private void registerEvents() {
-        Bukkit.getPluginManager()
-              .registerEvents(customMobListener, getInstance());
-        Bukkit.getPluginManager()
-              .registerEvents(spawnListener, getInstance());
-        Bukkit.getPluginManager()
-              .registerEvents(idlePlayerListener, getInstance());
-        Bukkit.getPluginManager()
-              .registerEvents(incomeListener, getInstance());
-        Bukkit.getPluginManager()
-              .registerEvents(damageListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(customMobListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(spawnListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(incomeListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(damageListener, getInstance());
+
+        //We register before calling PacketEvents#init, because that method might already call some events.
+        PacketEvents.getAPI().getEventManager().registerListener(new AttackAnimationListener(), PacketListenerPriority.LOW);
+        PacketEvents.getAPI().init();
     }
 
     private void pluginEnabledLog() {
@@ -198,14 +211,16 @@ public class Idletd extends JavaPlugin {
     public void onDisable() {
         shutDown();
         kickAllPlayers(); // Used to make sure all log-outs are handled correctly
+
+        PacketEvents.getAPI().terminate();
+
         instance = null;
 
         this.pluginDisabledLog();
     }
 
     private void kickAllPlayers() {
-        Bukkit.getOnlinePlayers()
-              .forEach(player -> player.kick(Component.text("Idle TD is reloading.")));
+        Bukkit.getOnlinePlayers().forEach(player -> player.kick(Component.text("Idle TD is reloading.")));
     }
 
     public static boolean isShuttingDown() {
