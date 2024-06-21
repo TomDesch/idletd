@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.custommob;
 
 import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import static io.github.stealingdapenta.idletd.custommob.CustomMobHandler.getMobLevel;
+import static io.github.stealingdapenta.idletd.listener.CustomArmorStandCleanUpListener.getCustomNamespacedKey;
 
 import io.github.stealingdapenta.idletd.Idletd;
 import io.github.stealingdapenta.idletd.custommob.mobtypes.CustomMob;
@@ -15,9 +16,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @RequiredArgsConstructor
 @Getter
@@ -123,9 +128,32 @@ public class CustomMobAttackHandler {
         Location arrowLaunchLocation = shooter.getEyeLocation().add(0, -0.2, 0);
         double flySpeed = calculateProjectileSpeed(shooter);
 
-        // todo DO BOW ANIMATION HERE
+        makeSkeletonDrawBow((Skeleton) shooter, targetLocation);
 
         createParabolicParticleTrail(arrowLaunchLocation, 1.5, targetLocation, flySpeed);
+    }
+
+    private void makeSkeletonDrawBow(Skeleton skeleton, Location targetLocation) {
+        ArmorStand invisibleTarget = createInvisibleTarget(targetLocation);
+        skeleton.setTarget(invisibleTarget);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                invisibleTarget.remove();
+                skeleton.setTarget(null);
+            }
+        }.runTaskLater(Idletd.getInstance(), 40L); // 20 ticks = 1 second
+    }
+
+    private ArmorStand createInvisibleTarget(Location location) {
+        return location.getWorld().spawn(location, ArmorStand.class, armorStand -> {
+            armorStand.setVisible(false);
+            armorStand.setCollidable(false);
+            armorStand.setInvulnerable(true);
+            armorStand.setMarker(true);
+            armorStand.setGravity(false);
+            armorStand.getPersistentDataContainer().set(getCustomNamespacedKey(), PersistentDataType.BOOLEAN, true);
+        });
     }
 
     private Location calculateTargetLocation(Entity target) {

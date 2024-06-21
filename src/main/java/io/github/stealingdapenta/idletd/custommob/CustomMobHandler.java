@@ -30,7 +30,6 @@ public class CustomMobHandler {
     private static final String ERROR_SETTING_TARGET = "Error setting agent as target for custom mob.";
     private static final String CUSTOM_MOB_TAG = "idletd_mob";
     private static final String PLAYER_TAG = "related_p";
-    private static final String CUSTOM_NSK_TAG = "customnsktag";
     private final ArrayList<CustomMobLiveDataHandle> livingCustomMobsLiveData = new ArrayList<>();
 
     public static CustomMobHandler getInstance() {

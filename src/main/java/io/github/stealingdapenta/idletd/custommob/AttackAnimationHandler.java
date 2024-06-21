@@ -44,17 +44,6 @@ public class AttackAnimationHandler {
 
 
     /**
-     * Sends the ranged attack animation to the specified player for the given entity.
-     *
-     * @param player       The player to show the animation to.
-     * @param targetEntity The entity performing the animation.
-     */
-    public void sendRangedAttackAnimation(Player player, Entity targetEntity) {
-        sendAnimation(player, targetEntity, EntityAnimationType.getById((byte) 30)); // Status 30 for skeleton drawing bow
-    }
-
-
-    /**
      * @param player              The player to show the animation to
      * @param targetEntity        the entity performing the animation
      * @param entityAnimationType The animation

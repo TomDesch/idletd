@@ -28,6 +28,7 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsRepository;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
+import io.github.stealingdapenta.idletd.listener.CustomArmorStandCleanUpListener;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
 import io.github.stealingdapenta.idletd.listener.DamageListener;
 import io.github.stealingdapenta.idletd.listener.DebugPacketEventListener;
@@ -99,6 +100,8 @@ public class Idletd extends JavaPlugin {
 
     private final AttackAnimationHandler attackAnimationHandler = new AttackAnimationHandler();
     private final AnimateCommand animateCommand = new AnimateCommand(attackAnimationHandler);
+
+    private final CustomArmorStandCleanUpListener customArmorStandCleanUpListener = new CustomArmorStandCleanUpListener();
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(idlePlayerService, idlePlayerManager, balanceHandler);
@@ -156,6 +159,7 @@ public class Idletd extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(idlePlayerListener, getInstance());
         Bukkit.getPluginManager().registerEvents(incomeListener, getInstance());
         Bukkit.getPluginManager().registerEvents(damageListener, getInstance());
+        Bukkit.getPluginManager().registerEvents(customArmorStandCleanUpListener, getInstance());
 
         //We register before calling PacketEvents#init, because that method might already call some events.
         PacketEvents.getAPI().getEventManager().registerListener(new DebugPacketEventListener(), PacketListenerPriority.LOW);
