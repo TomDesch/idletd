@@ -134,13 +134,14 @@ public class CustomMobAttackHandler {
     }
 
     private void makeSkeletonDrawBow(Skeleton skeleton, Location targetLocation) {
+        LivingEntity originalTarget = skeleton.getTarget();
         ArmorStand invisibleTarget = createInvisibleTarget(targetLocation);
         skeleton.setTarget(invisibleTarget);
         new BukkitRunnable() {
             @Override
             public void run() {
                 invisibleTarget.remove();
-                skeleton.setTarget(null);
+                skeleton.setTarget(originalTarget);
             }
         }.runTaskLater(Idletd.getInstance(), 40L); // 20 ticks = 1 second
     }
