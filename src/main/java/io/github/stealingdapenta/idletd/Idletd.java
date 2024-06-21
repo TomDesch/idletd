@@ -4,8 +4,6 @@ import static io.github.stealingdapenta.idletd.service.utils.Schematic.TOWER_DEF
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentRepository;
@@ -20,6 +18,7 @@ import io.github.stealingdapenta.idletd.command.CustomMobCommand;
 import io.github.stealingdapenta.idletd.command.PayCommand;
 import io.github.stealingdapenta.idletd.command.TowerDefenseCommand;
 import io.github.stealingdapenta.idletd.command.plot.PlotCommand;
+import io.github.stealingdapenta.idletd.custommob.AttackAnimationHandler;
 import io.github.stealingdapenta.idletd.custommob.CustomMobAttackTask;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationRepository;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
@@ -29,9 +28,9 @@ import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsRepository;
 import io.github.stealingdapenta.idletd.idleplayer.battlestats.BattleStatsService;
 import io.github.stealingdapenta.idletd.idleplayer.stats.BalanceHandler;
-import io.github.stealingdapenta.idletd.listener.AttackAnimationListener;
 import io.github.stealingdapenta.idletd.listener.CustomMobListener;
 import io.github.stealingdapenta.idletd.listener.DamageListener;
+import io.github.stealingdapenta.idletd.listener.DebugPacketEventListener;
 import io.github.stealingdapenta.idletd.listener.IdlePlayerListener;
 import io.github.stealingdapenta.idletd.listener.IncomeListener;
 import io.github.stealingdapenta.idletd.listener.SpawnListener;
@@ -53,7 +52,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -98,13 +96,17 @@ public class Idletd extends JavaPlugin {
                                                                               towerDefenseService);
     private final PayCommand payCommand = new PayCommand(idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobCommand customMobCommand = new CustomMobCommand(idlePlayerManager, agentManager);
-    private final AnimateCommand animateCommand = new AnimateCommand();
+
+    private final AttackAnimationHandler attackAnimationHandler = new AttackAnimationHandler();
+    private final AnimateCommand animateCommand = new AnimateCommand(attackAnimationHandler);
     private final IdlePlayerListener idlePlayerListener = new IdlePlayerListener(idlePlayerManager, idlePlayerService, battleStatsService);
     private final BalanceCommand balanceCommand = new BalanceCommand(idlePlayerManager);
     private final IncomeListener incomeListener = new IncomeListener(idlePlayerService, idlePlayerManager, balanceHandler);
     private final CustomMobListener customMobListener = new CustomMobListener(idlePlayerService, towerDefenseManager);
     private final AgentCommand agentCommand = new AgentCommand(plotService, idlePlayerService, agentService, agentManager, idleLocationService,
                                                                mainAgentStatsService);
+    private final AttackAnimationHandler attackAnimationListener = new AttackAnimationHandler();
+
     private final DamageListener damageListener = new DamageListener(agentManager, idlePlayerManager);
     private final SpawnListener spawnListener = new SpawnListener();
 
@@ -135,8 +137,6 @@ public class Idletd extends JavaPlugin {
 
         this.towerDefenseManager.initializeActiveGameManager();
         CustomMobAttackTask.startTask();
-
-        Arrays.stream(EntityPose.values()).forEach(v -> LOGGER.info("The value " + v + " has id " + v.getId(ClientVersion.V_1_20_5)));
     }
 
     private void registerCommands() {
@@ -158,7 +158,7 @@ public class Idletd extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(damageListener, getInstance());
 
         //We register before calling PacketEvents#init, because that method might already call some events.
-        PacketEvents.getAPI().getEventManager().registerListener(new AttackAnimationListener(), PacketListenerPriority.LOW);
+        PacketEvents.getAPI().getEventManager().registerListener(new DebugPacketEventListener(), PacketListenerPriority.LOW);
         PacketEvents.getAPI().init();
     }
 

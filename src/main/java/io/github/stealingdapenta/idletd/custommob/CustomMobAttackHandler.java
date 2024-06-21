@@ -25,6 +25,8 @@ public class CustomMobAttackHandler {
 
     private static CustomMobAttackHandler instance = null;
 
+    private static final AttackAnimationHandler attackAnimationHandler = AttackAnimationHandler.getInstance();
+
     private static final CustomMobHandler customMobHandler = CustomMobHandler.getInstance();
 
     public static CustomMobAttackHandler getInstance() {
@@ -37,51 +39,43 @@ public class CustomMobAttackHandler {
     private static final int SECOND_IN_MS = 1000;
 
     public void removeDeadMobs() {
-        customMobHandler.getLivingCustomMobsLiveData()
-                        .removeIf(customMobLiveDataHandle -> this.mobRemoved(customMobLiveDataHandle.getCustomMob()));
+        customMobHandler.getLivingCustomMobsLiveData().removeIf(customMobLiveDataHandle -> this.mobRemoved(customMobLiveDataHandle.getCustomMob()));
     }
 
     public void preventAllFromFalling() {
-        customMobHandler.getLivingCustomMobsLiveData()
-                        .forEach(customMobLiveDataHandle -> {
-                            Plot plot = customMobLiveDataHandle.getCustomMob()
-                                                               .getPlot();
-                            Mob mob = customMobLiveDataHandle.getCustomMob()
-                                                             .getMob();
-                            if (Objects.nonNull(plot) && Objects.nonNull(mob) && mob.isValid()) {
-                                if (mob.getFallDistance() > 5) {
-                                    mob.setFallDistance(0); // prevents fall dmg
-                                    mob.teleport(plot.getMobSpawnLocation());
-                                }
-                            }
-                        });
+        customMobHandler.getLivingCustomMobsLiveData().forEach(customMobLiveDataHandle -> {
+            Plot plot = customMobLiveDataHandle.getCustomMob().getPlot();
+            Mob mob = customMobLiveDataHandle.getCustomMob().getMob();
+            if (Objects.nonNull(plot) && Objects.nonNull(mob) && mob.isValid()) {
+                if (mob.getFallDistance() > 5) {
+                    mob.setFallDistance(0); // prevents fall dmg
+                    mob.teleport(plot.getMobSpawnLocation());
+                }
+            }
+        });
     }
 
     private boolean mobRemoved(CustomMob customMob) {
-        return Objects.isNull(customMob) || Objects.isNull(customMob.getMob()) || !customMob.getMob()
-                                                                                            .isValid() || customMob.getMob()
-                                                                                                                   .isDead();
+        return Objects.isNull(customMob) || Objects.isNull(customMob.getMob()) || !customMob.getMob().isValid() || customMob.getMob().isDead();
     }
 
     public void checkAllAttacks() {
-        customMobHandler.getLivingCustomMobsLiveData()
-                        .forEach(customMobLiveData -> {
-                            if (canAttack(customMobLiveData)) {
-                                LOGGER.warning("Can attack = " + customMobLiveData);
+        customMobHandler.getLivingCustomMobsLiveData().forEach(customMobLiveData -> {
+            if (canAttack(customMobLiveData)) {
+                LOGGER.warning("Can attack = " + customMobLiveData);
 
-                                doAttack(customMobLiveData);
-                            }
-                        });
+                doAttack(customMobLiveData);
+            }
+        });
     }
 
 
     private boolean canAttack(CustomMobLiveDataHandle customMobLiveDataHandle) {
         long msSinceLastAttack = System.currentTimeMillis() - customMobLiveDataHandle.getTimeSinceLastAttack();
-        double attackSpeedPerSecond = customMobLiveDataHandle.getMobWrapper()
-                                                             .getAttackSpeed();
+        double attackSpeedPerSecond = customMobLiveDataHandle.getMobWrapper().getAttackSpeed();
 
-//        LOGGER.warning("Time since last attack = " + msSinceLastAttack);  todo tweak atk speed later
-//        LOGGER.warning("atk speed / second = " + attackSpeedPerSecond);  todo tweak atk speed later
+        //        LOGGER.warning("Time since last attack = " + msSinceLastAttack);  todo tweak atk speed later
+        //        LOGGER.warning("atk speed / second = " + attackSpeedPerSecond);  todo tweak atk speed later
 
         // todo atk speed per level for zombies is currently not functional; they all hit equally quick.
 
@@ -90,7 +84,7 @@ public class CustomMobAttackHandler {
 
     private boolean enoughTimePassed(double timesPerSecond, long msPassed) {
         double requiredDelay = SECOND_IN_MS / timesPerSecond;
-//        LOGGER.warning("Required delay = " + requiredDelay); todo tweak atk speed later
+        //        LOGGER.warning("Required delay = " + requiredDelay); todo tweak atk speed later
         return requiredDelay <= msPassed;
     }
 
@@ -106,8 +100,8 @@ public class CustomMobAttackHandler {
 
 
     private void doMeleeAttack(CustomMob customMob) {
-        // todo do atk animation with protocollib
-
+        attackAnimationHandler.sendMeleeAttackAnimation(customMobHandler.getLinkedPlayer(customMob), customMob);
+        // todo calculate damage
     }
 
     private void doRangedAttack(CustomMob customMob) {
@@ -118,34 +112,38 @@ public class CustomMobAttackHandler {
             return;
         }
 
-        Location targetLocation = targetEntity.getLocation();
-        targetLocation = targetLocation.add(0, 1.5, 0); // adjusting to height
-
+        Location targetLocation = calculateTargetLocation(targetEntity);
         CustomMobLiveDataHandle shooterLiveData = customMobHandler.findBy(customMob);
 
         if (targetIsOutOfRange(shooterLiveData.getMobWrapper(), targetLocation)) {
-            shooter.getWorld()
-                   .spawnParticle(Particle.ANGRY_VILLAGER, shooter.getEyeLocation(), 2);
+            animateFlinch(shooter);
             return;
         }
 
-        Location arrowLaunchLocation = shooter.getEyeLocation()
-                                              .add(0, -0.2, 0);
-
-        int shooterLevel = getMobLevel(shooter);
-        // todo move this to field?
-        double flySpeed = 1 + ((double) shooterLevel / 100);
+        Location arrowLaunchLocation = shooter.getEyeLocation().add(0, -0.2, 0);
+        double flySpeed = calculateProjectileSpeed(shooter);
 
         // todo DO BOW ANIMATION HERE
 
         createParabolicParticleTrail(arrowLaunchLocation, 1.5, targetLocation, flySpeed);
     }
 
+    private Location calculateTargetLocation(Entity target) {
+        Location targetLocation = target.getLocation();
+        return targetLocation.add(0, 1.5, 0); // adjusting to head height
+    }
+
+    private void animateFlinch(Mob shooter) {
+        shooter.getWorld().spawnParticle(Particle.ANGRY_VILLAGER, shooter.getEyeLocation(), 1);
+    }
+
+    private double calculateProjectileSpeed(Mob shooter) {
+        int shooterLevel = getMobLevel(shooter);
+        return 1 + ((double) shooterLevel / 100); // todo tweak later
+    }
 
     private boolean targetIsOutOfRange(MobWrapper attacker, Location targetLocation) {
-        return attacker.getSummonedEntity()
-                       .getLocation()
-                       .distanceSquared(targetLocation) > attacker.getAttackRangeSquared();
+        return attacker.getSummonedEntity().getLocation().distanceSquared(targetLocation) > attacker.getAttackRangeSquared();
     }
 
     public void createParabolicParticleTrail(Location startLocation, double offset, Location targetLocation, double flySpeed) {
@@ -173,10 +171,7 @@ public class CustomMobAttackHandler {
 
             if (particleCollidesWithEntity(particleLocation)) {
                 List<LivingEntity> collidedEntities = getCollidedEntities(particleLocation);
-                LivingEntity possibleNPC = collidedEntities.stream()
-                                                           .filter(CitizensAPI.getNPCRegistry()::isNPC)
-                                                           .findFirst()
-                                                           .orElse(null);
+                LivingEntity possibleNPC = collidedEntities.stream().filter(CitizensAPI.getNPCRegistry()::isNPC).findFirst().orElse(null);
                 if (Objects.nonNull(possibleNPC)) {
                     System.out.printf("'Arrow' hit an NPC !! %s%n", possibleNPC.getName());
                     // todo deal dmg to npc
@@ -201,43 +196,31 @@ public class CustomMobAttackHandler {
     }
 
     private void spawnColoredParticleDelayed(Location location, Color color, int delayTicks) {
-        Bukkit.getScheduler()
-              .runTaskLater(Idletd.getInstance(), () -> spawnColoredParticle(location, color), delayTicks);
+        Bukkit.getScheduler().runTaskLater(Idletd.getInstance(), () -> spawnColoredParticle(location, color), delayTicks);
     }
 
     private void spawnColoredParticle(Location location, Color color) {
-        location.getWorld()
-                .spawnParticle(Particle.DUST_COLOR_TRANSITION, location, 0, 0, 0, 0, new Particle.DustOptions(color, 1));
+        location.getWorld().spawnParticle(Particle.DUST, location, 0, 0, 0, 0, new Particle.DustOptions(color, 1));
     }
 
     private boolean particleCollidesWithEntity(Location location) {
-        return location.getWorld()
-                       .getNearbyEntities(location, 0.15, 0.15, 0.15)
-                       .stream()
-                       .anyMatch(LivingEntity.class::isInstance);
+        return location.getWorld().getNearbyEntities(location, 0.15, 0.15, 0.15).stream().anyMatch(LivingEntity.class::isInstance);
     }
 
     private boolean particleCollidesWithSolidBlock(Location location) {
-        return !location.getBlock()
-                        .isPassable();
+        return !location.getBlock().isPassable();
     }
 
     private List<LivingEntity> getCollidedEntities(Location location) {
-        return location.getWorld()
-                       .getNearbyEntities(location, 0.15, 0.15, 0.15)
-                       .stream()
-                       .filter(LivingEntity.class::isInstance)
-                       .map(LivingEntity.class::cast)
+        return location.getWorld().getNearbyEntities(location, 0.15, 0.15, 0.15).stream().filter(LivingEntity.class::isInstance).map(LivingEntity.class::cast)
                        .toList();
     }
 
     private void animateEntityImpactParticles(Location location) {
-        location.getWorld()
-                .spawnParticle(Particle.EXPLOSION, location, 3, 0, 0, 0, 0);
+        location.getWorld().spawnParticle(Particle.EXPLOSION, location, 3, 0, 0, 0, 0);
     }
 
     private void animateGroundImpactParticles(Location location) {
-        location.getWorld()
-                .spawnParticle(Particle.SMOKE, location, 15, 0, 0, 0, 0.1);
+        location.getWorld().spawnParticle(Particle.SMOKE, location, 15, 0, 0, 0, 0.1);
     }
 }

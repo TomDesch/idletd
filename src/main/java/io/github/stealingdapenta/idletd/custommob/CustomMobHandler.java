@@ -13,10 +13,12 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
 
@@ -101,6 +103,15 @@ public class CustomMobHandler {
     public boolean isCustomMob(Entity entity) {
         return Boolean.TRUE.equals(entity.getPersistentDataContainer()
                                          .get(getCustomNameSpacedKey(), PersistentDataType.BOOLEAN));
+    }
+
+    public Player getLinkedPlayer(CustomMob customMob) {
+        return Bukkit.getPlayer(getLinkedPlayerUUID(customMob));
+    }
+
+
+    public String getLinkedPlayerUUID(CustomMob customMob) {
+        return customMob.getMob().getPersistentDataContainer().get(getPlayerNameSpacedKey(), PersistentDataType.STRING);
     }
 
     public String getLinkedPlayerUUID(LivingEntity customMob) {

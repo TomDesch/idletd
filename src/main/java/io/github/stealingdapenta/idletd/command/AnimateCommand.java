@@ -1,6 +1,6 @@
 package io.github.stealingdapenta.idletd.command;
 
-import io.github.stealingdapenta.idletd.listener.AttackAnimationListener;
+import io.github.stealingdapenta.idletd.custommob.AttackAnimationHandler;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.Command;
@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 public class AnimateCommand implements CommandExecutor {
+
+    private final AttackAnimationHandler attackAnimationHandler;
 
     /**
      * This method is a DEBUG method that will be removed later.
@@ -34,7 +36,7 @@ public class AnimateCommand implements CommandExecutor {
             return false;
         }
 
-        entityCollection.forEach(entity -> AttackAnimationListener.sendAttackAnimation(player, entity));
+        entityCollection.forEach(entity -> attackAnimationHandler.sendMeleeAttackAnimation(player, entity));
 
         return true;
     }
