@@ -2,12 +2,13 @@ package io.github.stealingdapenta.idletd.agent;
 
 import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgent;
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentHealthBar;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
 import io.github.stealingdapenta.idletd.service.utils.EntityTracker;
-import io.github.stealingdapenta.idletd.skin.Skin;
 import io.github.stealingdapenta.idletd.skin.SkinService;
 import java.util.List;
 import java.util.Objects;
@@ -42,14 +43,19 @@ public class AgentService {
         agent.getAgentNPC().setNpc(null);
     }
 
-    public AgentNPC summonNPC(Agent agent) {
+    public void summonNPC(Agent agent) {
+
+        MainAgent mainAgent = MainAgent.builder().agentNPC(agent.getAgentNPC()).fetchedAgentStats(agent.getFetchedAgentStats())
+                                       .build(); // todo fix so its actually stored and retrieved as mainAgent
+        mainAgent.setMainAgentHealthBar(new MainAgentHealthBar());
+
         AgentNPC agentNPC = agent.getAgentNPC();
         Player owner = idlePlayerService.getPlayer(agent.getPlayerUUID());
 
         if (Objects.nonNull(agentNPC)) {
             if (Objects.nonNull(agentNPC.getNpc())) {
                 LOGGER.info("Attempted to summon an NPC for an agent that already has one.");
-                return agent.getAgentNPC();
+                return;
             }
         } else {
             agentNPC = AgentNPC.builder()
@@ -65,7 +71,6 @@ public class AgentService {
         agentNPC.setLocation(agent.getFetchedLocation());
         agentNPC.spawn();
         agentNPC.updateTarget();
-        return agentNPC;
     }
 
     private void targetterTask(Agent agent) {
@@ -113,25 +118,22 @@ public class AgentService {
         fetchStatsIfNull(agent);
     }
 
-    private AgentStats fetchStatsIfNull(Agent agent) {
+    private void fetchStatsIfNull(Agent agent) {
         if (Objects.isNull(agent.getFetchedAgentStats())) {
             agent.setFetchedAgentStats(agentStatsService.getAgentStats(agent));
         }
-        return agent.getFetchedAgentStats();
     }
 
-    private Skin fetchSkinIfNull(Agent agent) {
+    private void fetchSkinIfNull(Agent agent) {
         if (Objects.isNull(agent.getFetchedSkin())) {
             agent.setFetchedSkin(skinService.getSkin(agent.getActiveSkinId()));
         }
-        return agent.getFetchedSkin();
     }
 
-    private IdlePlayer fetchIdlePlayerIfNull(Agent agent) {
+    private void fetchIdlePlayerIfNull(Agent agent) {
         if (Objects.isNull(agent.getFetchedPlayer())) {
             agent.setFetchedPlayer(idlePlayerService.getIdlePlayer(agent.getPlayerUUID()));
         }
-        return agent.getFetchedPlayer();
     }
 
     private Location fetchLocationIfNull(Agent agent) {

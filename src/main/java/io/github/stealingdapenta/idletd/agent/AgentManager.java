@@ -63,10 +63,10 @@ public class AgentManager {
         agents.forEach(this::activate);
     }
 
-    public boolean activate(Agent agent) {
+    public void activate(Agent agent) {
         agentService.summonNPC(agent);
 
-        return activeAgents.add(agent);
+        activeAgents.add(agent);
     }
 
     public boolean deactivate(Agent agent) {

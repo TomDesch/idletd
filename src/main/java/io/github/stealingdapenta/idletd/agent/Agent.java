@@ -3,16 +3,15 @@ package io.github.stealingdapenta.idletd.agent;
 import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.skin.Skin;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.bukkit.Location;
-
 import java.util.Objects;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.bukkit.Location;
 
-@Builder
+@SuperBuilder(toBuilder = true)
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor

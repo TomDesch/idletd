@@ -16,9 +16,8 @@ import org.bukkit.entity.Player;
 public class AttackAnimationHandler {
 
     private static AttackAnimationHandler instance;
-    // todo 2) Animate on MY choice of when attack (based on atk speed & distance to target)
-    // todo 3) Calculate dealt damage & inflict it
-    // todo 4) display Hero health somewhere
+    // todo 3) display Hero health somewhere
+    // todo 4) Calculate dealt damage & inflict it
     // todo 5) Game over when hero dead then what?
     // **> Remove wave; stop waves; restart from there : fined? / cost
     // todo 6) Make hero fight back

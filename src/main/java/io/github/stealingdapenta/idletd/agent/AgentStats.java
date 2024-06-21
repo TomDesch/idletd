@@ -1,14 +1,16 @@
 package io.github.stealingdapenta.idletd.agent;
 
 import java.util.Objects;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AgentStats {
 
-    private int agentId;
+    private final int agentId;
+
+    private double currentHealth;
 
     @Override
     public boolean equals(Object o) {

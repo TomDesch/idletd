@@ -52,6 +52,7 @@ public class AnimateCommand implements CommandExecutor {
         return true;
     }
 
+    @Deprecated(forRemoval = true)
     private void makeSkeletonDrawBow(Skeleton skeleton, Location targetLocation) {
         ArmorStand invisibleTarget = createArmorStand(targetLocation);
         skeleton.setTarget(invisibleTarget);
@@ -64,6 +65,7 @@ public class AnimateCommand implements CommandExecutor {
         }.runTaskLater(Idletd.getInstance(), 40L); // 20 ticks = 1 second
     }
 
+    @Deprecated(forRemoval = true)
     private ArmorStand createArmorStand(Location location) {
         return location.getWorld().spawn(location, ArmorStand.class, armorStand -> {
             armorStand.setVisible(false);
