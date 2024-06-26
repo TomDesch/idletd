@@ -1,30 +1,42 @@
 package io.github.stealingdapenta.idletd.agent;
 
-import java.util.Objects;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@RequiredArgsConstructor
+@SuperBuilder
+@NoArgsConstructor
 public abstract class AgentStats {
 
-    private final int agentId;
+    private long id;
 
+    private double maxHealth;
+    private double regenerationPerSecond;
+    private double overhealShieldLimit;
+    private double overhealShieldRegenerationPerSecond;
+    private double knockbackResistance;
+
+    private double swordResistance;
+    private double axeResistance;
+    private double magicResistance;
+    private double arrowResistance;
+    private double tridentResistance;
+    private double explosionResistance;
+    private double fireResistance;
+    private double poisonResistance;
+    private double criticalHitResistance;
+    private double blockChance;
+
+    private double attackPower;
+    private double attackRange;
+    private double attackKnockback;
+    private double attackSpeed;
+    private double projectileSpeed;
+    private double criticalHitChance;
+    private double criticalHitDamageMultiplier;
+
+    @Setter
     private double currentHealth;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AgentStats that)) {
-            return false;
-        }
-        return agentId == that.agentId;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(agentId);
-    }
 }

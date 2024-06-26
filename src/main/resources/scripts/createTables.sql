@@ -11,7 +11,6 @@ insert into PLOT(STARTX, STARTZ, PLAYERUUID) values (0, 0, 'SERVER');
 COMMIT;
 
 
-
 -- Create the IDLE_PLAYER table
 create TABLE IF NOT EXISTS IDLE_PLAYER (
     PLAYERUUID VARCHAR(36) PRIMARY KEY NOT NULL,
@@ -54,7 +53,6 @@ create TABLE IF NOT EXISTS LOCATION (
 create TABLE IF NOT EXISTS AGENT (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     PLAYERUUID VARCHAR(36) NOT NULL,
-    AGENT_TYPE INT NOT NULL,
     FK_LOCATION INT NOT NULL,
     ACTIVE_SKIN_ID INT NOT NULL,
     FOREIGN KEY (FK_LOCATION) REFERENCES LOCATION(ID) ON delete CASCADE,
@@ -93,7 +91,7 @@ CREATE TABLE IF NOT EXISTS BATTLE_STATS (
 
 -- Create the MAIN_AGENT_STATS table
 CREATE TABLE IF NOT EXISTS MAIN_AGENT_STATS (
-                                                AGENT_ID INT PRIMARY KEY NOT NULL,
+                                                ID INT AUTO_INCREMENT PRIMARY KEY,
                                                 MAX_HEALTH DOUBLE NOT NULL,
                                                 REGENERATION_PER_SECOND DOUBLE NOT NULL,
                                                 OVERHEAL_SHIELD_LIMIT DOUBLE NOT NULL,
@@ -115,8 +113,7 @@ CREATE TABLE IF NOT EXISTS MAIN_AGENT_STATS (
                                                 PROJECTILE_SPEED DOUBLE NOT NULL,
                                                 CRITICAL_HIT_CHANCE DOUBLE NOT NULL,
                                                 CRITICAL_HIT_DAMAGE_MULTIPLIER DOUBLE NOT NULL,
-                                                FOREIGN KEY (AGENT_ID) REFERENCES AGENT(ID)
-    );
+);
 
 
 

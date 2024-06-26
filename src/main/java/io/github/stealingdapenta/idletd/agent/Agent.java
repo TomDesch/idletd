@@ -19,13 +19,14 @@ public class Agent {
     // table fields
     private int id;
     private UUID playerUUID;
-    private AgentType agentType;
     private int fkLocation;
     private int activeSkinId;
+    private String name;
+
+    private AgentStats agentStats;
 
 
     // calculated fields
-    private AgentStats fetchedAgentStats;
     private IdlePlayer fetchedPlayer;
     private Location fetchedLocation;
     private Skin fetchedSkin;

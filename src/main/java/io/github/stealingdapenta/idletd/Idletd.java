@@ -85,8 +85,7 @@ public class Idletd extends JavaPlugin {
     private final MainAgentStatsRepository mainAgentStatsRepository = new MainAgentStatsRepository();
     private final MainAgentStatsService mainAgentStatsService = new MainAgentStatsService(mainAgentStatsRepository);
     private final AgentStatsService agentStatsService = new AgentStatsService(mainAgentStatsService);
-    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, entityTracker,
-                                                               agentStatsService);
+    private final AgentService agentService = new AgentService(agentRepository, idlePlayerService, idleLocationService, skinService, agentStatsService);
     private final AgentManager agentManager = new AgentManager(agentService, agentStatsService);
     private final TowerDefenseService towerDefenseService = new TowerDefenseService(towerDefenseRepository, plotService, idlePlayerService, schematicHandler,
                                                                                     agentManager);

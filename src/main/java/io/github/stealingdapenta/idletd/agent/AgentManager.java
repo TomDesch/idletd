@@ -2,6 +2,7 @@ package io.github.stealingdapenta.idletd.agent;
 
 import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgent;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import java.util.HashSet;
 import java.util.List;
@@ -32,9 +33,7 @@ public class AgentManager {
 
     public Agent getActiveMainAgent(IdlePlayer idlePlayer) {
         return getAllActiveAgents(idlePlayer)
-                .stream()
-                .filter(agent -> agent.getAgentType()
-                                      .equals(AgentType.MAIN_AGENT))
+                .stream().filter(agent -> agent instanceof MainAgent)
                 .findFirst()
                 .orElse(null);
     }
@@ -69,9 +68,9 @@ public class AgentManager {
         activeAgents.add(agent);
     }
 
-    public boolean deactivate(Agent agent) {
+    public void deactivate(Agent agent) {
         agentService.despawnAndDestroyNPC(agent);
-        return activeAgents.remove(agent);
+        activeAgents.remove(agent);
     }
 
     private List<Agent> getAllActiveAgents(IdlePlayer idlePlayer) {
@@ -99,10 +98,10 @@ public class AgentManager {
     public void saveAndDeactivate(Agent agent) {
         if (agent.getId() == 0) {
             agentService.saveAgent(agent);
-            agentStatsService.saveAgentStats(agent.getFetchedAgentStats());
+            agentStatsService.saveAgentStats(agent.getAgentStats());
         } else {
             agentService.updateAgent(agent);
-            agentStatsService.updateAgentStats(agent.getFetchedAgentStats());
+            agentStatsService.updateAgentStats(agent.getAgentStats());
         }
         deactivate(agent);
     }

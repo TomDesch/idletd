@@ -5,7 +5,6 @@ import static io.github.stealingdapenta.idletd.Idletd.LOGGER;
 import io.github.stealingdapenta.idletd.agent.Agent;
 import io.github.stealingdapenta.idletd.agent.AgentManager;
 import io.github.stealingdapenta.idletd.agent.AgentService;
-import io.github.stealingdapenta.idletd.agent.AgentType;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStats;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
@@ -57,7 +56,6 @@ public class AgentCommand implements CommandExecutor {
             int locationId = idleLocationService.save(summonLocation);
 
             Agent agent = Agent.builder()
-                               .agentType(AgentType.MAIN_AGENT)
                                .playerUUID(idlePlayer.getPlayerUUID())
                                .fkLocation(locationId)
                                .fetchedLocation(summonLocation)
@@ -67,9 +65,7 @@ public class AgentCommand implements CommandExecutor {
 
 
 
-            long agentId = agentService.saveAgent(agent);
             MainAgentStats mainAgentStats = MainAgentStats.builder()
-                                                          .agentId((int) agentId)
                                                           .maxHealth(10.0)
                                                           .regenerationPerSecond(0)
                                                           .overhealShieldLimit(0)
@@ -92,7 +88,8 @@ public class AgentCommand implements CommandExecutor {
                                                           .criticalHitChance(0)
                                                           .criticalHitDamageMultiplier(1)
                                                           .build();
-
+            agent.setAgentStats(mainAgentStats);
+            long agentId = agentService.saveAgent(agent); // todo persist all
             mainAgentStatsService.saveMainAgentStats(mainAgentStats);
         }
 

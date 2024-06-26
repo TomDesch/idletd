@@ -8,7 +8,6 @@ import io.github.stealingdapenta.idletd.agent.npc.AgentNPC;
 import io.github.stealingdapenta.idletd.idlelocation.IdleLocationService;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayer;
 import io.github.stealingdapenta.idletd.idleplayer.IdlePlayerService;
-import io.github.stealingdapenta.idletd.service.utils.EntityTracker;
 import io.github.stealingdapenta.idletd.skin.SkinService;
 import java.util.List;
 import java.util.Objects;
@@ -25,14 +24,7 @@ public class AgentService {
     private final IdlePlayerService idlePlayerService;
     private final IdleLocationService idleLocationService;
     private final SkinService skinService;
-    private final EntityTracker entityTracker;
     private final AgentStatsService agentStatsService;
-
-    public Agent getAgent(int id) {
-        Agent agent = agentRepository.getAgent(id);
-        fetchFields(agent);
-        return agent;
-    }
 
     public void despawnAndDestroyNPC(Agent agent) {
         NPC npc = agent.getAgentNPC().getNpc();
@@ -45,7 +37,7 @@ public class AgentService {
 
     public void summonNPC(Agent agent) {
 
-        MainAgent mainAgent = MainAgent.builder().agentNPC(agent.getAgentNPC()).fetchedAgentStats(agent.getFetchedAgentStats())
+        MainAgent mainAgent = MainAgent.builder().agentNPC(agent.getAgentNPC()).agentStats(agent.getAgentStats())
                                        .build(); // todo fix so its actually stored and retrieved as mainAgent
         mainAgent.setMainAgentHealthBar(new MainAgentHealthBar());
 
@@ -61,8 +53,7 @@ public class AgentService {
             agentNPC = AgentNPC.builder()
                                .location(fetchLocationIfNull(agent))
                                .currentSkin(agent.getFetchedSkin())
-                               .target(owner)
-                               .name(agent.getAgentType().getName())
+                               .target(owner).name(agent.getName())
                                .build();
             agent.setAgentNPC(agentNPC);
         }
@@ -107,10 +98,6 @@ public class AgentService {
         agentRepository.updateAgent(agent);
     }
 
-    public void deleteAgent(Agent agent) {
-        agentRepository.deleteAgent(agent.getId());
-    }
-
     private void fetchFields(Agent agent) {
         fetchIdlePlayerIfNull(agent);
         fetchLocationIfNull(agent);
@@ -119,8 +106,8 @@ public class AgentService {
     }
 
     private void fetchStatsIfNull(Agent agent) {
-        if (Objects.isNull(agent.getFetchedAgentStats())) {
-            agent.setFetchedAgentStats(agentStatsService.getAgentStats(agent));
+        if (Objects.isNull(agent.getAgentStats())) {
+            agent.setAgentStats(agentStatsService.getAgentStats(agent));
         }
     }
 

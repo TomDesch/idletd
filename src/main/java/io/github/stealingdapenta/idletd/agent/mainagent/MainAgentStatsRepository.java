@@ -14,15 +14,15 @@ public class MainAgentStatsRepository {
 
     public void saveMainAgentStats(MainAgentStats mainAgentStats) {
         try (Connection connection = getDataSource().getConnection();
-                PreparedStatement statement = connection.prepareStatement("INSERT INTO MAIN_AGENT_STATS " +
-                        "(AGENT_ID, MAX_HEALTH, REGENERATION_PER_SECOND, OVERHEAL_SHIELD_LIMIT, " +
+                PreparedStatement statement = connection.prepareStatement("INSERT INTO MAIN_AGENT_STATS " + "(ID, MAX_HEALTH, REGENERATION_PER_SECOND, OVERHEAL_SHIELD_LIMIT, "
+                                                                                  +
                         "OVERHEAL_SHIELD_REGEN_PER_SECOND, SWORD_RESISTANCE, AXE_RESISTANCE, " +
                         "MAGIC_RESISTANCE, ARROW_RESISTANCE, TRIDENT_RESISTANCE, EXPLOSION_RESISTANCE, FIRE_RESISTANCE, " +
                         "POISON_RESISTANCE, CRITICAL_HIT_RESISTANCE, BLOCK_CHANCE, ATTACK_POWER, ATTACK_RANGE, " +
                         "ATTACK_KNOCKBACK, ATTACK_SPEED, PROJECTILE_SPEED, CRITICAL_HIT_CHANCE, CRITICAL_HIT_DAMAGE_MULTIPLIER) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-            statement.setLong(1, mainAgentStats.getAgentId());
+            statement.setLong(1, mainAgentStats.getId());
             statement.setDouble(2, mainAgentStats.getMaxHealth());
             statement.setDouble(3, mainAgentStats.getRegenerationPerSecond());
             statement.setDouble(4, mainAgentStats.getOverhealShieldLimit());
@@ -47,13 +47,13 @@ public class MainAgentStatsRepository {
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.severe("Error inserting MainAgentStats. Agent ID: " + mainAgentStats.getAgentId());
+            LOGGER.severe("Error inserting MainAgentStats. Agent ID: " + mainAgentStats.getId());
         }
     }
 
     public MainAgentStats getMainAgentStats(long agentId) {
-        try (Connection connection = getDataSource().getConnection();
-                PreparedStatement statement = connection.prepareStatement("SELECT * FROM MAIN_AGENT_STATS WHERE AGENT_ID = ?")) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(
+                "SELECT * FROM MAIN_AGENT_STATS WHERE ID = ?")) {
 
             statement.setLong(1, agentId);
 
@@ -75,8 +75,7 @@ public class MainAgentStatsRepository {
                         "OVERHEAL_SHIELD_REGEN_PER_SECOND=?, SWORD_RESISTANCE=?, AXE_RESISTANCE=?, " +
                         "MAGIC_RESISTANCE=?, ARROW_RESISTANCE=?, TRIDENT_RESISTANCE=?, EXPLOSION_RESISTANCE=?, FIRE_RESISTANCE=?, " +
                         "POISON_RESISTANCE=?, CRITICAL_HIT_RESISTANCE=?, BLOCK_CHANCE=?, ATTACK_POWER=?, ATTACK_RANGE=?, " +
-                        "ATTACK_KNOCKBACK=?, ATTACK_SPEED=?, PROJECTILE_SPEED=?, CRITICAL_HIT_CHANCE=?, " +
-                        "CRITICAL_HIT_DAMAGE_MULTIPLIER=? WHERE AGENT_ID=?")) {
+                        "ATTACK_KNOCKBACK=?, ATTACK_SPEED=?, PROJECTILE_SPEED=?, CRITICAL_HIT_CHANCE=?, " + "CRITICAL_HIT_DAMAGE_MULTIPLIER=? WHERE ID=?")) {
 
             statement.setDouble(1, mainAgentStats.getMaxHealth());
             statement.setDouble(2, mainAgentStats.getRegenerationPerSecond());
@@ -99,7 +98,7 @@ public class MainAgentStatsRepository {
             statement.setDouble(19, mainAgentStats.getProjectileSpeed());
             statement.setDouble(20, mainAgentStats.getCriticalHitChance());
             statement.setDouble(21, mainAgentStats.getCriticalHitDamageMultiplier());
-            statement.setLong(22, mainAgentStats.getAgentId());
+            statement.setLong(22, mainAgentStats.getId());
 
             statement.executeUpdate();
 
@@ -109,8 +108,8 @@ public class MainAgentStatsRepository {
     }
 
     public void deleteMainAgentStats(long agentId) {
-        try (Connection connection = getDataSource().getConnection();
-                PreparedStatement statement = connection.prepareStatement("DELETE FROM MAIN_AGENT_STATS WHERE AGENT_ID = ?")) {
+        try (Connection connection = getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(
+                "DELETE FROM MAIN_AGENT_STATS WHERE ID = ?")) {
 
             statement.setLong(1, agentId);
             statement.executeUpdate();
@@ -121,8 +120,7 @@ public class MainAgentStatsRepository {
     }
 
     private MainAgentStats convertResultSet(ResultSet resultSet) throws SQLException {
-        return MainAgentStats.builder()
-                             .agentId(resultSet.getInt("AGENT_ID"))
+        return MainAgentStats.builder().id(resultSet.getInt("ID"))
                              .maxHealth(resultSet.getDouble("MAX_HEALTH"))
                              .regenerationPerSecond(resultSet.getDouble("REGENERATION_PER_SECOND"))
                              .overhealShieldLimit(resultSet.getDouble("OVERHEAL_SHIELD_LIMIT"))

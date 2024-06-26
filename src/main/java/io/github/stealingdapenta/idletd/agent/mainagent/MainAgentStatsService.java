@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.agent.mainagent;
 
+import io.github.stealingdapenta.idletd.agent.Agent;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -11,15 +12,15 @@ public class MainAgentStatsService {
         mainAgentStatsRepository.saveMainAgentStats(mainAgentStats);
     }
 
+    public MainAgentStats getMainAgentStats(Agent agent) {
+        return getMainAgentStats(agent.getId());
+    }
+
     public MainAgentStats getMainAgentStats(long agentId) {
         return mainAgentStatsRepository.getMainAgentStats(agentId);
     }
 
     public void updateMainAgentStats(MainAgentStats mainAgentStats) {
         mainAgentStatsRepository.updateMainAgentStats(mainAgentStats);
-    }
-
-    public void deleteMainAgentStats(long agentId) {
-        mainAgentStatsRepository.deleteMainAgentStats(agentId);
     }
 }

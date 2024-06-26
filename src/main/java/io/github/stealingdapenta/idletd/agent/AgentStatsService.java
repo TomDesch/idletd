@@ -1,5 +1,6 @@
 package io.github.stealingdapenta.idletd.agent;
 
+import io.github.stealingdapenta.idletd.agent.mainagent.MainAgent;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStats;
 import io.github.stealingdapenta.idletd.agent.mainagent.MainAgentStatsService;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +19,11 @@ public class AgentStatsService {
     }
 
     public AgentStats getAgentStats(Agent agent) {
-        AgentType agentType = agent.getAgentType();
-
-        return switch (agentType) {
-            case MAIN_AGENT -> mainAgentStatsService.getMainAgentStats(agent.getId());
-            case MELEE -> null;
-            case RANGED -> null;
-            case MAGE -> null;
-            case NECROMANCER -> null;
-        };
+        if (agent instanceof MainAgent mainAgent) {
+            return mainAgentStatsService.getMainAgentStats(mainAgent);
+        }
         // todo extend for all agent types
-
+        return null;
     }
 
     public void updateAgentStats(AgentStats agentStats) {
@@ -37,12 +32,5 @@ public class AgentStatsService {
         }
         // todo extend for all agent types
 
-    }
-
-    public void deleteAgentStats(AgentStats agentStats) {
-        if (agentStats instanceof MainAgentStats mainAgentStats) {
-            mainAgentStatsService.deleteMainAgentStats(mainAgentStats.getAgentId());
-        }
-        // todo extend for all agent types
     }
 }
